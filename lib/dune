@@ -1,0 +1,6 @@
+(library
+ (name lib)
+ (libraries angstrom base re2 stdio)
+ (instrumentation
+  (backend bisect_ppx))
+  (preprocess (pps ppx_jane)))
