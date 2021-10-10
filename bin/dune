@@ -1,6 +1,7 @@
 (executable
+ (public_name pyml_bindgen)
  (name pyml_bindgen)
- (libraries base cmdliner lib re2 stdio)
+ (libraries base cmdliner lib little_logger re2 stdio)
  (instrumentation
   (backend bisect_ppx))
  (preprocess (pps ppx_jane)))

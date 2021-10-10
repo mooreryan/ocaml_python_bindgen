@@ -20,6 +20,9 @@ let assert_pyml_impl_is f spec =
   in
   assert (f x)
 
+(* Not using expect tests here as I don't want dune promote to blow up my
+   formatting on the functions...(too hard to read otherwise). *)
+
 let%test_unit "attribute" =
   let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec "val pie : t -> int" in
   let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
@@ -46,10 +49,10 @@ let%test_unit "instance method" =
   let expect =
     clean
       {|
-let pie t a ?b cat ?what () =
+let pie t ~a ?b ~cat ?what () =
   let callable = Py.Object.find_attr_string t "pie" in
   let kwargs =
-    List.filter_map Fun.id
+    filter_opt
       [
         Some ("a", Py.String.of_string a);
         (match b with
@@ -79,10 +82,10 @@ let%test_unit "class method" =
   let expect =
     clean
       {|
-let pie a ?b cat ?what () =
+let pie ~a ?b ~cat ?what () =
   let callable = Py.Module.get (import_module ()) "Apple" in
   let kwargs =
-    List.filter_map Fun.id
+    filter_opt
       [
         Some ("a", Py.String.of_string a);
         (match b with
@@ -115,10 +118,10 @@ let%test_unit "lists are okay" =
   let expect =
     clean
       {|
-let foo t ?apple ?pie good () =
+let foo t ?apple ?pie ~good () =
   let callable = Py.Object.find_attr_string t "foo" in
   let kwargs =
-    List.filter_map Fun.id
+    filter_opt
       [
         (match apple with
         | Some apple ->
@@ -152,10 +155,10 @@ let%test_unit "lists are okay" =
   let expect =
     clean
       {|
-let foo t ?apple ?pie good () =
+let foo t ?apple ?pie ~good () =
   let callable = Py.Object.find_attr_string t "foo" in
   let kwargs =
-    List.filter_map Fun.id
+    filter_opt
       [
         (match apple with
         | Some apple ->

@@ -4,3 +4,9 @@
  (inline_tests)
  (preprocess
   (pps ppx_jane ppx_inline_test ppx_expect)))
+
+(cram
+ (applies_to :whole_subtree)
+ (deps
+   %{bin:pyml_bindgen}
+   ./helpers/sanitize_logs))

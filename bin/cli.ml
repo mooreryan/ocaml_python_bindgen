@@ -8,10 +8,11 @@ type opts = {
   py_module : string;
   py_class : string;
   caml_module : string option;
+  of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
 }
 
-let make_opts signatures py_module py_class caml_module =
-  { signatures; py_module; py_class; caml_module }
+let make_opts signatures py_module py_class caml_module of_pyo_ret_type =
+  { signatures; py_module; py_class; caml_module; of_pyo_ret_type }
 
 let signatures_term =
   let doc = "Path to signatures" in
@@ -34,10 +35,27 @@ let caml_module_term =
     & opt (some string) None
     & info [ "c"; "caml-module" ] ~doc ~docv:"CAML_MODULE")
 
+(* See for info about how the enum works.
+   https://github.com/dbuenzli/logs/blob/master/src/logs_cli.ml *)
+let of_pyo_ret_type_term =
+  let enum =
+    [ ("no_check", `No_check); ("option", `Option); ("or_error", `Or_error) ]
+  in
+  let argv_conv = Arg.enum enum in
+  let enum_alts = Arg.doc_alts_enum enum in
+  let doc =
+    Printf.sprintf
+      "Return type of the of_pyobject function.  $(docv) must be %s." enum_alts
+  in
+  Arg.(
+    value
+    & opt argv_conv `Option
+    & info [ "of-pyo-ret-type" ] ~doc ~docv:"OF_PYO_RET_TYPE")
+
 let term =
   Term.(
     const make_opts $ signatures_term $ py_module_term $ py_class_term
-    $ caml_module_term)
+    $ caml_module_term $ of_pyo_ret_type_term)
 
 let info =
   let doc = "generate pyml bindings for a set of signatures" in

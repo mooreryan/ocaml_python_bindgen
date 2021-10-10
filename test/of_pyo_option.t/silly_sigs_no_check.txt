@@ -1,0 +1,2 @@
+val __init__ : x:string -> unit -> t
+val x : t -> string

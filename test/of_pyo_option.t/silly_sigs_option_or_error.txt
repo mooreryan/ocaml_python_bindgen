@@ -1,0 +1,3 @@
+val __init__ : x:string -> unit -> t option
+val x : t -> string
+val bad_fun : x:string -> unit -> t Or_error.t

@@ -1,0 +1,2 @@
+val __init__ : x:string -> unit -> t Or_error.t
+val x : t -> string

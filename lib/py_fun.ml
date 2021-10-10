@@ -163,14 +163,17 @@ let arg_to_kwarg_spec = function
 let get_var_names args =
   String.concat ~sep:" "
   @@ List.map args ~f:(function
-       | `Labeled arg -> Oarg.labeled_name arg
-       | `Optional arg -> [%string "?%{Oarg.optional_name arg}"])
+       | `Labeled arg -> "~" ^ Oarg.labeled_name arg
+       | `Optional arg -> "?" ^ Oarg.optional_name arg)
 
 (* TODO mixing optionals and non-optionals is fine on the OCaml side, but it's
    weird from a python standpoint. *)
+(* Note: [filter_opt] should be defined by the user, or in the pyml_bindgen cli
+   program. It's basically a way to get [List.filter_map Fun.id] whether you're
+   using Base or not. *)
 let get_kwargs args =
   let arg_list = String.concat ~sep:"" @@ List.map args ~f:arg_to_kwarg_spec in
-  [%string {| let kwargs = List.filter_map Fun.id [ %{arg_list} ] in |}]
+  [%string {| let kwargs = filter_opt [ %{arg_list} ] in |}]
 
 (* TODO only the Class_method variant actually uses the class name, but right
    now, you have to pass it in even if you're not generating a class method. *)

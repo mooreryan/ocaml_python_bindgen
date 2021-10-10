@@ -20,6 +20,7 @@
    angstrom
    base
    cmdliner
+   little_logger
    re2
    stdio
    ocaml

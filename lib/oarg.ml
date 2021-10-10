@@ -3,8 +3,14 @@ open! Base
 (* Each of these have their own type in addition to being in the variant type so
    that we can make sure certain things are passed to certain functions by
    callers. *)
+
+(* posistional can be an option type...'optional' refers to ?a:string and stuff
+   like that. *)
 type positional = { type_ : Otype.t } [@@deriving sexp]
 type labeled = { name : string; type_ : Otype.t } [@@deriving sexp]
+
+(* Kind of confusing, but these are not things like a:string option, but
+   ?a:string. It's optional in the sense of you don't need to pass it in. *)
 type optional = { name : string; type_ : Otype.t } [@@deriving sexp]
 
 let make_positional type_ : positional = { type_ }
