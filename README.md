@@ -57,7 +57,12 @@ Next, run `pyml_bindgen` on the signatures file to generate an OCaml module with
 
 ```
 $ pyml_bindgen --caml-module=Silly signatures.txt silly_module Silly > lib.ml
-$ ocamlformat --enable-outside-detected-project lib.ml 
+$ ocamlformat --enable-outside-detected-project lib.ml
+```
+
+After running `ocamlformat`, `lib.ml` should look something like this.
+
+```ocaml
 let filter_opt l = List.filter_map Fun.id l
 
 let import_module () = Py.Import.import_module "silly"
