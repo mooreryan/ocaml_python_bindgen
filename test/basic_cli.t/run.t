@@ -6,6 +6,11 @@ No arguments.
   Try `pyml_bindgen --help' for more information.
   [1]
 
+Version screen
+
+  $ pyml_bindgen --version
+  0.1.0
+
 Help screen
 
   $ pyml_bindgen --help=plain
