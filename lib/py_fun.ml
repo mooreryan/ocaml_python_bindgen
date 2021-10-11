@@ -175,6 +175,41 @@ let get_kwargs args =
   let arg_list = String.concat ~sep:"" @@ List.map args ~f:arg_to_kwarg_spec in
   [%string {| let kwargs = filter_opt [ %{arg_list} ] in |}]
 
+(* __init__ is a special function in python and is called right on the class
+   name like this: Apple(1, 2). *)
+(* IMPORTANT this assumes you have an import_module function in scope... it
+   should look something like this: [let import () = Py.Import.import_module
+   "module_name_here"] *)
+let init_impl ~class_name ~fun_name return_type args =
+  let py_to_ocaml = Otype.py_to_ocaml return_type in
+  let get_callable =
+    (* This time the class is the callable. *)
+    [%string
+      {| let callable = Py.Module.get (import_module ()) "%{class_name}" in |}]
+  in
+  [%string
+    "let %{fun_name} %{get_var_names args} () = %{get_callable} %{get_kwargs \
+     args} %{py_to_ocaml} @@ Py.Callable.to_function_with_keywords callable \
+     [||] kwargs"]
+
+(* IMPORTANT this assumes you have an import_module function in scope... it
+   should look something like this: [let import () = Py.Import.import_module
+   "module_name_here"] *)
+let class_method_impl ~class_name ~fun_name return_type args =
+  let py_to_ocaml = Otype.py_to_ocaml return_type in
+  let get_class_ =
+    [%string
+      {| let class_ = Py.Module.get (import_module ()) "%{class_name}" in |}]
+  in
+  let get_callable =
+    [%string
+      {| let callable = Py.Object.find_attr_string class_ "%{fun_name}" in |}]
+  in
+  [%string
+    "let %{fun_name} %{get_var_names args} () = %{get_class_} %{get_callable} \
+     %{get_kwargs args} %{py_to_ocaml} @@ \
+     Py.Callable.to_function_with_keywords callable [||] kwargs"]
+
 (* TODO only the Class_method variant actually uses the class name, but right
    now, you have to pass it in even if you're not generating a class method. *)
 let pyml_impl class_name = function
@@ -193,16 +228,7 @@ let pyml_impl class_name = function
         "let %{fun_name} t %{get_var_names args} () = %{get_callable} \
          %{get_kwargs args} %{py_to_ocaml} @@ \
          Py.Callable.to_function_with_keywords callable [||] kwargs"]
-  | Class_method { fun_name; return_type; args } ->
-      let py_to_ocaml = Otype.py_to_ocaml return_type in
-      let get_callable =
-        (* IMPORTANT this assumes you have an import_module function in scope...
-           it should look something like this: [let import () =
-           Py.Import.import_module "module_name_here"] *)
-        [%string
-          {| let callable = Py.Module.get (import_module ()) "%{class_name}" in |}]
-      in
-      [%string
-        "let %{fun_name} %{get_var_names args} () = %{get_callable} \
-         %{get_kwargs args} %{py_to_ocaml} @@ \
-         Py.Callable.to_function_with_keywords callable [||] kwargs"]
+  | Class_method { fun_name; return_type; args } -> (
+      match fun_name with
+      | "__init__" -> init_impl ~class_name ~fun_name return_type args
+      | _ -> class_method_impl ~class_name ~fun_name return_type args)

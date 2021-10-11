@@ -70,6 +70,31 @@ let pie t ~a ?b ~cat ?what () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+let%test_unit "special __init__ method" =
+  let val_spec =
+    Or_error.ok_exn
+    @@ Oarg.parse_val_spec "val __init__ : x:int -> y:int -> unit -> t"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let __init__ ~x ~y () =
+  let callable = Py.Module.get (import_module ()) "Apple" in
+  let kwargs =
+    filter_opt
+      [
+        Some ("x", Py.Int.of_int x);
+        Some ("y", Py.Int.of_int y);
+      ]
+  in
+  of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+ |}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
 let%test_unit "class method" =
   let val_spec =
     Or_error.ok_exn
@@ -83,7 +108,8 @@ let%test_unit "class method" =
     clean
       {|
 let pie ~a ?b ~cat ?what () =
-  let callable = Py.Module.get (import_module ()) "Apple" in
+  let class_ = Py.Module.get (import_module ()) "Apple" in
+  let callable = Py.Object.find_attr_string class_ "pie" in
   let kwargs =
     filter_opt
       [
@@ -176,6 +202,34 @@ let foo t ?apple ?pie ~good () =
   in
   let actual = clean @@ Or_error.ok_exn x in
   [%test_result: string] actual ~expect
+
+(* TODO *)
+(* let%test_unit "no arg python functions work" =
+ *   let val_spec =
+ *     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> t Or_error.t"
+ *   in
+ *   let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+ *   let class_name = "Apple" in
+ *   let expect = clean {|
+ * let f () =
+ *   let callable = Py.Module.get (import_module ()) "Apple" in
+ *   let kwargs =
+ *     filter_opt
+ *       [
+ *         Some ("a", Py.String.of_string a);
+ *         (match b with
+ *         | Some b -> Some ("b", Food.to_pyobject b)
+ *         | None -> None);
+ *         Some ("cat", Animal.to_pyobject cat);
+ *         (match what with
+ *         | Some what -> Some ("what", Py.Float.of_float what)
+ *         | None -> None);
+ *       ]
+ *   in
+ *   Cat.of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+ * |} in
+ *   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+ *   [%test_result: string] actual ~expect *)
 
 (* Checking for errors and okays. *)
 

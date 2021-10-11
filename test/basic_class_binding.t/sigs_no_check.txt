@@ -1,0 +1,11 @@
+val __init__ : x:int -> y:int -> unit -> t
+
+# Attributes
+val x : t -> int
+val y : t -> int
+
+# Instance method
+val foo : t -> a:int -> b:int -> unit -> int
+
+# Class method
+val bar : a:int -> b:int -> unit -> int
