@@ -5,6 +5,12 @@ Generate [pyml](https://github.com/thierry-martinez/pyml) bindings from OCaml va
 * [Install](#install)
 * [Example](#example)
 * [Docs](#docs)
+* [Value specification rules](#value-specification-rules)
+  * [Types](#types)
+  * [Function and argument names](#function-and-argument-names)
+  * [Attributes & properties](#attributes--properties)
+  * [Instance methods](#instance-methods)
+  * [Class/static methods](#classstatic-methods)
 * [License](#license)
 
 ## Install
