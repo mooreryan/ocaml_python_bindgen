@@ -1,6 +1,6 @@
 # pyml_bindgen
 
-Generate [pyml](https://github.com/thierry-martinez/pyml) bindings from OCaml signatures.
+Generate [pyml](https://github.com/thierry-martinez/pyml) bindings from OCaml value specifications.
 
 * [Install](#install)
 * [Example](#example)
@@ -38,7 +38,7 @@ class Silly:
         return a + b
 ```
 
-Now, write some `mli` signatures representing the bindings.  In other words, write signatures for how you want to use this Python class from your OCaml code.  Put it in a file called `signatures.txt`.
+Now, write some `mli` value specifications representing the bindings.  In other words, write value specs for how you want to use this Python class from your OCaml code.  Put it in a file called `signatures.txt`.
 
 ```ocaml
 val __init__ : x:int -> y:int -> unit -> t option
@@ -51,9 +51,11 @@ val foo : t -> a:int -> b:int -> unit -> int
 val bar : a:int -> b:int -> unit -> int
 ```
 
-*Note: You have to follow certain rules when writing signatures.  See the [docs](#docs) for more info.*
+*Note: You have to follow certain rules when writing value specifications.  See the [docs](#docs) for more info.*
 
-Next, run `pyml_bindgen` on the signatures file to generate an OCaml module with [pyml](https://github.com/thierry-martinez/pyml) bindings.  The [ocamlformat](https://github.com/ocaml-ppx/ocamlformat) command is optional, of course.
+Next, run `pyml_bindgen` on the value specifications file to generate an OCaml module with [pyml](https://github.com/thierry-martinez/pyml) bindings.  The [ocamlformat](https://github.com/ocaml-ppx/ocamlformat) command is optional, of course.
+
+It would be nice to turn this into a ppx, but for now, you have to run it manually on value specs.
 
 ```
 $ pyml_bindgen --caml-module=Silly signatures.txt silly_module Silly > lib.ml
@@ -140,9 +142,9 @@ let () = print_endline ("foo: " ^ Int.to_string (Silly.foo silly ~a:10 ~b:20 ())
 let () = print_endline ("bar: " ^ Int.to_string (Silly.bar ~a:10 ~b:20 ()))
 ```
 
-*Note: You don't need to use [Base](TODO); I just like it.*
+*Note: You don't need to use [Base](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html) in your code.  It's used here as this example is taken from the [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test/basic_class_binding.t).*
 
-Oh, and don't forget your [Dune](TODO) file either...
+Oh, and don't forget your [Dune](https://dune.readthedocs.io) file either...
 
 ```
 (executable
@@ -163,7 +165,114 @@ There you go....Hello, (Python) World!
 
 ## Docs
 
-I'm still working on them :) But in the meantime, there are [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that demonstrate many of the rules for properly writing signatures.   Check 'em out!
+I'm still working on them :) But in the meantime, there are [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that demonstrate many of the rules for properly writing value specifications.   Check 'em out!
+
+Currently, you can only bind to functions within Python classes (a.k.a., Python methods).  At some point, I will change it so you can also bind Python functions that aren't associated with a class.
+
+## Value specification rules
+
+You have to follow some rules while writing value specifications for functions you want to bind.
+
+To start, there are (more or less) three types of methods in Python that you can to bind:  attributes/properties, instance methods, and class/static methods.
+
+`pyml_bindgen` figures out which type of method you want to bind by looking at the value specifications.
+
+### Types
+
+Not all OCaml types are allowed.  For function arguments, you can use
+
+* `int`
+* `float`
+* `string`
+* `bool`
+* `t` (i.e., the main type of the current module)
+* Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
+* Lists of any of the above types
+
+For return types, you can use all of the above types plus `unit`.   Additionally, you can return `'a option` and `'a Or_error.t` where `'a'` is any of the previously mentioned types.
+
+TODO mention the hack for Python dictionaries...
+
+### Function and argument names
+
+You can't pick just any old name for your functions and arguments :)
+
+The main thing to remember is in addition to being valid OCaml names, they must also be [valid python names](https://docs.python.org/3/reference/lexical_analysis.html#identifiers).  This is because we pass the function name and argument names "as-is" to Python.
+
+In addition to that, there are a couple other things to keep in mind.
+
+* Argument names that match any of the types mentioned [above](#allowed-types) are not allowed.
+* Argument names that start with any of the types mentioned [above](#allowed-types) are not allowed.  (E.g., `val foo : t -> int_thing:string -> unit -> float` will fail.)
+* Argument names that end with any of the above types are actually okay.  You probably shouldn't name them like this but it works.  Really, it's just an artifact of the parsing :) This will probably be fixed at some point....
+* Function names and arguments can start with underscores (e.g., `__init__`) but they cannot be *all* underscores.  E.g., `val ____ : ...` will not parse.
+
+### Attributes & properties
+
+Value specifications that take a single argument `t` will be interpreted as bindings to Python attributes or properties.
+
+Value specs for attributes and properties look like this:
+
+```ocaml
+val f : t -> 'a
+```
+
+#### Rules
+
+* The first and only function argument must be `t`.
+* The return type can be any of the types mentioned [above](#allowed-types).
+
+#### Examples
+
+```ocaml
+val x : t -> int
+val name : t -> string
+val price : t -> float
+```
+
+### Instance methods
+
+Value specs for instance methods look like this:
+
+```ocaml
+val f : t -> a:'a -> ?b:'b -> ... -> unit -> 'c
+```
+
+#### Rules
+
+* The first argument must be `t`.
+* The final function argument (penultimate type expression) must be `unit`.
+* The return type can be any of the types mentioned [above](#allowed-types).
+* The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned [above](#allowed-types).
+
+*Note on the final unit argument:  I require all arguments that bind to Python method arguments be named or optional.  Depending on the order of the arguments, you could get an optional at the end, and then at least one of the arguments will not be erasable.  In Python, it's quite common to have optional arguments at the end of functions.  While a fancier implementation could take all this into account, to keep it simple, and to keep your APIs all looking the same, I decided to require all arguments be named (or optional) and followed by a final `unit` argument.*
+
+#### Examples
+
+```ocaml
+val add_item : t -> fruit:string -> price:float -> unit -> unit
+val subtract : t -> x:int -> ?y:int -> unit -> int
+```
+
+### Class/static methods
+
+Value specs for class/static methods look like this:
+
+```ocaml
+val f : a:'a -> ?b:'b -> ... -> unit -> 'c
+```
+
+#### Rules
+
+* The final function argument (penultimate type expression) must be `unit`.
+* The return type can be any of the types mentioned [above](#allowed-types).
+* The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned [above](#allowed-types).
+
+#### Examples
+
+```ocaml
+val add_item : fruit:string -> price:float -> unit -> unit
+val subtract : x:int -> ?y:int -> unit -> int
+```
 
 ## License
 
