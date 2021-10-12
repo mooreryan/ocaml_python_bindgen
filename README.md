@@ -2,6 +2,8 @@
 
 Generate [pyml](https://github.com/thierry-martinez/pyml) bindings from OCaml value specifications.
 
+While you *could* write all your `pyml` bindings by hand, it can be tedious and it gets old real quick.  While `pyml_bindgen` can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖
+
 * [Install](#install)
 * [Example](#example)
 * [Docs](#docs)
@@ -61,7 +63,7 @@ val bar : a:int -> b:int -> unit -> int
 
 Next, run `pyml_bindgen` on the value specifications file to generate an OCaml module with [pyml](https://github.com/thierry-martinez/pyml) bindings.  The [ocamlformat](https://github.com/ocaml-ppx/ocamlformat) command is optional, of course.
 
-It would be nice to turn this into a ppx, but for now, you have to run it manually on value specs.
+*For now, you have to run this manually on the specs you write.  One day, it would be nice to turn this into a ppx, but it's not too bad to run yourself :)*
 
 ```
 $ pyml_bindgen --caml-module=Silly signatures.txt silly_module Silly > lib.ml
@@ -130,7 +132,9 @@ end = struct
 end
 ```
 
-As you see, it generated an OCaml module called `Silly`.  Now, you can use `Lib.Silly` like any other OCaml module, but it will be running Python under the hood.  Just don't forget to initialize the Python interpreter first.
+As you see, it generated an OCaml module called `Silly` with some additional useful functions.  Now that wouldn't be too bad to write by hand, but if you have a bunch of big Python classes, with lots of functions and a complicated interface, it can get really messy really fast!
+
+You can now use `Lib.Silly` like any other OCaml module, but it will be running Python under the hood.  Just don't forget to initialize the Python interpreter first.  Check it out!
 
 ```ocaml
 (* Save this in run.ml *)
@@ -169,12 +173,6 @@ bar: 30
 ```
 There you go....Hello, (Python) World!
 
-## Docs
-
-I'm still working on them :) But in the meantime, there are [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that demonstrate many of the rules for properly writing value specifications.   Check 'em out!
-
-Currently, you can only bind to functions within Python classes (a.k.a., Python methods).  At some point, I will change it so you can also bind Python functions that aren't associated with a class.
-
 ## Value specification rules
 
 You have to follow some rules while writing value specifications for functions you want to bind.
@@ -182,6 +180,8 @@ You have to follow some rules while writing value specifications for functions y
 To start, there are (more or less) three types of methods in Python that you can to bind:  attributes/properties, instance methods, and class/static methods.
 
 `pyml_bindgen` figures out which type of method you want to bind by looking at the value specifications.
+
+*Note: there are [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that demonstrate many of the rules for properly writing value specifications.   Check 'em out!*
 
 ### Types
 
@@ -250,7 +250,7 @@ val f : t -> a:'a -> ?b:'b -> ... -> unit -> 'c
 * The return type can be any of the types mentioned [above](#allowed-types).
 * The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned [above](#allowed-types).
 
-*Note on the final unit argument:  I require all arguments that bind to Python method arguments be named or optional.  Depending on the order of the arguments, you could get an optional at the end, and then at least one of the arguments will not be erasable.  In Python, it's quite common to have optional arguments at the end of functions.  While a fancier implementation could take all this into account, to keep it simple, and to keep your APIs all looking the same, I decided to require all arguments be named (or optional) and followed by a final `unit` argument.*
+Note on the final unit argument...I require all arguments that bind to Python method arguments be named or optional.  Python will often have optional named arguments at the end of a function's arguments.  In OCaml, these can't be erased unless you have a unit argument that comes after.  So, to keep the APIs all looking similar, I decided that all instance and static methods would end in a final unit argument.  This may change in the future, but for now, that's how it works :)
 
 #### Examples
 
@@ -279,6 +279,32 @@ val f : a:'a -> ?b:'b -> ... -> unit -> 'c
 val add_item : fruit:string -> price:float -> unit -> unit
 val subtract : x:int -> ?y:int -> unit -> int
 ```
+
+## Miscellaneous
+
+### You can only bind methods, not functions
+
+Currently, you can only bind to functions within Python classes (a.k.a., Python methods).  At some point, I will change it so you can also bind Python functions that aren't associated with a class.
+
+Here's what I mean.  A function that isn't associated with a class currently cannot be bound with `pyml_bindgen`.
+
+```python
+# Can't bind this
+def foo(x, y):
+    return x + y
+```
+
+But that same function associated with a class, can be bound by `pyml_bindgen`.
+
+```python
+# Can bind this
+class Apple:
+    @staticmethod
+    def foo(x, y):
+        return x + y
+```
+
+Let me just be clear that `pyml` can bind this function just fine, only, you would need to write this binding by hand.
 
 ## License
 
