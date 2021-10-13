@@ -16,6 +16,7 @@ module P = struct
   let bool = string "bool"
   let unit = string "unit"
   let list = string "list"
+  let seq = string "Seq.t"
   let option = string "option"
   let or_error = string "Or_error.t"
 
@@ -32,48 +33,35 @@ module P = struct
         if Utils.is_ok_for_name c then fail "not a t type" else return t_string
     | None -> return t_string
 
-  (* Custom "types" ...e.g., Doc.t, Span.t, Silly_thing.t. Note that this will
-     also parse Or_error.t as well. So if you need that to NOT parse, then
-     you'll have to deal with ordering. Todo: it would be nice to check that it
-     isn't Or_error.t in this function. *)
+  (* Custom "types" ...e.g., Doc.t, Span.t, Silly_thing.t. Fails if it is Seq.t
+     or Or_error.t. *)
   let custom =
     let%bind c = peek_char_fail in
     if Utils.is_capital_letter c then
       let%bind name = take_while Utils.is_ok_for_name in
       let%bind dot = dot in
       let%bind t = t in
-      return (name ^ dot ^ t)
+      match name ^ dot ^ t with
+      | "Seq.t" -> fail "custom cannot be Seq.t"
+      | "Or_error.t" -> fail "custom cannot be Or_error.t"
+      | s -> return s
     else fail "first letter should be capital"
 
-  (* A list of any otype *)
-  let x_list =
-    let%bind first =
-      choice ~failure_msg:"First token wasn't an otype"
-        [ int; float; string_; bool; unit; t; custom ]
-    in
-    let%bind _space = string " " in
-    let%bind list = list in
-    return @@ first ^ " " ^ list
+  (* Not a list, seq, option, etc. Just the type. *)
+  let basic_otype =
+    choice ~failure_msg:"Token wasn't an otype"
+      [ int; float; string_; bool; unit; t; custom ]
 
-  (* A option of any otype *)
-  let x_option =
-    let%bind first =
-      choice ~failure_msg:"First token wasn't an otype"
-        [ int; float; string_; bool; unit; t; custom ]
-    in
+  (* 'a Seq.t, 'a option, 'a Or_error.t, 'a list. *)
+  let compound_otype =
+    let%bind first = basic_otype in
     let%bind _space = string " " in
-    let%bind option = option in
-    return @@ first ^ " " ^ option
-
-  (* An Or_error.t of any otype *)
-  let x_or_error =
-    let%bind first =
-      choice ~failure_msg:"First token wasn't an otype"
-        [ int; float; string_; bool; unit; t; custom ]
+    let%bind second =
+      choice
+        ~failure_msg:"Second token wasn't list, option, Or_error.t, or Seq.t"
+        [ list; seq; option; or_error ]
     in
-    let%bind _space = string " " in
-    let%bind or_error = or_error in
-    return @@ first ^ " " ^ or_error
+    return @@ first ^ " " ^ second
 end
 
 (* Be aware that there is no char type here like in ocaml. *)
@@ -86,6 +74,7 @@ type t =
   | T
   | Custom of string
   | List of t
+  | Seq of t
   (* The option and or_error variants are a little different...the oarg will
      make sure that you're only allowed to return something that is an option or
      or_error type, and ONLY of T or Custom otype. What I mean is that [val f :
@@ -106,36 +95,51 @@ let remove_suffix s ~suffix =
   else failwith [%string "missing '%{suffix}' suffix"]
 
 (* On user input, you should use parse instead. This doesn't check the
-   invariants. *)
+   invariants. IMPORTANT...if you add more variants to [t], you need to update
+   this function...the compiler won't catch it because of the custom type case.
+   TODO: Because this function doesn't check the input, it will silently let
+   things through as custom that shouldn't be. Because of this, if you add a new
+   type it will come up in the tests as Custom whatever...just be aware of
+   this!! Tbh, I probably shouldn't even have this function and just have the
+   parsers generate the right types. *)
 let of_string = function
   | "int" -> Int
   | "int list" -> List Int
+  | "int Seq.t" -> Seq Int
   | "int option" -> Option Int
   | "int Or_error.t" -> Or_error Int
   | "float" -> Float
   | "float list" -> List Float
+  | "float Seq.t" -> Seq Float
   | "float option" -> Option Float
   | "float Or_error.t" -> Or_error Float
   | "string" -> String
   | "string list" -> List String
+  | "string Seq.t" -> Seq String
   | "string option" -> Option String
   | "string Or_error.t" -> Or_error String
   | "bool" -> Bool
   | "bool list" -> List Bool
+  | "bool Seq.t" -> Seq Bool
   | "bool option" -> Option Bool
   | "bool Or_error.t" -> Or_error Bool
   | "unit" -> Unit
   | "unit list" -> List Unit
+  | "unit Seq.t" -> Seq Unit
   | "unit option" -> Option Unit
   | "unit Or_error.t" -> Or_error Unit
   | "t" -> T
   | "t list" -> List T
+  | "t Seq.t" -> Seq T
   | "t option" -> Option T
   | "t Or_error.t" -> Or_error T
   | s ->
       if String.is_suffix s ~suffix:" list" then
         let s = remove_suffix s ~suffix:" list" in
         List (Custom s)
+      else if String.is_suffix s ~suffix:" Seq.t" then
+        let s = remove_suffix s ~suffix:" Seq.t" in
+        Seq (Custom s)
       else if String.is_suffix s ~suffix:" option" then
         let s = remove_suffix s ~suffix:" option" in
         Option (Custom s)
@@ -150,7 +154,10 @@ let rec py_to_ocaml = function
   | Float -> "Py.Float.to_float"
   | String -> "Py.String.to_string"
   | Bool -> "Py.Bool.to_bool"
-  | Unit -> failwith "Can't use unit here"
+  (* In OCaml we return unit from functions that don't really return anything.
+     In Python, we return None. TODO...need to reconcile this. *)
+  | Unit ->
+      failwith "Error in py_to_ocaml. TODO: For now, you can't use unit here."
   (* Note: T.of_pyobject converts the pyobject INTO the OCaml module type. It's
      opposite of the others. *)
   | T -> "of_pyobject"
@@ -162,6 +169,10 @@ let rec py_to_ocaml = function
       match t with
       | List _ -> failwith "Can't have nested lists"
       | t -> "Py.List.to_list_map " ^ py_to_ocaml t)
+  | Seq t -> (
+      match t with
+      | Seq _ -> failwith "Can't have nested Seq.t"
+      | t -> "Py.Iter.to_seq_map " ^ py_to_ocaml t)
   | Option t -> (
       match t with
       | T | Custom _ -> py_to_ocaml t
@@ -189,6 +200,10 @@ let rec py_of_ocaml = function
       match t with
       | List _ -> failwith "Can't have nested lists"
       | t -> "Py.List.of_list_map " ^ py_of_ocaml t)
+  | Seq t -> (
+      match t with
+      | Seq _ -> failwith "Can't have nested Seq.t"
+      | t -> "Py.Iter.of_seq_map " ^ py_of_ocaml t)
   | Option t -> (
       match t with
       | T | Custom _ -> py_of_ocaml t
@@ -202,19 +217,7 @@ let rec py_of_ocaml = function
 let parser_ =
   let open Angstrom in
   let f =
-    choice ~failure_msg:"Bad type string"
-      [
-        P.x_list;
-        P.x_option;
-        P.x_or_error;
-        P.int;
-        P.float;
-        P.string_;
-        P.bool;
-        P.unit;
-        P.t;
-        P.custom;
-      ]
+    choice ~failure_msg:"Bad type string" [ P.compound_otype; P.basic_otype ]
   in
   P.spaces *> f <* P.spaces
 

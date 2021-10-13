@@ -8,17 +8,30 @@ let spaces = Re2.create_exn "[ \n]+"
 let squash_spaces s = Re2.rewrite_exn ~template:" " spaces s
 let clean s = String.strip @@ squash_spaces s
 
+let gen_pyml_impl spec =
+  let open Or_error.Let_syntax in
+  let%bind val_spec = Oarg.parse_val_spec spec in
+  let%bind py_fun = Py_fun.create val_spec in
+  let class_name = "Apple" in
+  return @@ clean @@ Py_fun.pyml_impl class_name py_fun
+
+let bad_spec spec = [%string "bad spec was << %{spec} >>"]
+
 (* Go from a string spec to a pyml_impl. Assert whether it is ok or not. (f
    should be either Or_error.is_ok or is_error. *)
 let assert_pyml_impl_is f spec =
-  let open Or_error.Let_syntax in
-  let x =
-    let%bind val_spec = Oarg.parse_val_spec spec in
-    let%bind py_fun = Py_fun.create val_spec in
-    let class_name = "Apple" in
-    return @@ clean @@ Py_fun.pyml_impl class_name py_fun
-  in
-  assert (f x)
+  let impl = gen_pyml_impl spec in
+  [%test_pred: string Or_error.t] f impl ~message:(bad_spec spec)
+
+let assert_pyml_impl_throws spec =
+  match gen_pyml_impl spec with
+  | exception _ -> ()
+  | _ -> failwith [%string "I expected an exception.  %{bad_spec spec}"]
+
+let assert_pyml_impls_throw specs = List.iter specs ~f:assert_pyml_impl_throws
+
+(* TODO group related assertions using this function. *)
+let assert_pyml_impls_are f specs = List.iter specs ~f:(assert_pyml_impl_is f)
 
 (* Not using expect tests here as I don't want dune promote to blow up my
    formatting on the functions...(too hard to read otherwise). *)
@@ -357,3 +370,68 @@ let%test_unit "names and args cannot be only underscores" =
 let%test_unit "names and args cannot be only underscores" =
   assert_pyml_impl_is Or_error.is_error
     "val ____ : t -> ?__:Cat.t -> unit -> float"
+
+(* Seq.t *)
+
+let%test_unit "attribute returning Seq.t" =
+  let spec = "val f : t -> int Seq.t" in
+  let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec spec in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let f t =
+  Py.Iter.to_seq_map Py.Int.to_int @@ Py.Object.find_attr_string t "f"
+|}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
+let%test_unit "Seq.t is for attributes" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> int Seq.t";
+      "val f : t -> float Seq.t";
+      "val f : t -> string Seq.t";
+      "val f : t -> bool Seq.t";
+      "val f : t -> t Seq.t";
+      "val f : t -> Token.t Seq.t";
+      "val f : t -> Apple_pie.t Seq.t";
+    ]
+
+let%test_unit "Seq.t is for instance methods" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> a:int Seq.t -> unit -> int Seq.t";
+      "val f : t -> a:float Seq.t -> unit -> float Seq.t";
+      "val f : t -> a:string Seq.t -> unit -> string Seq.t";
+      "val f : t -> a:bool Seq.t -> unit -> bool Seq.t";
+      "val f : t -> a:t Seq.t -> unit -> t Seq.t";
+      "val f : t -> a:Token.t Seq.t -> unit -> Token.t Seq.t";
+      "val f : t -> a:Apple_pie.t Seq.t -> unit -> Apple_pie.t Seq.t";
+    ]
+
+let%test_unit "Seq.t is for class methods" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : a:int Seq.t -> unit -> int Seq.t";
+      "val f : a:float Seq.t -> unit -> float Seq.t";
+      "val f : a:string Seq.t -> unit -> string Seq.t";
+      "val f : a:bool Seq.t -> unit -> bool Seq.t";
+      "val f : a:t Seq.t -> unit -> t Seq.t";
+      "val f : a:Token.t Seq.t -> unit -> Token.t Seq.t";
+      "val f : a:Apple_pie.t Seq.t -> unit -> Apple_pie.t Seq.t";
+    ]
+
+(* TODO it is confusing that these raise exceptions, but many of the other py
+   impl failures return Or_errors *)
+let%test_unit "you can't have unit Seq.t as an argument or return value" =
+  assert_pyml_impls_throw
+    [
+      "val f : t -> unit Seq.t";
+      "val f : t -> a:unit Seq.t -> unit -> unit Seq.t";
+      "val f : a:unit Seq.t -> unit -> unit Seq.t";
+      "val f : t -> a:int -> unit -> unit Seq.t";
+      "val f : a:int -> unit -> unit Seq.t";
+    ]

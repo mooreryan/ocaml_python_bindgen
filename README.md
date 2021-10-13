@@ -185,7 +185,7 @@ To start, there are (more or less) three types of methods in Python that you can
 
 ### Types
 
-Not all OCaml types are allowed.  For function arguments, you can use
+Not all OCaml types are allowed.  For function arguments, you can use:
 
 * `int`
 * `float`
@@ -194,8 +194,17 @@ Not all OCaml types are allowed.  For function arguments, you can use
 * `t` (i.e., the main type of the current module)
 * Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
 * Lists of any of the above types
+* Seq.t of any of the above types
 
-For return types, you can use all of the above types plus `unit`.   Additionally, you can return `'a option` and `'a Or_error.t` where `'a'` is any of the previously mentioned types.
+For return types, you can use all of the above types plus `unit`.   You can also return `'a list` and `'a Seq.t` as well.
+
+Additionally, you can return `'a option` and `'a Or_error.t` for certain types `'a`.  Currently, you can only have `t option`, `t Or_error.t`, `<custom> option`, and `<custom> Or_error.t`.  I actually have no idea why I did this...I almost certainly will change it :)
+
+Oh, and one more thing about `unit`...you can't use it with `list` and `Seq.t`.  This is because I haven't decided the best way to handle `unit` and `None` (that's Python's `None`) quite yet!
+
+There are a lot of [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that exercise the rules here.
+
+*Note: currently, you're not allowed to have nested `list`, `Seq.t`, `option`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)*
 
 TODO mention the hack for Python dictionaries...
 
@@ -305,6 +314,10 @@ class Apple:
 ```
 
 Let me just be clear that `pyml` can bind this function just fine, only, you would need to write this binding by hand.
+
+### Gotchas & bugs
+
+* You currently can't bind "no argument" functions like this: `val bad_fun : unit -> t Or_error.t`.  It's a bug that will get fixed at some point.
 
 ## License
 
