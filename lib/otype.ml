@@ -94,6 +94,12 @@ module P = struct
         lift (fun _ -> Option t) option;
         lift (fun _ -> Or_error t) or_error;
       ]
+
+  let compound_or_basic =
+    choice ~failure_msg:"Expected compound or basic otype"
+      [ compound_otype; basic_otype ]
+
+  let parser_ = spaces *> compound_or_basic <* spaces
 end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
@@ -163,16 +169,8 @@ let rec py_of_ocaml = function
       | T | Custom _ -> py_of_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
 
-(* An angstrom parser for otype values. *)
-let parser_ =
-  let open Angstrom in
-  let f =
-    choice ~failure_msg:"Bad type string" [ P.compound_otype; P.basic_otype ]
-  in
-  P.spaces *> f <* P.spaces
-
 (* Parse a otype from a string *)
 let parse s =
-  match Angstrom.parse_string ~consume:Angstrom.Consume.All parser_ s with
+  match Angstrom.parse_string ~consume:Angstrom.Consume.All P.parser_ s with
   | Ok s -> Or_error.return s
   | Error err -> Or_error.errorf "Parsing Otype failed... %s" err

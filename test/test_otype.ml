@@ -12,7 +12,7 @@ let print_string_or_error x =
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "apple";
-  [%expect {| (Error "Parsing Otype failed... : Bad type string") |}]
+  [%expect {| (Error "Parsing Otype failed... : Expected compound or basic otype") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int";
@@ -44,7 +44,7 @@ let%expect_test _ =
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "apple list";
-  [%expect {| (Error "Parsing Otype failed... : Bad type string") |}]
+  [%expect {| (Error "Parsing Otype failed... : Expected compound or basic otype") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int list";
@@ -92,7 +92,7 @@ let%expect_test _ =
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "";
-  [%expect {| (Error "Parsing Otype failed... : Bad type string") |}]
+  [%expect {| (Error "Parsing Otype failed... : Expected compound or basic otype") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int Seq.t";
@@ -135,7 +135,7 @@ let%expect_test "Converting list types" =
        (Failure "Error in py_to_ocaml. TODO: For now, you can't use unit here."))
       (Ok "Py.List.to_list_map of_pyobject")
       (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
-      (Error "Parsing Otype failed... : Bad type string")) |}]
+      (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]
 
 let%expect_test "Converting Seq.t types" =
   let print x =
@@ -164,7 +164,7 @@ let%expect_test "Converting Seq.t types" =
        (Failure "Error in py_to_ocaml. TODO: For now, you can't use unit here."))
       (Ok "Py.Iter.to_seq_map of_pyobject")
       (Ok "Py.Iter.to_seq_map Apple_pie.of_pyobject")
-      (Error "Parsing Otype failed... : Bad type string")) |}]
+      (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]
 
 let%expect_test "Converting option types" =
   let print x =
@@ -191,7 +191,7 @@ let%expect_test "Converting option types" =
      (Error (Failure "you can only have <t> option or <custom> option"))
      (Error (Failure "you can only have <t> option or <custom> option"))
      (Ok of_pyobject) (Ok Apple_pie.of_pyobject)
-     (Error "Parsing Otype failed... : Bad type string")) |}]
+     (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]
 
 let%expect_test "Converting Or_error types" =
   let print x =
@@ -218,7 +218,7 @@ let%expect_test "Converting Or_error types" =
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Ok of_pyobject) (Ok Apple_pie.of_pyobject)
-     (Error "Parsing Otype failed... : Bad type string")) |}]
+     (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]
 
 let%expect_test "Converting triples fails" =
   let specs =

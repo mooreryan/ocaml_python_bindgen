@@ -93,7 +93,7 @@ module P = struct
   (* apple:int <- arg type is the second part of that. Note you can use
      Otype.of_string on values produced by this as the parser will fail on bad
      otype strings. *)
-  let arg_type = Otype.parser_
+  let arg_type = Otype.P.parser_
 
   (* string; int; Doc.t *)
   let positional =
