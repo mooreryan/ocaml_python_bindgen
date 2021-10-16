@@ -1,6 +1,29 @@
 open! Base
 open! Stdio
 
+(* Be aware that there is no char type here like in ocaml. *)
+type t =
+  | Int
+  | Float
+  | String
+  | Bool
+  | Unit
+  | T
+  | Custom of string
+  | List of t
+  | Seq of t
+  (* The option and or_error variants are a little different...the oarg will
+     make sure that you're only allowed to return something that is an option or
+     or_error type, and ONLY of T or Custom otype. What I mean is that [val f :
+     string option -> unit -> 'a] wouldn't be allowed, but [val f : t -> unit ->
+     A.t option] would be allowed. *)
+  | Option of t
+  | Or_error of t
+[@@deriving sexp]
+
+let is_unit = function Unit -> true | _ -> false
+let is_t = function T -> true | _ -> false
+
 module P = struct
   open Angstrom
   open Angstrom.Let_syntax
@@ -50,103 +73,30 @@ module P = struct
   (* Not a list, seq, option, etc. Just the type. *)
   let basic_otype =
     choice ~failure_msg:"Token wasn't an otype"
-      [ int; float; string_; bool; unit; t; custom ]
+      [
+        lift (fun _ -> Int) int;
+        lift (fun _ -> Float) float;
+        lift (fun _ -> String) string_;
+        lift (fun _ -> Bool) bool;
+        lift (fun _ -> Unit) unit;
+        lift (fun _ -> T) t;
+        lift (fun s -> Custom s) custom;
+      ]
 
   (* 'a Seq.t, 'a option, 'a Or_error.t, 'a list. *)
   let compound_otype =
-    let%bind first = basic_otype in
+    let%bind t = basic_otype in
     let%bind _space = string " " in
-    let%bind second =
-      choice
-        ~failure_msg:"Second token wasn't list, option, Or_error.t, or Seq.t"
-        [ list; seq; option; or_error ]
-    in
-    return @@ first ^ " " ^ second
+    choice ~failure_msg:"Second token wasn't list, option, Or_error.t, or Seq.t"
+      [
+        lift (fun _ -> List t) list;
+        lift (fun _ -> Seq t) seq;
+        lift (fun _ -> Option t) option;
+        lift (fun _ -> Or_error t) or_error;
+      ]
 end
 
-(* Be aware that there is no char type here like in ocaml. *)
-type t =
-  | Int
-  | Float
-  | String
-  | Bool
-  | Unit
-  | T
-  | Custom of string
-  | List of t
-  | Seq of t
-  (* The option and or_error variants are a little different...the oarg will
-     make sure that you're only allowed to return something that is an option or
-     or_error type, and ONLY of T or Custom otype. What I mean is that [val f :
-     string option -> unit -> 'a] wouldn't be allowed, but [val f : t -> unit ->
-     A.t option] would be allowed. *)
-  | Option of t
-  | Or_error of t
-[@@deriving sexp]
-
-let is_unit = function Unit -> true | _ -> false
-let is_t = function T -> true | _ -> false
-
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
-
-let remove_suffix s ~suffix =
-  if String.is_suffix s ~suffix then
-    String.prefix s (String.length s - String.length suffix)
-  else failwith [%string "missing '%{suffix}' suffix"]
-
-(* On user input, you should use parse instead. This doesn't check the
-   invariants. IMPORTANT...if you add more variants to [t], you need to update
-   this function...the compiler won't catch it because of the custom type case.
-   TODO: Because this function doesn't check the input, it will silently let
-   things through as custom that shouldn't be. Because of this, if you add a new
-   type it will come up in the tests as Custom whatever...just be aware of
-   this!! Tbh, I probably shouldn't even have this function and just have the
-   parsers generate the right types. *)
-let of_string = function
-  | "int" -> Int
-  | "int list" -> List Int
-  | "int Seq.t" -> Seq Int
-  | "int option" -> Option Int
-  | "int Or_error.t" -> Or_error Int
-  | "float" -> Float
-  | "float list" -> List Float
-  | "float Seq.t" -> Seq Float
-  | "float option" -> Option Float
-  | "float Or_error.t" -> Or_error Float
-  | "string" -> String
-  | "string list" -> List String
-  | "string Seq.t" -> Seq String
-  | "string option" -> Option String
-  | "string Or_error.t" -> Or_error String
-  | "bool" -> Bool
-  | "bool list" -> List Bool
-  | "bool Seq.t" -> Seq Bool
-  | "bool option" -> Option Bool
-  | "bool Or_error.t" -> Or_error Bool
-  | "unit" -> Unit
-  | "unit list" -> List Unit
-  | "unit Seq.t" -> Seq Unit
-  | "unit option" -> Option Unit
-  | "unit Or_error.t" -> Or_error Unit
-  | "t" -> T
-  | "t list" -> List T
-  | "t Seq.t" -> Seq T
-  | "t option" -> Option T
-  | "t Or_error.t" -> Or_error T
-  | s ->
-      if String.is_suffix s ~suffix:" list" then
-        let s = remove_suffix s ~suffix:" list" in
-        List (Custom s)
-      else if String.is_suffix s ~suffix:" Seq.t" then
-        let s = remove_suffix s ~suffix:" Seq.t" in
-        Seq (Custom s)
-      else if String.is_suffix s ~suffix:" option" then
-        let s = remove_suffix s ~suffix:" option" in
-        Option (Custom s)
-      else if String.is_suffix s ~suffix:" Or_error.t" then
-        let s = remove_suffix s ~suffix:" Or_error.t" in
-        Or_error (Custom s)
-      else Custom s
 
 (* Convert py types to ocaml types. *)
 let rec py_to_ocaml = function
@@ -224,5 +174,5 @@ let parser_ =
 (* Parse a otype from a string *)
 let parse s =
   match Angstrom.parse_string ~consume:Angstrom.Consume.All parser_ s with
-  | Ok s -> Or_error.return @@ of_string s
+  | Ok s -> Or_error.return s
   | Error err -> Or_error.errorf "Parsing Otype failed... %s" err

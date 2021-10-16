@@ -98,14 +98,14 @@ module P = struct
   (* string; int; Doc.t *)
   let positional =
     let%bind type_ = arg_type in
-    return @@ Positional (make_positional @@ Otype.of_string type_)
+    return @@ Positional (make_positional type_)
 
   (* apple:int list; pie:Fruit.t *)
   let labeled =
     let%bind name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Labeled (make_labeled name @@ Otype.of_string type_)
+    return @@ Labeled (make_labeled name type_)
 
   (* ?apple:int list; ?pie:Fruit.t *)
   let optional =
@@ -113,7 +113,7 @@ module P = struct
     let%bind name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Optional (make_optional name @@ Otype.of_string type_)
+    return @@ Optional (make_optional name type_)
 
   (* Any of the three arg types. *)
   let arg =
