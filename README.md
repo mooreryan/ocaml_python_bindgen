@@ -1,8 +1,8 @@
-# pyml_bindgen
+# OCaml-Python Bindings Generator
 
-Generate [pyml](https://github.com/thierry-martinez/pyml) bindings from OCaml value specifications.
+Generate Python bindings with [pyml](https://github.com/thierry-martinez/pyml) directly from OCaml value specifications.
 
-While you *could* write all your `pyml` bindings by hand, it can be tedious and it gets old real quick.  While `pyml_bindgen` can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖
+While you *could* write all your Python bindings by hand, it can be tedious and it gets old real quick.  While `pyml_bindgen` can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖
 
 * [Install](#install)
 * [Example](#example)
