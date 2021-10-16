@@ -6,13 +6,16 @@ While you *could* write all your `pyml` bindings by hand, it can be tedious and 
 
 * [Install](#install)
 * [Example](#example)
-* [Docs](#docs)
 * [Value specification rules](#value-specification-rules)
   * [Types](#types)
   * [Function and argument names](#function-and-argument-names)
   * [Attributes & properties](#attributes--properties)
   * [Instance methods](#instance-methods)
   * [Class/static methods](#classstatic-methods)
+* [Miscellaneous](#miscellaneous)
+  * [You can only bind methods, not functions](#you-can-only-bind-methods-not-functions)
+  * [Handling tuples](#handling-tuples)
+  * [Gotchas & bugs](#gotchas--bugs)
 * [License](#license)
 
 ## Install
@@ -204,9 +207,15 @@ Oh, and one more thing about `unit`...you can't use it with `list` and `Seq.t`. 
 
 There are a lot of [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that exercise the rules here.
 
-*Note: currently, you're not allowed to have nested `list`, `Seq.t`, `option`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)*
+*Note: currently, you're not allowed to have **nested** `list`, `Seq.t`, `option`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)*
+
+#### Dictionaries
 
 TODO mention the hack for Python dictionaries...
+
+#### Tuples
+
+Tuples are a little weird in `pyml_bindgen`.  If you need to pass or return tuples to Python functions, see [here](#handling-tuples).
 
 ### Function and argument names
 
@@ -314,6 +323,52 @@ class Apple:
 ```
 
 Let me just be clear that `pyml` can bind this function just fine, only, you would need to write this binding by hand.
+
+### Handling tuples
+
+Tuples are sort of weird....As of now, `pyml_bindgen` can't handle tuples directly :( 
+
+For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.
+
+Say you need to get an `int * string` tuple in and out of Python.  You should make a module something like this:
+
+```ocaml
+module rec Tuple_int_string : sig
+  type t
+
+  val make : int -> string -> t
+
+  val to_pyobject : t -> Pytypes.pyobject
+  val of_pyobject : Pytypes.pyobject -> t
+
+  val print_endline : t -> unit
+end = struct
+  type t = int * string
+
+  let make i s = (i, s)
+
+  let to_pyobject (i, s) =
+    Py.Tuple.of_tuple2 (Py.Int.of_int i, Py.String.of_string s)
+
+  let of_pyobject pyo =
+    let i, s = Py.Tuple.to_tuple2 pyo in
+    (Py.Int.to_int i, Py.String.to_string s)
+
+  let print_endline (i, s) = print_endline @@ string_of_int i ^ " " ^ s
+end
+```
+
+Then you can put that with the code that `pyml_bindgen` generates for whatever class you're actually trying to bind.
+
+In the val specs that you write, just refer to the `Tuple_int_string` module like any other:
+
+```ocaml
+val foo : x:Tuple_int_string.t -> unit -> Tuple_int_string.t
+```
+
+As long as you properly wrote the `to_pyobject` and `of_pyobject`, then it should work :)
+
+There is a Cram test [here](https://github.com/mooreryan/pyml_bindgen/tree/main/test/binding_tuples.t) that illustrates this idea.  Just note that some of the bash stuff in the `run.t` file is to automate it, but you'd probably do that part by hand.
 
 ### Gotchas & bugs
 
