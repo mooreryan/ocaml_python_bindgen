@@ -1,0 +1,24 @@
+module rec Tuple_int_string : sig
+  type t
+
+  val make : int -> string -> t
+
+  val to_pyobject : t -> Pytypes.pyobject
+  val of_pyobject : Pytypes.pyobject -> t
+
+  val print_endline : t -> unit
+end = struct
+  type t = int * string
+
+  let make i s = (i, s)
+
+  let to_pyobject (i, s) =
+    Py.Tuple.of_tuple2 (Py.Int.of_int i, Py.String.of_string s)
+
+  let of_pyobject pyo =
+    let i, s = Py.Tuple.to_tuple2 pyo in
+    (Py.Int.to_int i, Py.String.to_string s)
+
+  let print_endline (i, s) =
+    print_endline @@ (string_of_int i) ^ " " ^ s
+end

@@ -1,0 +1,1 @@
+val foo : x:Tuple_int_string.t -> unit -> Tuple_int_string.t
