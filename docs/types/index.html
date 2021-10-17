@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ryan M. Moore">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/types/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Types - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Types";
+    var mkdocs_page_input_path = "types.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/types/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/ocaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+<meta property="og:site_name" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator" />
+
+<meta property="og:type" content="website">
+
+<meta property="og:title" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+<meta property="description" content="TODO">
+<meta property="og:description" content="TODO">
+<meta name="twitter:description" content="TODO">
+
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/types/">
+
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+  
+
+  
+
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> pyml_bindgen -- OCaml-Python Bindings Generator</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">pyml_bindgen</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Rules</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Types</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#dictionaries">Dictionaries</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tuples">Tuples</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../static-methods/">Class & Static Methods</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Miscellaneous</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../no-functions/">You can only bind methods, not functions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">pyml_bindgen -- OCaml-Python Bindings Generator</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Rules &raquo;</li>
+        
+      
+    
+    <li>Types</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/master/docs_src/src/types.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="types">Types</h1>
+<p>Not all OCaml types are allowed.  For function arguments, you can use:</p>
+<ul>
+<li><code>int</code></li>
+<li><code>float</code></li>
+<li><code>string</code></li>
+<li><code>bool</code></li>
+<li><code>t</code> (i.e., the main type of the current module)</li>
+<li>Other module types (e.g., <code>Span.t</code>, <code>Doc.t</code>, <code>Apple_pie.t</code>)</li>
+<li>Lists of any of the above types</li>
+<li>Seq.t of any of the above types</li>
+</ul>
+<p>For return types, you can use all of the above types plus <code>unit</code>.   You can also return <code>'a list</code> and <code>'a Seq.t</code> as well.</p>
+<p>Additionally, you can return <code>'a option</code> and <code>'a Or_error.t</code> for certain types <code>'a</code>.  Currently, you can only have <code>t option</code>, <code>t Or_error.t</code>, <code>&lt;custom&gt; option</code>, and <code>&lt;custom&gt; Or_error.t</code>.  I actually have no idea why I did this...I almost certainly will change it :)</p>
+<p>Oh, and one more thing about <code>unit</code>...you can't use it with <code>list</code> and <code>Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
+<p>There are a lot of <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test">tests</a> that exercise the rules here.</p>
+<p><em>Note: currently, you're not allowed to have </em><em>nested</em><em> <code>list</code>, <code>Seq.t</code>, <code>option</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</em></p>
+<h2 id="dictionaries">Dictionaries</h2>
+<p>TODO mention the hack for Python dictionaries...</p>
+<h2 id="tuples">Tuples</h2>
+<p>Tuples are a little weird in <code>pyml_bindgen</code>.  If you need to pass or return tuples to Python functions, see <a href="../todo/">here</a>.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../names/" class="btn btn-neutral float-right" title="Function & Argument Names">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../getting-started/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/mooreryan/ocaml_python_bindgen/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../getting-started/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../names/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
