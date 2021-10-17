@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {% set title = config.site_name %}
+
+  {% if page and page.title and not page.is_homepage %}
+    {% set title = page.title ~ " - " ~ config.site_name | striptags %}
+  {% endif %}
+
+  {% set description = config.site_description %}
+
+  {% if page and page.meta.description %}
+    {% set description = page.meta.description %}
+  {% endif %}
+
+  {% if page and page.canonical_url %}
+    {% set canonical_url = page.canonical_url %}
+  {% endif %}
+
+
+<meta property="og:site_name" content="{{ title }}" />
+
+<meta property="og:type" content="website">
+
+<meta property="og:title" content="{{ title }}">
+
+<meta property="description" content="{{ description }}">
+<meta property="og:description" content="{{ description }}">
+<meta name="twitter:description" content="{{ description }}">
+
+<meta property="og:url" content="{{ canonical_url }}">
+
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title }}">
+
+  {% if page and page.meta.image %}
+    {% set image = config.site_url ~ page.meta.image %}
+<meta property="og:image" content="{{ image }}">
+<meta name="twitter:image" content="{{ image }}">
+  {% endif %}
+
+  {% if page and page.meta and page.meta.main %}
+<meta name="google-site-verification" content="lAMnqKIoNocjUOHIuFkaXcMzcceqyGBcevAs7t3N_AI" />
+  {% endif%}
+
+{% endblock %}

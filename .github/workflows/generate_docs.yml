@@ -1,0 +1,31 @@
+name: Generate Docs
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - run: pip install mkdocs
+      - run: cd _docs_src && ./make_docs.sh
+      - run: git checkout gh-pages
+      - run: if [ -d docs ]; then rm -r docs; fi
+      - run: mv _docs docs
+
+      - name: Commit site changes
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git add docs
+          git commit -m "Update docs site"
+          git push

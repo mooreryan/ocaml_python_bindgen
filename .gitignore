@@ -1,2 +1,5 @@
 # Ignore all dirs starting with _
 _*
+
+# Un-ignore some of them
+!_docs_src

@@ -1,0 +1,39 @@
+site_name: pyml_bindgen -- OCaml-Python Bindings Generator
+site_url: https://mooreryan.github.io/ocaml_python_bindgen/
+repo_url: https://github.com/mooreryan/ocaml_python_bindgen
+edit_uri: edit/master/docs_src/src
+site_description: TODO
+site_author: Ryan M. Moore
+nav:
+  - pyml_bindgen: index.md
+#  - Installation: installation.md
+#  - Getting Started:
+  #   - Usage: usage.md
+  #   - Just Enough Git: git.md
+  - Examples & Tutorials:
+    - Getting Started: getting-started.md
+  - Rules:
+    - Types: types.md
+    - Function & Argument Names: names.md
+    - Attributes & Properties: attributes.md
+    - Instance Methods: instance-methods.md
+    - Class & Static Methods: static-methods.md
+  - Miscellaneous:
+    - You can only bind methods, not functions: no-functions.md
+    - Handling Tuples: tuples.md
+    - Gotchas & Known Bugs: gotchas-bugs.md
+  #   - Overview: tutorials/overview.md
+  #   - Basic usage: tutorials/basic_usage.md
+  #   - Correcting failed actions: tutorials/correcting_failed_actions.md
+  #   - Ignoring actions: tutorials/ignoring_actions.md
+theme:
+  name: readthedocs
+  custom_dir: custom_theme
+  highlightjs: true
+  hljs_languages:
+    - ocaml
+    - python
+markdown_extensions:
+  - meta
+docs_dir: src
+site_dir: ../docs
