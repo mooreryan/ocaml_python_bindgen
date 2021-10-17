@@ -130,9 +130,7 @@ let%expect_test "Converting list types" =
      ((Ok "Py.List.to_list_map Py.Int.to_int")
       (Ok "Py.List.to_list_map Py.Float.to_float")
       (Ok "Py.List.to_list_map Py.String.to_string")
-      (Ok "Py.List.to_list_map Py.Bool.to_bool")
-      (Error
-       (Failure "Error in py_to_ocaml. TODO: For now, you can't use unit here."))
+      (Ok "Py.List.to_list_map Py.Bool.to_bool") (Ok "Py.List.to_list_map ignore")
       (Ok "Py.List.to_list_map of_pyobject")
       (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
       (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]
@@ -159,9 +157,7 @@ let%expect_test "Converting Seq.t types" =
      ((Ok "Py.Iter.to_seq_map Py.Int.to_int")
       (Ok "Py.Iter.to_seq_map Py.Float.to_float")
       (Ok "Py.Iter.to_seq_map Py.String.to_string")
-      (Ok "Py.Iter.to_seq_map Py.Bool.to_bool")
-      (Error
-       (Failure "Error in py_to_ocaml. TODO: For now, you can't use unit here."))
+      (Ok "Py.Iter.to_seq_map Py.Bool.to_bool") (Ok "Py.Iter.to_seq_map ignore")
       (Ok "Py.Iter.to_seq_map of_pyobject")
       (Ok "Py.Iter.to_seq_map Apple_pie.of_pyobject")
       (Error "Parsing Otype failed... : Expected compound or basic otype")) |}]

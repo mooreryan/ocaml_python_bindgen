@@ -26,8 +26,6 @@ let labeled_type (x : labeled) : Otype.t = x.type_
 type t = Positional of positional | Labeled of labeled | Optional of optional
 [@@deriving sexp]
 
-(* TODO probably want to change this name to "signature" or something like
-   that. *)
 type val_spec = { fun_name : string; args : t list } [@@deriving sexp]
 
 let type_ = function

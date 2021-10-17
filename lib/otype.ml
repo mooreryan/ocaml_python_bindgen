@@ -110,10 +110,9 @@ let rec py_to_ocaml = function
   | Float -> "Py.Float.to_float"
   | String -> "Py.String.to_string"
   | Bool -> "Py.Bool.to_bool"
-  (* In OCaml we return unit from functions that don't really return anything.
-     In Python, we return None. TODO...need to reconcile this. *)
-  | Unit ->
-      failwith "Error in py_to_ocaml. TODO: For now, you can't use unit here."
+  (* Use the ignore function ['a -> unit]. None in pyml is still a pyobject that
+     you need to ignore. *)
+  | Unit -> "ignore"
   (* Note: T.of_pyobject converts the pyobject INTO the OCaml module type. It's
      opposite of the others. *)
   | T -> "of_pyobject"

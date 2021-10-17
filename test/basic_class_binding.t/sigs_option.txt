@@ -6,6 +6,8 @@ val y : t -> int
 
 # Instance method
 val foo : t -> a:int -> b:int -> unit -> int
+val do_nothing : t -> unit -> unit
 
 # Class method
 val bar : a:int -> b:int -> unit -> int
+val do_nothing2 : unit -> unit

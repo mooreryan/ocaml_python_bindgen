@@ -30,7 +30,11 @@ of_pyobject with no check
   
     val foo : t -> a:int -> b:int -> unit -> int
   
+    val do_nothing : t -> unit -> unit
+  
     val bar : a:int -> b:int -> unit -> int
+  
+    val do_nothing2 : unit -> unit
   end = struct
     type t = Pytypes.pyobject
   
@@ -56,6 +60,11 @@ of_pyobject with no check
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let do_nothing t () =
+      let callable = Py.Object.find_attr_string t "do_nothing" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -63,6 +72,12 @@ of_pyobject with no check
         filter_opt [ Some ("a", Py.Int.of_int a); Some ("b", Py.Int.of_int b) ]
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let do_nothing2 () =
+      let class_ = Py.Module.get (import_module ()) "Silly" in
+      let callable = Py.Object.find_attr_string class_ "do_nothing2" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   end
   $ dune exec ./run_no_check.exe 2> /dev/null
   x: 1
@@ -94,7 +109,11 @@ of_pyobject returning option
   
     val foo : t -> a:int -> b:int -> unit -> int
   
+    val do_nothing : t -> unit -> unit
+  
     val bar : a:int -> b:int -> unit -> int
+  
+    val do_nothing2 : unit -> unit
   end = struct
     type t = Pytypes.pyobject
   
@@ -124,6 +143,11 @@ of_pyobject returning option
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let do_nothing t () =
+      let callable = Py.Object.find_attr_string t "do_nothing" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -131,6 +155,12 @@ of_pyobject returning option
         filter_opt [ Some ("a", Py.Int.of_int a); Some ("b", Py.Int.of_int b) ]
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let do_nothing2 () =
+      let class_ = Py.Module.get (import_module ()) "Silly" in
+      let callable = Py.Object.find_attr_string class_ "do_nothing2" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   end
   $ dune exec ./run_option.exe 2> /dev/null
   x: 1
@@ -164,7 +194,11 @@ of_pyobject returning Or_error
   
     val foo : t -> a:int -> b:int -> unit -> int
   
+    val do_nothing : t -> unit -> unit
+  
     val bar : a:int -> b:int -> unit -> int
+  
+    val do_nothing2 : unit -> unit
   end = struct
     type t = Pytypes.pyobject
   
@@ -196,6 +230,11 @@ of_pyobject returning Or_error
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let do_nothing t () =
+      let callable = Py.Object.find_attr_string t "do_nothing" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -203,6 +242,12 @@ of_pyobject returning Or_error
         filter_opt [ Some ("a", Py.Int.of_int a); Some ("b", Py.Int.of_int b) ]
       in
       Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let do_nothing2 () =
+      let class_ = Py.Module.get (import_module ()) "Silly" in
+      let callable = Py.Object.find_attr_string class_ "do_nothing2" in
+      let kwargs = filter_opt [] in
+      ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   end
   $ dune exec ./run_or_error.exe 2> /dev/null
   x: 1

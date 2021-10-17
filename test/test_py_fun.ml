@@ -83,6 +83,24 @@ let pie t ~a ?b ~cat ?what () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+let%test_unit "instance method that returns unit" =
+  let val_spec =
+    Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> unit -> unit"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let f t () =
+  let callable = Py.Object.find_attr_string t "f" in
+  let kwargs = filter_opt [ ] in
+  ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+|}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
 let%test_unit "special __init__ method" =
   let val_spec =
     Or_error.ok_exn
@@ -137,6 +155,25 @@ let pie ~a ?b ~cat ?what () =
       ]
   in
   Cat.of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+ |}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
+let%test_unit "class method returning unit" =
+  let val_spec =
+    Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> unit"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let f () =
+  let class_ = Py.Module.get (import_module ()) "Apple" in
+  let callable = Py.Object.find_attr_string class_ "f" in
+  let kwargs = filter_opt [ ] in
+  ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
  |}
   in
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
@@ -377,19 +414,64 @@ let f t =
 
 (* let%test_unit "spaces don't matter" =
  *   assert_pyml_impls_are Or_error.is_error
- *     [ "val f:t->a:int->int"; "val     f   :  t    ->    a  :   int ->    int" ]
- *
- * let%test_unit "attributes cannot return unit" =
- *   assert_pyml_impls_are Or_error.is_error [ "val f : t -> unit" ]
- *
- * let%test_unit "everything else CAN return unit" =
- *   assert_pyml_impls_are Or_error.is_ok
- *     [
- *       "val f : t -> unit -> unit";
- *       "val f : t -> a:int -> unit -> unit";
- *       "val f : unit -> unit";
- *       "val f : a:int -> unit -> unit";
- *     ] *)
+ *     [ "val f:t->a:int->int"; "val     f   :  t    ->    a  :   int ->    int" ] *)
+
+let%test_unit "attributes cannot return unit" =
+  assert_pyml_impls_are Or_error.is_error [ "val f : t -> unit" ]
+
+let%test_unit "everything else CAN return unit" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> unit -> unit";
+      "val f : t -> a:int -> unit -> unit";
+      "val f : unit -> unit";
+      "val f : a:int -> unit -> unit";
+    ]
+
+let%test_unit "unit can be in a list or seq return type" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> unit list";
+      "val f : t -> unit Seq.t";
+      "val f : unit -> unit list";
+      "val f : unit -> unit Seq.t";
+    ]
+
+(* It's brittle, but these actually throw rather than return Or_error. *)
+let%test_unit "unit can't be in an option or or_error return type" =
+  assert_pyml_impls_throw
+    [
+      "val f : t -> unit option";
+      "val f : unit -> unit option";
+      "val f : t -> unit Or_error.t";
+      "val f : unit -> unit Or_error.t";
+    ]
+
+let%test_unit "unit can be in Seq.t or list in return types" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      (* seq *)
+      "val f : t -> unit Seq.t";
+      "val f : t -> unit -> unit Seq.t";
+      "val f : unit -> unit Seq.t";
+      "val f : t -> a:int -> unit -> unit Seq.t";
+      "val f : a:int -> unit -> unit Seq.t";
+      (* list *)
+      "val f : t -> unit list";
+      "val f : t -> unit -> unit list";
+      "val f : unit -> unit list";
+      "val f : t -> a:int -> unit -> unit list";
+      "val f : a:int -> unit -> unit list";
+    ]
+
+let%test_unit "unit cannot be in args in functions that aren't 'no arg' python \
+               functions" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : a:unit -> unit -> unit";
+      "val f : a:unit -> ?b:unit -> unit -> unit";
+      "val f : unit -> a:unit -> unit -> unit";
+    ]
 
 let%test_unit "Seq.t is for attributes" =
   assert_pyml_impls_are Or_error.is_ok
@@ -427,18 +509,6 @@ let%test_unit "Seq.t is for class methods" =
       "val f : a:Apple_pie.t Seq.t -> unit -> Apple_pie.t Seq.t";
     ]
 
-(* TODO it is confusing that these raise exceptions, but many of the other py
-   impl failures return Or_errors *)
-let%test_unit "you can't have unit Seq.t as an argument or return value" =
-  assert_pyml_impls_throw
-    [
-      "val f : t -> unit Seq.t";
-      "val f : t -> a:unit Seq.t -> unit -> unit Seq.t";
-      "val f : a:unit Seq.t -> unit -> unit Seq.t";
-      "val f : t -> a:int -> unit -> unit Seq.t";
-      "val f : a:int -> unit -> unit Seq.t";
-    ]
-
 (* Note, for now you can only return [t option] or [<custom> option] and
    Or_error. *)
 
@@ -466,6 +536,6 @@ let%test_unit "but one arg positional only class methods not are okay" =
       "val f : int -> Cat.t Or_error.t";
     ]
 
-(* let%test_unit "these were once bugs..." =
- *   assert_pyml_impls_are Or_error.is_ok
- *     [ "val foo : x:Tup_int_string.t -> unit -> unit" ] *)
+let%test_unit "these were once bugs..." =
+  assert_pyml_impls_are Or_error.is_ok
+    [ "val foo : x:Tup_int_string.t -> unit -> unit" ]
