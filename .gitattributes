@@ -1,1 +1,2 @@
+_docs_src -linguist-detectable
 test/*/run.t -linguist-detectable
