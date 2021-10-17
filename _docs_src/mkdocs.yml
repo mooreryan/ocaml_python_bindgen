@@ -36,4 +36,4 @@ theme:
 markdown_extensions:
   - meta
 docs_dir: src
-site_dir: ../docs
+site_dir: ../_docs
