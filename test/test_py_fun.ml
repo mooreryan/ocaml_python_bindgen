@@ -216,33 +216,22 @@ let foo t ?apple ?pie ~good () =
   let actual = clean @@ Or_error.ok_exn x in
   [%test_result: string] actual ~expect
 
-(* TODO *)
-(* let%test_unit "no arg python functions work" =
- *   let val_spec =
- *     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> t Or_error.t"
- *   in
- *   let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
- *   let class_name = "Apple" in
- *   let expect = clean {|
- * let f () =
- *   let callable = Py.Module.get (import_module ()) "Apple" in
- *   let kwargs =
- *     filter_opt
- *       [
- *         Some ("a", Py.String.of_string a);
- *         (match b with
- *         | Some b -> Some ("b", Food.to_pyobject b)
- *         | None -> None);
- *         Some ("cat", Animal.to_pyobject cat);
- *         (match what with
- *         | Some what -> Some ("what", Py.Float.of_float what)
- *         | None -> None);
- *       ]
- *   in
- *   Cat.of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
- * |} in
- *   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
- *   [%test_result: string] actual ~expect *)
+let%test_unit "no arg python functions work" =
+  let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> int" in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let f () =
+  let class_ = Py.Module.get (import_module ()) "Apple" in
+  let callable = Py.Object.find_attr_string class_ "f" in
+  let kwargs = filter_opt [ ] in
+  Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+|}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
 
 (* Checking for errors and okays. *)
 
@@ -371,8 +360,6 @@ let%test_unit "names and args cannot be only underscores" =
   assert_pyml_impl_is Or_error.is_error
     "val ____ : t -> ?__:Cat.t -> unit -> float"
 
-(* Seq.t *)
-
 let%test_unit "attribute returning Seq.t" =
   let spec = "val f : t -> int Seq.t" in
   let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec spec in
@@ -387,6 +374,22 @@ let f t =
   in
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
+
+(* let%test_unit "spaces don't matter" =
+ *   assert_pyml_impls_are Or_error.is_error
+ *     [ "val f:t->a:int->int"; "val     f   :  t    ->    a  :   int ->    int" ]
+ *
+ * let%test_unit "attributes cannot return unit" =
+ *   assert_pyml_impls_are Or_error.is_error [ "val f : t -> unit" ]
+ *
+ * let%test_unit "everything else CAN return unit" =
+ *   assert_pyml_impls_are Or_error.is_ok
+ *     [
+ *       "val f : t -> unit -> unit";
+ *       "val f : t -> a:int -> unit -> unit";
+ *       "val f : unit -> unit";
+ *       "val f : a:int -> unit -> unit";
+ *     ] *)
 
 let%test_unit "Seq.t is for attributes" =
   assert_pyml_impls_are Or_error.is_ok
@@ -435,3 +438,34 @@ let%test_unit "you can't have unit Seq.t as an argument or return value" =
       "val f : t -> a:int -> unit -> unit Seq.t";
       "val f : a:int -> unit -> unit Seq.t";
     ]
+
+(* Note, for now you can only return [t option] or [<custom> option] and
+   Or_error. *)
+
+let%test_unit "'no arg' class methods are okay" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : unit -> int";
+      "val f : unit -> t";
+      "val f : unit -> t option";
+      "val f : unit -> t Or_error.t";
+      "val f : unit -> Cat.t";
+      "val f : unit -> Cat.t option";
+      "val f : unit -> Cat.t Or_error.t";
+    ]
+
+let%test_unit "but one arg positional only class methods not are okay" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : int -> int";
+      "val f : int -> t";
+      "val f : int -> t option";
+      "val f : int -> t Or_error.t";
+      "val f : int -> Cat.t";
+      "val f : int -> Cat.t option";
+      "val f : int -> Cat.t Or_error.t";
+    ]
+
+(* let%test_unit "these were once bugs..." =
+ *   assert_pyml_impls_are Or_error.is_ok
+ *     [ "val foo : x:Tup_int_string.t -> unit -> unit" ] *)

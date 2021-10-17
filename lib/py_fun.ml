@@ -95,7 +95,7 @@ let parse_class_method fun_name args =
       let first_unit_arg = ary.(0) in
       let return_type_arg = ary.(1) in
       let first_good = Oarg.is_positional_unit first_unit_arg in
-      let last_good = Oarg.is_positional_unit return_type_arg in
+      let last_good = Oarg.is_positional return_type_arg in
       match (first_good, last_good) with
       | true, true ->
           let return_type = Oarg.type_ return_type_arg in
