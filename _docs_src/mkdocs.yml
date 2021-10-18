@@ -12,6 +12,7 @@ nav:
   #   - Just Enough Git: git.md
   - Examples & Tutorials:
     - Getting Started: getting-started.md
+    - Matplotlib Example: matplotlib.md
   - Rules:
     - Types: types.md
     - Function & Argument Names: names.md
