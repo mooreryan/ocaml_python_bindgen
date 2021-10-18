@@ -1,1 +1,1 @@
-Sitemap: https://mooreryan.github.io/computational_lab_notebooks/sitemap.xml
+Sitemap: https://mooreryan.github.io/ocaml_python_bindgen/sitemap.xml

@@ -1,15 +1,11 @@
 site_name: pyml_bindgen -- OCaml-Python Bindings Generator
 site_url: https://mooreryan.github.io/ocaml_python_bindgen/
 repo_url: https://github.com/mooreryan/ocaml_python_bindgen
-edit_uri: edit/master/docs_src/src
+edit_uri: edit/master/_docs_src/src
 site_description: Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.
 site_author: Ryan M. Moore
 nav:
   - pyml_bindgen: index.md
-#  - Installation: installation.md
-#  - Getting Started:
-  #   - Usage: usage.md
-  #   - Just Enough Git: git.md
   - Examples & Tutorials:
     - Getting Started: getting-started.md
     - Matplotlib Example: matplotlib.md
@@ -23,10 +19,6 @@ nav:
     - You can only bind methods, not functions: no-functions.md
     - Handling Tuples: tuples.md
     - Gotchas & Known Bugs: gotchas-bugs.md
-  #   - Overview: tutorials/overview.md
-  #   - Basic usage: tutorials/basic_usage.md
-  #   - Correcting failed actions: tutorials/correcting_failed_actions.md
-  #   - Ignoring actions: tutorials/ignoring_actions.md
 theme:
   name: readthedocs
   custom_dir: custom_theme
