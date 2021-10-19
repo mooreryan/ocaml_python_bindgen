@@ -179,6 +179,27 @@ let f () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+let%test_unit "module function returning unit" =
+  let val_spec =
+    Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> unit"
+  in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create val_spec ~associated_with:`Module
+  in
+  (* Annoying, but you still have to pass in the class name :/ *)
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let f () =
+  let callable = Py.Module.get (import_module ()) "f" in
+  let kwargs = filter_opt [ ] in
+  ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+|}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
 let%test_unit "lists are okay" =
   let open Or_error.Let_syntax in
   let spec =

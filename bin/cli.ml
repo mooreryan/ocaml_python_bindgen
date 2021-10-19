@@ -9,10 +9,19 @@ type opts = {
   py_class : string;
   caml_module : string option;
   of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
+  associated_with : [ `Class | `Module ];
 }
 
-let make_opts signatures py_module py_class caml_module of_pyo_ret_type =
-  { signatures; py_module; py_class; caml_module; of_pyo_ret_type }
+let make_opts signatures py_module py_class caml_module of_pyo_ret_type
+    associated_with =
+  {
+    signatures;
+    py_module;
+    py_class;
+    caml_module;
+    of_pyo_ret_type;
+    associated_with;
+  }
 
 let signatures_term =
   let doc = "Path to signatures" in
@@ -50,12 +59,27 @@ let of_pyo_ret_type_term =
   Arg.(
     value
     & opt argv_conv `Option
-    & info [ "of-pyo-ret-type" ] ~doc ~docv:"OF_PYO_RET_TYPE")
+    & info [ "r"; "of-pyo-ret-type" ] ~doc ~docv:"OF_PYO_RET_TYPE")
+
+let associated_with_term =
+  let enum = [ ("class", `Class); ("module", `Module) ] in
+  let argv_conv = Arg.enum enum in
+  let enum_alts = Arg.doc_alts_enum enum in
+  let doc =
+    Printf.sprintf
+      "Are the Python functions associated with a class or just a module?  \
+       $(docv) must be %s."
+      enum_alts
+  in
+  Arg.(
+    value
+    & opt argv_conv `Class
+    & info [ "a"; "associated-with" ] ~doc ~docv:"ASSOCIATED_WITH")
 
 let term =
   Term.(
     const make_opts $ signatures_term $ py_module_term $ py_class_term
-    $ caml_module_term $ of_pyo_ret_type_term)
+    $ caml_module_term $ of_pyo_ret_type_term $ associated_with_term)
 
 let info =
   let doc = "generate pyml bindings for a set of signatures" in

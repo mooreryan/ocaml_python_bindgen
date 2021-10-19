@@ -1,7 +1,7 @@
 site_name: pyml_bindgen -- OCaml-Python Bindings Generator
 site_url: https://mooreryan.github.io/ocaml_python_bindgen/
 repo_url: https://github.com/mooreryan/ocaml_python_bindgen
-edit_uri: edit/master/_docs_src/src
+edit_uri: edit/main/_docs_src/src
 site_description: Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.
 site_author: Ryan M. Moore
 nav:

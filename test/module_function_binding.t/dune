@@ -1,0 +1,3 @@
+(executables
+ (names run_no_caml_module run_with_caml_module)
+ (libraries base pyml stdio))

@@ -34,6 +34,10 @@ Help screen
              Path to signatures
   
   OPTIONS
+         -a ASSOCIATED_WITH, --associated-with=ASSOCIATED_WITH (absent=class)
+             Are the Python functions associated with a class or just a module?
+             ASSOCIATED_WITH must be either `class' or `module'.
+  
          -c CAML_MODULE, --caml-module=CAML_MODULE
              Write full module and signature
   
@@ -42,7 +46,7 @@ Help screen
              `pager', `groff' or `plain'. With `auto', the format is `pager` or
              `plain' whenever the TERM env var is `dumb' or undefined.
   
-         --of-pyo-ret-type=OF_PYO_RET_TYPE (absent=option)
+         -r OF_PYO_RET_TYPE, --of-pyo-ret-type=OF_PYO_RET_TYPE (absent=option)
              Return type of the of_pyobject function. OF_PYO_RET_TYPE must be
              one of `no_check', `option' or `or_error'.
   

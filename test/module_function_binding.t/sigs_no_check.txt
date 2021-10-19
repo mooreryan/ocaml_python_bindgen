@@ -1,0 +1,2 @@
+val add : a:int -> b:int -> unit -> int
+val do_nothing : unit -> unit

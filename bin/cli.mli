@@ -6,6 +6,7 @@ type opts = {
   py_class : string;
   caml_module : string option;
   of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
+  associated_with : [ `Class | `Module ];
 }
 
 val parse_cli : unit -> (opts, int) Result.t

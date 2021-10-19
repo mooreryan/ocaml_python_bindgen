@@ -11,9 +11,9 @@ let clean s = String.strip @@ squash_spaces s
 let all_whitespace = Re2.create_exn "^\\s*$"
 let is_comment = Re2.create_exn "^\\s*#"
 
-let gen_pyml_impl ~py_class ~signature =
+let gen_pyml_impl ~associated_with ~py_class ~signature =
   let%bind val_spec = Oarg.parse_val_spec signature in
-  let%bind py_fun = Py_fun.create val_spec in
+  let%bind py_fun = Py_fun.create val_spec ~associated_with in
   return @@ clean @@ Py_fun.pyml_impl py_class py_fun
 
 let clean_signatures data =
@@ -41,9 +41,9 @@ let read_signatures_file fname =
   let signatures = clean_signatures sig_dat in
   (needs_base, signatures)
 
-let gen_pyml_impls ~py_class ~signatures =
+let gen_pyml_impls ~associated_with ~py_class ~signatures =
   List.map signatures ~f:(fun signature ->
-      let impl = gen_pyml_impl ~py_class ~signature in
+      let impl = gen_pyml_impl ~associated_with ~py_class ~signature in
       Or_error.tag impl ~tag:[%string "Error generating spec for %{signature}"])
 
 let parse_cli_args () =
@@ -102,7 +102,15 @@ let assert_base_and_ret_type_good needs_base of_pyo_ret_type =
         "You said you wanted Option return type, but Or_error was found in the \
          sigs."
 
-let run { Cli.signatures; py_module; py_class; caml_module; of_pyo_ret_type } =
+let run
+    {
+      Cli.signatures;
+      py_module;
+      py_class;
+      caml_module;
+      of_pyo_ret_type;
+      associated_with;
+    } =
   Logger.set_log_level Logger.Level.Debug;
   let _x = caml_module in
   let import_module_impl = Shared.gen_import_module_impl py_module in
@@ -113,7 +121,9 @@ let run { Cli.signatures; py_module; py_class; caml_module; of_pyo_ret_type } =
   let needs_base, signatures = read_signatures_file signatures in
   assert_base_and_ret_type_good needs_base of_pyo_ret_type;
   (* impls -> implementations *)
-  let%bind impls = Or_error.all @@ gen_pyml_impls ~py_class ~signatures in
+  let%bind impls =
+    Or_error.all @@ gen_pyml_impls ~associated_with ~py_class ~signatures
+  in
   match caml_module with
   | Some caml_module ->
       Or_error.return
