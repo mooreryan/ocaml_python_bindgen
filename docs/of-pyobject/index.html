@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ryan M. Moore">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/of-pyobject/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Converting `pyobjects` to OCaml types - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Converting `pyobjects` to OCaml types";
+    var mkdocs_page_input_path = "of-pyobject.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/of-pyobject/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/ocaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+<meta property="og:site_name" content="Converting `pyobjects` to OCaml types - pyml_bindgen -- OCaml-Python Bindings Generator" />
+
+<meta property="og:type" content="website">
+
+<meta property="og:title" content="Converting `pyobjects` to OCaml types - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+<meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/of-pyobject/">
+
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Converting `pyobjects` to OCaml types - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+  
+
+  
+
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> pyml_bindgen -- OCaml-Python Bindings Generator</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">pyml_bindgen</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Rules</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../static-methods/">Class & Static Methods</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Miscellaneous</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Converting `pyobjects` to OCaml types</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#checking-pyobjects-at-module-boundaries">Checking pyobjects at module boundaries</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#wrap-up">Wrap-up</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../no-functions/">You can only bind methods, not functions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">pyml_bindgen -- OCaml-Python Bindings Generator</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Miscellaneous &raquo;</li>
+        
+      
+    
+    <li>Converting `pyobjects` to OCaml types</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/of-pyobject.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="converting-pyobjects-to-ocaml-types">Converting <code>pyobjects</code> to OCaml Types</h1>
+<p>With <code>pyml_bindgen</code>, you are generally want to set up a binding from a single Python class to a single OCaml module.</p>
+<p>E.g.,</p>
+<pre><code class="language-python">class Foo:
+    def __init__(self, x)
+        self.x = x
+
+    def add1(self):
+        self.x += 1
+</code></pre>
+<p>would have a corresponding module something like this</p>
+<pre><code class="language-ocaml">module Foo : sig
+  type t
+
+  val of_pyobject : Pytypes.pyobject -&gt; t
+  val to_pyobject : t -&gt; Pytypes.pyobject
+
+  val x : t -&gt; int
+
+  val add1 : t -&gt; unit -&gt; unit
+end = struct
+  type t = Pytypes.pyobject
+
+  let of_pyobject x = x
+  let to_pyobject x = x
+
+  let add1 t () = 
+end
+</code></pre>
+<p>In the above example, we don't bother checking the Python-land type of the <code>pyobject</code>.  All OCaml compiler knows at compile time is that we are taking a <code>Pytypes.pyobject</code> type and getting back a <code>Foo.t</code>.  </p>
+<p>Depending on how that <code>pyobject</code> was actually created elsewhere in the code, it might not actually be an instance of the <code>Foo</code> class.  In this case, when you go to call the <code>Foo.say_hi</code> function in your OCaml code, you will get a runtime error.  Let me give you an example.</p>
+<pre><code class="language-ocaml">let i = Py.Int.of_int 1
+assert 
+let foo = Foo.of_pyobject i
+
+let _ = Foo.say_hi foo ()
+(* ERROR! *)
+</code></pre>
+<p>You'll get an exception: <code>Exception: E (&lt;class 'AttributeError'&gt;, 'int' object has no attribute 'add1')</code>.</p>
+<h2 id="checking-pyobjects-at-module-boundaries">Checking <code>pyobjects</code> at module boundaries</h2>
+<p>While you <em>could</em> remove the <code>of_pyobject</code> function from the interface, you are often going to need it outside the module.  For example, you may have a Python class <code>Foo</code> that has a method which returns an object of class <code>Bar</code>.  In your OCaml code you'd need to call the <code>Bar.of_pyobject</code> method from inside the <code>Foo</code> module.</p>
+<p>Basically, you would like to have an <code>of_pyobject</code> that actually checks that the underlying Python type is what the module expects.  I.e., you only want to create a <code>Foo.t</code> if the <code>pyobject</code> is a <code>Foo</code> object in Python-land.</p>
+<p>You can address this problem in the typical OCaml way (e.g., by returning <code>t option</code> or <code>t Or_error.t</code> instead of <code>t</code>) in <code>pyml_bindgen</code> as well.  Let's see what I mean.</p>
+<p><code>pyml_bindgen</code> automatically generates <code>of_pyobject</code> and <code>to_pyobject</code> functions for you (in fact, you shouldn't provide those yourself).</p>
+<p>You can generate three kinds <code>of_pyobject</code> function with <code>pyml_bindgen</code>:</p>
+<ul>
+<li>No checking: <code>val of_pyobject : Pytypes.pyobject -&gt; t</code></li>
+<li><code>option</code> returning: <code>val of_pyobject : Pytypes.pyobject -&gt; t option</code></li>
+<li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/Or_error/index.html">Base</a> <code>Or_error.t</code> returning: <code>val of_pyobject : Pytypes.pyobject -&gt; t Or_error.t</code></li>
+</ul>
+<p>You can choose between the three with the <code>--of-pyo-ret-type</code> option.  Here is the section from the man page:</p>
+<pre><code>-r OF_PYO_RET_TYPE, --of-pyo-ret-type=OF_PYO_RET_TYPE (absent=option)
+    Return type of the of_pyobject function. OF_PYO_RET_TYPE must be
+    one of `no_check', `option' or `or_error'.
+</code></pre>
+<p>While the <code>option</code> and <code>Or_error.t</code> let you avoid a lot of potential runtime problems, they will force you to deal with potential errors each time <code>of_pyobject</code> is called, and in code generated by <code>pyml_bindgen</code> you may not realize that it is being called!</p>
+<p>Say that you generated both <code>Person</code> and <code>Job</code> modules with the <code>--of-pyo-ret-type=option</code> command line option.  Then both of these modules will have <code>of_pyobject</code> functions that return <code>t option</code> rather than just <code>t</code>.</p>
+<p><em>Note: For now, you can only generate one of these module signatures at a time with <code>pyml_bindgen</code>.  To combine them, you'll have to run it multiple times and then combine manually.</em></p>
+<p>Here is an example of code that won't work.</p>
+<pre><code class="language-ocaml">module rec Person : sig
+  type t
+  val of_pyobject : Pytypes.pyobject -&gt; t option
+  (* Oops! *)
+  val get_job : t -&gt; unit -&gt; Job.t
+  ...
+end = struct ... end
+
+and Job : sig
+  type t
+  val of_pyobject : Pytypes.pyobject -&gt; t option
+  ...
+end = struct ... end
+</code></pre>
+<p>When <code>pyml_bindgen</code> sees a function that ends in a custom type (a module type like <code>Job.t</code>, <code>Person.t</code>, or whatever), the generated code will call that type's <code>of_pyobject</code> function to convert it to the correct OCaml type.  So, for <code>Person.get_job</code> it will generate a function that calls <code>Job.of_pyobject</code> somewhere in the <code>get_job</code> implementation.  Of course, <code>Job.of_pyobject</code> returns <code>Job.t option</code> and not <code>Job.t</code>.  But in the <code>Person.get_job</code> signature, we've specified that <code>get_job</code> returns <code>Job.t</code> and <em>NOT</em> <code>Job.t option</code>.</p>
+<p>Now, <code>pyml_bindgen</code> will happily generate this implementation for you, but when you try to actually compile it, you will get an error about the return type of <code>get_job</code> implementation not matching the expected signature.</p>
+<p>So what do you do?  Well, you have to remember that the <code>--of-pyo-ret-type=option</code> and <code>--of-pyo-ret-type=or_error</code> flags will essentially poison all generated functions that manipulate other auto-generated modules.</p>
+<p>Specifically, for this example, you can't write <code>val get_job : t -&gt; unit -&gt; Job.t</code>.  Instead, you have to write <code>val get_job : t -&gt; unit -&gt; Job.t option</code>.  Just so that it's clear, the reason is because <code>Job.of_pyobject</code> returns <code>Job.t option</code>, and the generated implementation of <code>Person.get_job</code> will call <code>Job.of_pyobject</code> somewhere in its body.)</p>
+<h2 id="wrap-up">Wrap-up</h2>
+<p>You have to be aware of the return types of the <code>of_pyobject</code> functions you're generating with <code>pyml_bindgen</code>.  If you use <code>option</code> or <code>Or_error.t</code>, you have to remember to adjust your value specifications accordingly!</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../no-functions/" class="btn btn-neutral float-right" title="You can only bind methods, not functions">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../static-methods/" class="btn btn-neutral" title="Class & Static Methods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/mooreryan/ocaml_python_bindgen/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../static-methods/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../no-functions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
