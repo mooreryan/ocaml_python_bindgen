@@ -148,7 +148,7 @@
     <li>Handling Tuples</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/master/_docs_src/src/tuples.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/tuples.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -162,7 +162,7 @@
               
                 <h1 id="handling-tuples">Handling Tuples</h1>
 <p>Tuples are sort of weird....As of now, <code>pyml_bindgen</code> can't handle tuples directly :(</p>
-<p>For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.</p>
+<p>For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.  <em>(Or just write the binding by hand...)</em></p>
 <p>Say you need to get an <code>int * string</code> tuple in and out of Python.  You should make a module something like this:</p>
 <pre><code class="language-ocaml">module rec Tuple_int_string : sig
   type t
@@ -188,12 +188,30 @@ end = struct
   let print_endline (i, s) = print_endline @@ string_of_int i ^ &quot; &quot; ^ s
 end
 </code></pre>
-<p>Then you can put that with the code that <code>pyml_bindgen</code> generates for whatever class you're actually trying to bind.</p>
+<p>Then you can put that with the code that <code>pyml_bindgen</code> generates for whatever class you're actually trying to bind.  Perhaps something like this...</p>
+<pre><code class="language-ocaml">module rec Tuple_int_string : sig
+...
+end = struct
+...
+end
+
+and My_cool_thing : sig
+
+...
+
+val foo : x:Tuple_int_string.t -&gt; unit -&gt; Tuple_int_string.t
+
+...
+
+end
+</code></pre>
+<p>(You get the idea.)</p>
 <p>In the val specs that you write, just refer to the <code>Tuple_int_string</code> module like any other:</p>
 <pre><code class="language-ocaml">val foo : x:Tuple_int_string.t -&gt; unit -&gt; Tuple_int_string.t
 </code></pre>
-<p>As long as you properly wrote the <code>to_pyobject</code> and <code>of_pyobject</code>, then it should work :)</p>
+<p>The key here is to have a module that has working <code>to_pyobject</code> and <code>of_pyobject</code> functions.  If these two functions know how to properly get your type/module into and out of Python-land, then it should work :)</p>
 <p>There is a Cram test <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test/binding_tuples.t">here</a> that illustrates this idea.  Just note that some of the bash stuff in the <code>run.t</code> file is to automate it, but you'd probably do that part by hand.</p>
+<p>*Note: At some point, I will work up a full example with tuples and other types that you can't yet deal with directly in <code>pyml_bindgen</code>.</p>
               
             </div>
           </div>
