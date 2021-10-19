@@ -100,6 +100,12 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Types</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#function-arguments">Function arguments</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#return-types">Return types</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#nesting">Nesting</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#dictionaries">Dictionaries</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#tuples">Tuples</a>
@@ -165,9 +171,11 @@
             <div class="section">
               
                 <h1 id="types">Types</h1>
-<p>Not all OCaml types are allowed.  For function arguments, you can use:</p>
+<p>Not all OCaml types are allowed.  </p>
+<p>There are a lot of <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test">tests</a> that exercise the rules here.</p>
+<h2 id="function-arguments">Function arguments</h2>
+<p>For function arguments, you can use</p>
 <ul>
-<li><code>int</code></li>
 <li><code>float</code></li>
 <li><code>string</code></li>
 <li><code>bool</code></li>
@@ -175,12 +183,12 @@
 <li>Other module types (e.g., <code>Span.t</code>, <code>Doc.t</code>, <code>Apple_pie.t</code>)</li>
 <li>Lists of any of the above types</li>
 <li>Seq.t of any of the above types</li>
+<li><code>'a option</code>, <code>'a option list</code>, '<code>a option Seq.t</code></li>
 </ul>
-<p>For return types, you can use all of the above types plus <code>unit</code>.   You can also return <code>'a list</code> and <code>'a Seq.t</code> as well.</p>
-<p>Additionally, you can return <code>'a option</code> and <code>'a Or_error.t</code> for certain types <code>'a</code>.  Currently, you can only have <code>t option</code>, <code>t Or_error.t</code>, <code>&lt;custom&gt; option</code>, and <code>&lt;custom&gt; Or_error.t</code>.  I actually have no idea why I did this...I almost certainly will change it :)</p>
-<p>Oh, and one more thing about <code>unit</code>...you can't use it with <code>list</code> and <code>Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
-<p>There are a lot of <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test">tests</a> that exercise the rules here.</p>
-<p><em>Note: currently, you're not allowed to have </em><em>nested</em><em> <code>list</code>, <code>Seq.t</code>, <code>option</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</em></p>
+<h2 id="return-types">Return types</h2>
+<p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>.  However, you cannot use <code>unit list</code> or <code>unit Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
+<h2 id="nesting">Nesting</h2>
+<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>list</code>, <code>Seq.t</code>, <code>option</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
 <h2 id="dictionaries">Dictionaries</h2>
 <p>TODO mention the hack for Python dictionaries...</p>
 <h2 id="tuples">Tuples</h2>
