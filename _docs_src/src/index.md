@@ -4,9 +4,13 @@ main: true
 
 # OCaml-Python Bindings Generator
 
-<!-- [![Build and Test](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml/badge.svg?branch=master)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml) [![Build and Test Static](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml/badge.svg?branch=master)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml) [![Generate Docs](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml/badge.svg?branch=master)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml) -->
+<!-- [![Build and Test](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml) [![Build and Test Static](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml) [![Generate Docs](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml) -->
 
-<!-- [![code on GitHub](https://img.shields.io/badge/code-GitHub-blue)](https://github.com/mooreryan/ocaml_python_bindgen) [![GitHub issues](https://img.shields.io/github/issues/mooreryan/ocaml_python_bindgen)](https://github.com/mooreryan/ocaml_python_bindgen/issues) [![Coverage Status](https://coveralls.io/repos/github/mooreryan/ocaml_python_bindgen/badge.svg?branch=master)](https://coveralls.io/github/mooreryan/ocaml_python_bindgen?branch=master) -->
+[![code on GitHub](https://img.shields.io/badge/code-GitHub-blue)](https://github.com/mooreryan/ocaml_python_bindgen) 
+
+<!-- [![GitHub issues](https://img.shields.io/github/issues/mooreryan/ocaml_python_bindgen)](https://github.com/mooreryan/ocaml_python_bindgen/issues)  -->
+
+<!-- [![Coverage Status](https://coveralls.io/repos/github/mooreryan/ocaml_python_bindgen/badge.svg?branch=main)](https://coveralls.io/github/mooreryan/ocaml_python_bindgen?branch=main) -->
 
 Generate Python bindings with [pyml](https://github.com/thierry-martinez/pyml) directly from OCaml value specifications.
 

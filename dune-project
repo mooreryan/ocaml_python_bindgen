@@ -8,13 +8,13 @@
  (name pyml_bindgen)
  (version 0.1.0)
  (license "MIT")
- (maintainers "Ryan Moore")
- (authors "Ryan Moore")
+ (maintainers "Ryan M. Moore")
+ (authors "Ryan M. Moore")
  (homepage "https://github.com/mooreryan/pyml_bindgen")
  (source (github mooreryan/pyml_bindgen))
  (documentation "https://github.com/mooreryan/pyml_bindgen")
  (bug_reports "https://github.com/mooreryan/pyml_bindgen/issues")
- (synopsis "Generate pyml bindings from OCaml signatures")
+ (synopsis "Generate pyml bindings from OCaml value specifications")
  (depends
    ; Runtime deps
    angstrom
