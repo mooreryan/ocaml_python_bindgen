@@ -15,7 +15,7 @@ For function arguments, you can use
 * Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
 * Lists of any of the above types
 * Seq.t of any of the above types
-* `'a option`, `'a option list`, '`a option Seq.t`
+* `'a option`, `'a option list`, `'a option Seq.t`
 
 ## Return types
 
