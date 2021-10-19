@@ -1,3 +1,4 @@
 (executables
  (names run_no_check run_option run_or_error)
- (libraries base pyml stdio))
+ (libraries base pyml stdio)
+ (preprocess (pps ppx_sexp_conv)))

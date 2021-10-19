@@ -32,6 +32,10 @@ of_pyobject with no check
   
     val do_nothing : t -> unit -> unit
   
+    val return_list : t -> l:string list -> unit -> string list
+  
+    val return_opt_list : t -> l:string option list -> unit -> string option list
+  
     val bar : a:int -> b:int -> unit -> int
   
     val do_nothing2 : unit -> unit
@@ -65,6 +69,30 @@ of_pyobject with no check
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let return_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_list" in
+      let kwargs =
+        filter_opt [ Some ("l", Py.List.of_list_map Py.String.of_string l) ]
+      in
+      Py.List.to_list_map Py.String.to_string
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let return_opt_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_opt_list" in
+      let kwargs =
+        filter_opt
+          [
+            Some
+              ( "l",
+                Py.List.of_list_map
+                  (function Some x -> Py.String.of_string x | None -> Py.none)
+                  l );
+          ]
+      in
+      Py.List.to_list_map (fun x ->
+          if Py.is_none x then None else Some (Py.String.to_string x))
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -84,6 +112,8 @@ of_pyobject with no check
   y: 2
   foo: 33
   bar: 30
+  (apple pie)
+  ((apple) () (pie))
 
 of_pyobject returning option
 
@@ -110,6 +140,10 @@ of_pyobject returning option
     val foo : t -> a:int -> b:int -> unit -> int
   
     val do_nothing : t -> unit -> unit
+  
+    val return_list : t -> l:string list -> unit -> string list
+  
+    val return_opt_list : t -> l:string option list -> unit -> string option list
   
     val bar : a:int -> b:int -> unit -> int
   
@@ -148,6 +182,30 @@ of_pyobject returning option
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let return_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_list" in
+      let kwargs =
+        filter_opt [ Some ("l", Py.List.of_list_map Py.String.of_string l) ]
+      in
+      Py.List.to_list_map Py.String.to_string
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let return_opt_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_opt_list" in
+      let kwargs =
+        filter_opt
+          [
+            Some
+              ( "l",
+                Py.List.of_list_map
+                  (function Some x -> Py.String.of_string x | None -> Py.none)
+                  l );
+          ]
+      in
+      Py.List.to_list_map (fun x ->
+          if Py.is_none x then None else Some (Py.String.to_string x))
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -167,6 +225,8 @@ of_pyobject returning option
   y: 2
   foo: 33
   bar: 30
+  (apple pie)
+  ((apple) () (pie))
 
 of_pyobject returning Or_error
 
@@ -195,6 +255,10 @@ of_pyobject returning Or_error
     val foo : t -> a:int -> b:int -> unit -> int
   
     val do_nothing : t -> unit -> unit
+  
+    val return_list : t -> l:string list -> unit -> string list
+  
+    val return_opt_list : t -> l:string option list -> unit -> string option list
   
     val bar : a:int -> b:int -> unit -> int
   
@@ -235,6 +299,30 @@ of_pyobject returning Or_error
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
+    let return_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_list" in
+      let kwargs =
+        filter_opt [ Some ("l", Py.List.of_list_map Py.String.of_string l) ]
+      in
+      Py.List.to_list_map Py.String.to_string
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let return_opt_list t ~l () =
+      let callable = Py.Object.find_attr_string t "return_opt_list" in
+      let kwargs =
+        filter_opt
+          [
+            Some
+              ( "l",
+                Py.List.of_list_map
+                  (function Some x -> Py.String.of_string x | None -> Py.none)
+                  l );
+          ]
+      in
+      Py.List.to_list_map (fun x ->
+          if Py.is_none x then None else Some (Py.String.to_string x))
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
     let bar ~a ~b () =
       let class_ = Py.Module.get (import_module ()) "Silly" in
       let callable = Py.Object.find_attr_string class_ "bar" in
@@ -254,4 +342,6 @@ of_pyobject returning Or_error
   y: 2
   foo: 33
   bar: 30
+  (apple pie)
+  ((apple) () (pie))
 

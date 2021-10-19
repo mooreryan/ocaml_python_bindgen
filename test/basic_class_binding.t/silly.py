@@ -9,6 +9,12 @@ class Silly:
     def do_nothing(self):
         return None
 
+    def return_list(self, l):
+        return l
+
+    def return_opt_list(self, l):
+        return l
+
     @staticmethod
     def bar(a, b):
         return a + b

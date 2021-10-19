@@ -91,19 +91,19 @@ module P = struct
   (* apple:int <- arg type is the second part of that. Note you can use
      Otype.of_string on values produced by this as the parser will fail on bad
      otype strings. *)
-  let arg_type = Otype.P.parser_
+  let arg_type = Otype.P.parser_ <?> "arg_type parser"
 
   (* string; int; Doc.t *)
   let positional =
     let%bind type_ = arg_type in
-    return @@ Positional (make_positional type_)
+    return @@ Positional (make_positional type_) <?> "positional parser"
 
   (* apple:int list; pie:Fruit.t *)
   let labeled =
     let%bind name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Labeled (make_labeled name type_)
+    return @@ Labeled (make_labeled name type_) <?> "labeled parser"
 
   (* ?apple:int list; ?pie:Fruit.t *)
   let optional =
@@ -111,15 +111,16 @@ module P = struct
     let%bind name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Optional (make_optional name type_)
+    return @@ Optional (make_optional name type_) <?> "optional parser"
 
   (* Any of the three arg types. *)
   let arg =
     choice ~failure_msg:"Input doesn't look like a valid Arg"
       [ positional; labeled; optional ]
+    <?> "arg parser"
 
   (* int -> fruit:string -> unit *)
-  let args = sep_by arrow arg
+  let args = sep_by arrow arg <?> "args parser"
 
   (* e.g., val f : int -> fruit:string -> unit*)
   let val_spec =
@@ -128,7 +129,7 @@ module P = struct
     let%bind fun_name = arg_name in
     let%bind _colon = colon in
     let%bind args = args in
-    return { fun_name; args }
+    return { fun_name; args } <?> "val_spec parser"
 end
 
 let parse_val_spec s =

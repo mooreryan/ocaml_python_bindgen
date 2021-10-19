@@ -13,3 +13,14 @@ let () = print_endline ("bar: " ^ Int.to_string (Silly.bar ~a:10 ~b:20 ()))
 
 let () = Silly.do_nothing silly ()
 let () = Silly.do_nothing2 ()
+
+let () =
+  print_endline
+  @@ Sexp.to_string_hum ~indent:1
+  @@ [%sexp_of: string list]
+  @@ Silly.return_list silly ~l:[ "apple"; "pie" ] ()
+let () =
+  print_endline
+  @@ Sexp.to_string_hum ~indent:1
+  @@ [%sexp_of: string option list]
+  @@ Silly.return_opt_list silly ~l:[ Some "apple"; None; Some "pie" ] ()

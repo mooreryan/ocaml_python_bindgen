@@ -33,42 +33,53 @@ module P = struct
   let dot = string "."
 
   (* Parsers for each of the Otype variants. *)
-  let int = string "int"
-  let float = string "float"
-  let string_ = string "string"
-  let bool = string "bool"
-  let unit = string "unit"
-  let list = string "list"
-  let seq = string "Seq.t"
-  let option = string "option"
-  let or_error = string "Or_error.t"
+  let int = string "int" <?> "int parser"
+  let float = string "float" <?> "float parser"
+  let string_ = string "string" <?> "string parser"
+  let bool = string "bool" <?> "bool parser"
+  let unit = string "unit" <?> "unit parser"
+  let list = string "list" <?> "list parser"
+  let seq = string "Seq.t" <?> "seq parser"
+  let option = string "option" <?> "option parser"
+  let or_error = string "Or_error.t" <?> "or_error parser"
+
+  (* We allow stuff like [int option list] *)
+  let option_list = string "option list" <?> "option_list parser"
+  let option_seq = string "option Seq.t" <?> "option_seq parser"
 
   (* If you just do string "t", then any arg names that start with t will blow
      up parsing. This is pretty hacky... *)
   let t =
     let%bind t_string = string "t" in
-    let%bind next_char = peek_char in
-    (* No types or custom types (currently) start with lowercase t, so, if you
-       have a lower case t followed by more stuff that is ok for a name then,
-       the t type parser should fail. *)
-    match next_char with
-    | Some c ->
-        if Utils.is_ok_for_name c then fail "not a t type" else return t_string
-    | None -> return t_string
+    let p =
+      let%bind next_char = peek_char in
+      (* No types or custom types (currently) start with lowercase t, so, if you
+         have a lower case t followed by more stuff that is ok for a name then,
+         the t type parser should fail. *)
+      match next_char with
+      | Some c ->
+          if Utils.is_ok_for_name c then fail "not a t type"
+          else return t_string
+      | None -> return t_string
+    in
+    p <?> "t parser"
 
   (* Custom "types" ...e.g., Doc.t, Span.t, Silly_thing.t. Fails if it is Seq.t
      or Or_error.t. *)
   let custom =
     let%bind c = peek_char_fail in
-    if Utils.is_capital_letter c then
-      let%bind name = take_while Utils.is_ok_for_name in
-      let%bind dot = dot in
-      let%bind t = t in
-      match name ^ dot ^ t with
-      | "Seq.t" -> fail "custom cannot be Seq.t"
-      | "Or_error.t" -> fail "custom cannot be Or_error.t"
-      | s -> return s
-    else fail "first letter should be capital"
+    let p =
+      if Utils.is_capital_letter c then
+        let%bind name = take_while Utils.is_ok_for_name in
+        let%bind dot = dot in
+        let%bind t = t in
+        match name ^ dot ^ t with
+        | "Seq.t" -> fail "custom cannot be Seq.t"
+        | "Or_error.t" -> fail "custom cannot be Or_error.t"
+        | s -> return s
+      else fail "first letter should be capital"
+    in
+    p <?> "custom parser"
 
   (* Not a list, seq, option, etc. Just the type. *)
   let basic_otype =
@@ -82,24 +93,34 @@ module P = struct
         lift (fun _ -> T) t;
         lift (fun s -> Custom s) custom;
       ]
+    <?> "basic_otype parser"
 
   (* 'a Seq.t, 'a option, 'a Or_error.t, 'a list. *)
   let compound_otype =
     let%bind t = basic_otype in
     let%bind _space = string " " in
-    choice ~failure_msg:"Second token wasn't list, option, Or_error.t, or Seq.t"
-      [
-        lift (fun _ -> List t) list;
-        lift (fun _ -> Seq t) seq;
-        lift (fun _ -> Option t) option;
-        lift (fun _ -> Or_error t) or_error;
-      ]
+    let p =
+      choice
+        ~failure_msg:
+          "Second token wasn't list, option, Or_error.t, Seq.t, 'option list', \
+           or 'option Seq.t'"
+        [
+          lift (fun _ -> List (Option t)) option_list;
+          lift (fun _ -> Seq (Option t)) option_seq;
+          lift (fun _ -> List t) list;
+          lift (fun _ -> Seq t) seq;
+          lift (fun _ -> Option t) option;
+          lift (fun _ -> Or_error t) or_error;
+        ]
+    in
+    p <?> "compound_otype parser"
 
   let compound_or_basic =
     choice ~failure_msg:"Expected compound or basic otype"
       [ compound_otype; basic_otype ]
+    <?> "compound_or_basic parser"
 
-  let parser_ = spaces *> compound_or_basic <* spaces
+  let parser_ = spaces *> compound_or_basic <* spaces <?> "parser_"
 end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
@@ -131,7 +152,13 @@ let rec py_to_ocaml = function
   | Option t -> (
       match t with
       | T | Custom _ -> py_to_ocaml t
-      | _ -> failwith "you can only have <t> option or <custom> option")
+      | Option _ -> failwith "Can't have nested options"
+      | Unit -> failwith "Can't have unit option"
+      | List _ | Seq _ | Or_error _ -> "only basic types can be options"
+      | Int | Float | String | Bool ->
+          [%string
+            "(fun x -> if Py.is_none x then None else Some (%{py_to_ocaml t} \
+             x))"])
   | Or_error t -> (
       match t with
       | T | Custom _ -> py_to_ocaml t
@@ -162,7 +189,11 @@ let rec py_of_ocaml = function
   | Option t -> (
       match t with
       | T | Custom _ -> py_of_ocaml t
-      | _ -> failwith "you can only have <t> option or <custom> option")
+      | Option _ -> failwith "Can't have nested options"
+      | Unit -> failwith "Can't have unit option"
+      | List _ | Seq _ | Or_error _ -> "only basic types can be options"
+      | Int | Float | String | Bool ->
+          [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])
   | Or_error t -> (
       match t with
       | T | Custom _ -> py_of_ocaml t

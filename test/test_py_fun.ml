@@ -291,6 +291,27 @@ let f () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+(* let%test_unit "attribute returning option_list" =
+ *   let val_spec =
+ *     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> "
+ *   in
+ *   let py_fun =
+ *     Or_error.ok_exn @@ Py_fun.create val_spec ~associated_with:`Module
+ *   in
+ *   (\* Annoying, but you still have to pass in the class name :/ *\)
+ *   let class_name = "Apple" in
+ *   let expect =
+ *     clean
+ *       {|
+ * let f () =
+ *   let callable = Py.Module.get (import_module ()) "f" in
+ *   let kwargs = filter_opt [ ] in
+ *   ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+ * |}
+ *   in
+ *   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+ *   [%test_result: string] actual ~expect *)
+
 (* Checking for errors and okays. *)
 
 let%test_unit "all middle args of instance method must be named" =
@@ -560,3 +581,57 @@ let%test_unit "but one arg positional only class methods not are okay" =
 let%test_unit "these were once bugs..." =
   assert_pyml_impls_are Or_error.is_ok
     [ "val foo : x:Tup_int_string.t -> unit -> unit" ]
+
+let%test_unit "option lists usage that is okay" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> a:int option list -> unit -> int option list";
+      "val f : t -> a:float option list -> unit -> float option list";
+      "val f : t -> a:string option list -> unit -> int option list";
+      "val f : t -> a:bool option list -> unit -> bool option list";
+      "val f : t -> a:t option list -> unit -> t option list";
+      "val f : t -> a:Apple_pie.t option list -> unit -> Apple_pie.t option \
+       list";
+    ]
+
+let%test_unit "option lists usage that is NOT okay" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : t -> a:int list option -> unit -> int list option";
+      "val f : t -> a:float list option -> unit -> float list option";
+      "val f : t -> a:string list option -> unit -> int list option";
+      "val f : t -> a:bool list option -> unit -> bool list option";
+      "val f : t -> a:t list option -> unit -> t list option";
+      "val f : t -> a:Apple_pie.t list option -> unit -> Apple_pie.t option \
+       list";
+    ]
+
+let%test_unit "option lists usage that throws" =
+  assert_pyml_impls_throw [ "val f : t -> unit option list" ]
+
+let%test_unit "option Seq.ts usage that is okay" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> a:int option Seq.t -> unit -> int option Seq.t";
+      "val f : t -> a:float option Seq.t -> unit -> float option Seq.t";
+      "val f : t -> a:string option Seq.t -> unit -> int option Seq.t";
+      "val f : t -> a:bool option Seq.t -> unit -> bool option Seq.t";
+      "val f : t -> a:t option Seq.t -> unit -> t option Seq.t";
+      "val f : t -> a:Apple_pie.t option Seq.t -> unit -> Apple_pie.t option \
+       Seq.t";
+    ]
+
+let%test_unit "option Seq.ts usage that is NOT okay" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : t -> a:int Seq.t option -> unit -> int Seq.t option";
+      "val f : t -> a:float Seq.t option -> unit -> float Seq.t option";
+      "val f : t -> a:string Seq.t option -> unit -> int Seq.t option";
+      "val f : t -> a:bool Seq.t option -> unit -> bool Seq.t option";
+      "val f : t -> a:t Seq.t option -> unit -> t Seq.t option";
+      "val f : t -> a:Apple_pie.t Seq.t option -> unit -> Apple_pie.t option \
+       Seq.t";
+    ]
+
+let%test_unit "option Seq.ts usage that throws" =
+  assert_pyml_impls_throw [ "val f : t -> unit option Seq.t" ]
