@@ -42,8 +42,6 @@ Run
   $ ocamlformat --enable-outside-detected-project lib.ml
   let filter_opt l = List.filter_map Fun.id l
   
-  let import_module () = Py.Import.import_module "silly"
-  
   module Silly : sig
     type t
   
@@ -55,6 +53,8 @@ Run
   
     val do_nothing : unit -> unit
   end = struct
+    let import_module () = Py.Import.import_module "silly"
+  
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo

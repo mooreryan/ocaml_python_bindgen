@@ -63,11 +63,11 @@ let print_full ~caml_module ~shared_signatures ~shared_impls ~signatures ~impls
     ~import_module_impl ~needs_base =
   if needs_base then print_dbl_endline "open! Base";
   print_dbl_endline @@ gen_filter_map_impl needs_base;
-  print_dbl_endline import_module_impl;
   print_endline [%string "module %{caml_module} : sig"];
   List.iter shared_signatures ~f:print_dbl_endline;
   List.iter signatures ~f:print_dbl_endline;
   print_endline "end = struct";
+  print_dbl_endline import_module_impl;
   List.iter shared_impls ~f:print_dbl_endline;
   List.iter impls ~f:print_dbl_endline;
   print_endline "end"

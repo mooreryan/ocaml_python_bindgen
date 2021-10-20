@@ -13,8 +13,6 @@ of_pyobject with no check
   $ ocamlformat --enable-outside-detected-project lib.ml
   let filter_opt l = List.filter_map Fun.id l
   
-  let import_module () = Py.Import.import_module "silly"
-  
   module Silly : sig
     type t
   
@@ -40,6 +38,8 @@ of_pyobject with no check
   
     val do_nothing2 : unit -> unit
   end = struct
+    let import_module () = Py.Import.import_module "silly"
+  
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
@@ -122,8 +122,6 @@ of_pyobject returning option
   $ ocamlformat --enable-outside-detected-project lib.ml
   let filter_opt l = List.filter_map Fun.id l
   
-  let import_module () = Py.Import.import_module "silly"
-  
   module Silly : sig
     type t
   
@@ -149,6 +147,8 @@ of_pyobject returning option
   
     val do_nothing2 : unit -> unit
   end = struct
+    let import_module () = Py.Import.import_module "silly"
+  
     type t = Pytypes.pyobject
   
     let is_instance pyo =
@@ -237,8 +237,6 @@ of_pyobject returning Or_error
   
   let filter_opt = List.filter_opt
   
-  let import_module () = Py.Import.import_module "silly"
-  
   module Silly : sig
     type t
   
@@ -264,6 +262,8 @@ of_pyobject returning Or_error
   
     val do_nothing2 : unit -> unit
   end = struct
+    let import_module () = Py.Import.import_module "silly"
+  
     type t = Pytypes.pyobject
   
     let is_instance pyo =

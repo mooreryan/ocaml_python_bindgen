@@ -14,14 +14,11 @@ Binding tuples
 
 Now here is something brittle...
 
-  $ head -n4 tmp > a
-  $ grep -v 'let filter_opt' tmp | grep -v 'let import_module' > c
+  $ grep 'let filter_opt' tmp > a
+  $ grep -v 'let filter_opt' tmp > c
   $ cat a lib_ml.txt c > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
   let filter_opt l = List.filter_map Fun.id l
-  
-  let import_module () = Py.Import.import_module "silly"
-  
   module rec Tuple_int_string : sig
     type t
   
@@ -55,6 +52,8 @@ Now here is something brittle...
   
     val foo : x:Tuple_int_string.t -> unit -> Tuple_int_string.t
   end = struct
+    let import_module () = Py.Import.import_module "silly"
+  
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
