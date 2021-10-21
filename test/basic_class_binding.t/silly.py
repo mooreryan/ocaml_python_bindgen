@@ -15,6 +15,12 @@ class Silly:
     def return_opt_list(self, l):
         return l
 
+    def return_array(self, a):
+        return a
+
+    def return_opt_array(self, a):
+        return a
+
     @staticmethod
     def bar(a, b):
         return a + b

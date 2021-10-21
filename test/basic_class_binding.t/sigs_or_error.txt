@@ -9,6 +9,8 @@ val foo : t -> a:int -> b:int -> unit -> int
 val do_nothing : t -> unit -> unit
 val return_list : t -> l:string list -> unit -> string list
 val return_opt_list : t -> l:string option list -> unit -> string option list
+val return_array : t -> a:string array -> unit -> string array
+val return_opt_array : t -> a:string option array -> unit -> string option array
 
 # Class method
 val bar : a:int -> b:int -> unit -> int
