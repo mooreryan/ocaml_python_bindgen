@@ -41,11 +41,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://mooreryan.github.io/ocaml_python_bindgen/no-functions/</loc>
-         <lastmod>2021-10-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/of-pyobject/</loc>
          <lastmod>2021-10-21</lastmod>
          <changefreq>daily</changefreq>
