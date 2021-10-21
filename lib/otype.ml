@@ -130,8 +130,8 @@ end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
 
-(* Convert py types to ocaml types. TODO disallow nested mixed compound
-   types. *)
+(* Convert py types to ocaml types. Some of these failwith things are prevented
+   because we only construct otypes with the parsing functions.... *)
 let rec py_to_ocaml = function
   | Int -> "Py.Int.to_int"
   | Float -> "Py.Float.to_float"
@@ -149,15 +149,15 @@ let rec py_to_ocaml = function
       [%string "%{name}.of_pyobject"]
   | Array t -> (
       match t with
-      | Array _ -> failwith "Can't have nested arrays"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.List.to_array_map " ^ py_to_ocaml t)
   | List t -> (
       match t with
-      | List _ -> failwith "Can't have nested lists"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.List.to_list_map " ^ py_to_ocaml t)
   | Seq t -> (
       match t with
-      | Seq _ -> failwith "Can't have nested Seq.t"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.Iter.to_seq_map " ^ py_to_ocaml t)
   | Option t -> (
       match t with
@@ -175,7 +175,8 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
 
-(* Convert ocaml types to py types. TODO disallow mismatched compound types. *)
+(* Convert ocaml types to py types. Some of these failwith things are prevented
+   because we only construct otypes with the parsing functions.... *)
 let rec py_of_ocaml = function
   | Int -> "Py.Int.of_int"
   | Float -> "Py.Float.of_float"
@@ -191,15 +192,15 @@ let rec py_of_ocaml = function
       [%string "%{name}.to_pyobject"]
   | Array t -> (
       match t with
-      | Array _ -> failwith "Can't have nested arrays"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.List.of_array_map " ^ py_of_ocaml t)
   | List t -> (
       match t with
-      | List _ -> failwith "Can't have nested lists"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.List.of_list_map " ^ py_of_ocaml t)
   | Seq t -> (
       match t with
-      | Seq _ -> failwith "Can't have nested Seq.t"
+      | Array _ | List _ | Seq _ -> failwith "Can't nest containers"
       | t -> "Py.Iter.of_seq_map " ^ py_of_ocaml t)
   | Option t -> (
       match t with

@@ -24,7 +24,11 @@ For return types, you can use all of the above types plus `unit`, and `'a Or_err
 
 ## Nesting
 
-Note: currently, you're not allowed to have **nested** `array`, `list`, `Seq.t`, `option`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)
+Note: currently, you're not allowed to have **nested** `array`, `list`, `Seq.t`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)
+
+E.g., `'a array list` will fail.
+
+You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s however.
 
 ## Dictionaries
 

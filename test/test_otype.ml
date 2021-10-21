@@ -8,6 +8,22 @@ let print_string_or_error x =
   print_endline
   @@ Sexp.to_string_hum ~indent:1 ([%sexp_of: Otype.t Or_error.t] x)
 
+let parse_then_py_to_ocaml spec =
+  let open Or_error.Let_syntax in
+  let%bind parsed = Otype.parse spec in
+  (* py_to_ocaml can raise. *)
+  match Otype.py_to_ocaml parsed with
+  | exception e -> Or_error.of_exn e
+  | x -> Or_error.return x
+
+let parse_then_py_of_ocaml spec =
+  let open Or_error.Let_syntax in
+  let%bind parsed = Otype.parse spec in
+  (* py_to_ocaml can raise. *)
+  match Otype.py_of_ocaml parsed with
+  | exception e -> Or_error.of_exn e
+  | x -> Or_error.return x
+
 (* Quickcheck *)
 
 (* Generate good names of custom otypes *)
@@ -28,11 +44,25 @@ let%test_unit "parse function works with custom types" =
       | Custom parsed_name -> [%test_eq: string] parsed_name name
       | _ -> failwith "expected variant Custom")
 
-let%test_unit "parse doesn't raise" =
+let%test_unit "parse doesn't raise (may be ok or error though)" =
   Q.test String.gen_nonempty ~sexp_of:String.sexp_of_t
     ~shrinker:String.quickcheck_shrinker ~examples:[ "" ] ~f:(fun s ->
       let _x = Otype.parse s in
       ())
+
+let%test_unit "container nesting raises or returns error" =
+  let gen_otype = QG.of_list [ "array"; "list"; "Seq.t" ] in
+  let gen =
+    let open QG.Let_syntax in
+    let%bind n = QG.small_positive_int in
+    (* Use n + 1 because we need 2 or more *)
+    List.gen_with_length (n + 1) gen_otype
+  in
+  Q.test gen ~sexp_of:[%sexp_of: string list] ~f:(fun otypes ->
+      let s = String.concat otypes ~sep:" " in
+      match Otype.parse ("int " ^ s) with
+      | (exception _) | Error _ -> ()
+      | Ok _ -> failwith "should have failed or raised")
 
 (* test parsing *)
 
@@ -162,14 +192,6 @@ let%expect_test _ =
   [%expect {| (Ok (Seq Int)) |}]
 
 (* Converting pytypes to ocaml types *)
-
-let parse_then_py_to_ocaml spec =
-  let open Or_error.Let_syntax in
-  let%bind parsed = Otype.parse spec in
-  (* py_to_ocaml can raise. *)
-  match Otype.py_to_ocaml parsed with
-  | exception e -> Or_error.of_exn e
-  | x -> Or_error.return x
 
 let%expect_test "Converting list types" =
   let print x =
@@ -312,10 +334,9 @@ let%expect_test "Converting Or_error types" =
      (Error
       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
 
-let%expect_test "Converting triples fails" =
+let%expect_test "Most nesting fails" =
   let specs =
     [
-      (* For now, some triples don't parse. *)
       "int Or_error.t array";
       "int Or_error.t list";
       "int Or_error.t Seq.t";
@@ -325,6 +346,16 @@ let%expect_test "Converting triples fails" =
       "int array Or_error.t";
       "int list Or_error.t";
       "int Seq.t Or_error.t";
+      (* Nesting array, list, Seq.t *)
+      "int array array";
+      "int list list";
+      "int Seq.t Seq.t";
+      "int array list";
+      "int list array";
+      "int array Seq.t";
+      "int Seq.t array";
+      "int list Seq.t";
+      "int Seq.t list";
     ]
   in
   print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list]
@@ -332,6 +363,15 @@ let%expect_test "Converting triples fails" =
   [%expect
     {|
      ((Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
@@ -496,14 +536,6 @@ let%expect_test "Converting option seq" =
 
 (* Converting ocaml types to python types *)
 
-let parse_then_py_of_ocaml spec =
-  let open Or_error.Let_syntax in
-  let%bind parsed = Otype.parse spec in
-  (* py_to_ocaml can raise. *)
-  match Otype.py_of_ocaml parsed with
-  | exception e -> Or_error.of_exn e
-  | x -> Or_error.return x
-
 let%expect_test "Converting list types" =
   let print x =
     print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
@@ -647,7 +679,7 @@ let%expect_test "Converting Or_error types" =
      (Error
       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
 
-let%expect_test "Converting triples fails" =
+let%expect_test "Most nesting fails" =
   let specs =
     [
       (* For now, some triples don't parse. *)
@@ -660,6 +692,16 @@ let%expect_test "Converting triples fails" =
       "int array Or_error.t";
       "int list Or_error.t";
       "int Seq.t Or_error.t";
+      (* Nesting array, list, Seq.t *)
+      "int array array";
+      "int list list";
+      "int Seq.t Seq.t";
+      "int array list";
+      "int list array";
+      "int array Seq.t";
+      "int Seq.t array";
+      "int list Seq.t";
+      "int Seq.t list";
     ]
   in
   print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list]
@@ -667,6 +709,15 @@ let%expect_test "Converting triples fails" =
   [%expect
     {|
      ((Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
