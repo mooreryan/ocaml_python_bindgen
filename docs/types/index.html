@@ -193,7 +193,9 @@
 <h2 id="return-types">Return types</h2>
 <p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>.  However, you cannot use <code>unit array</code>, <code>unit list</code>, or <code>unit Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
 <h2 id="nesting">Nesting</h2>
-<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, <code>option</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
+<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
+<p>E.g., <code>'a array list</code> will fail.</p>
+<p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s however.</p>
 <h2 id="dictionaries">Dictionaries</h2>
 <p>TODO mention the hack for Python dictionaries...</p>
 <h2 id="tuples">Tuples</h2>
