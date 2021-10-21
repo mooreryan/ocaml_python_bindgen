@@ -9,6 +9,7 @@ nav:
   - Examples & Tutorials:
     - Getting Started: getting-started.md
     - Matplotlib Example: matplotlib.md
+    - Matplotlib Example 2: matplotlib-2.md
   - Rules:
     - Types: types.md
     - Function & Argument Names: names.md
