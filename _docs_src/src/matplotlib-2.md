@@ -54,6 +54,8 @@ This value spec will generate an `Axes.plot` function actually has a bug.  If yo
 
 You may be thinking, well, that's pretty annoying...I agree!  For this function, I would probably just write it by hand from the start.  I'm showing it here partly as a reminder that I want to change the behaviour of `pyml_bindgen` in a future release to handle methods like this one.  But for now, you have to deal with it yourself :)
 
+*Note that while we used `float list` for `x` and `y` here, you may want to use `float array` instead.*
+
 ### `Figure.savefig`
 
 ([docs](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig))

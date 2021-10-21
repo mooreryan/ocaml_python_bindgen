@@ -59,6 +59,8 @@ val plot : t -> x:float list -> y:float list -> ?color:string -> unit -> unit
 
 Not bad!  You just make it like any old OCaml optional argument.
 
+*Note that while we used `float list` for `x` and `y` here, you may want to use `float array` instead.*
+
 ### save
 
 Finally, the `save` function.  Nothing new to talk about so I'll just put down the spec.
