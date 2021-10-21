@@ -109,6 +109,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib-2/">Matplotlib Example 2</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
                 <ul>
@@ -248,8 +250,6 @@ def sub(a, b):
 <p>And here's the output:</p>
 <pre><code class="language-ocaml">let filter_opt l = List.filter_map Fun.id l
 
-let import_module () = Py.Import.import_module &quot;thing&quot;
-
 module Thing : sig
   type t
 
@@ -265,6 +265,8 @@ module Thing : sig
 
   val sub : a:int -&gt; b:int -&gt; unit -&gt; int
 end = struct
+  let import_module () = Py.Import.import_module &quot;thing&quot;
+
   type t = Pytypes.pyobject
 
   let is_instance pyo =

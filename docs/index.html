@@ -111,6 +111,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="matplotlib/">Matplotlib Example</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="matplotlib-2/">Matplotlib Example 2</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
                 <ul>
@@ -224,8 +226,6 @@ $ ocamlformat --enable-outside-detected-project lib.ml
 <p>And here's the output of the <code>ocamlformat</code> command.</p>
 <pre><code class="language-ocaml">let filter_opt l = List.filter_map Fun.id l
 
-let import_module () = Py.Import.import_module &quot;thing&quot;
-
 module Thing : sig
   type t
 
@@ -239,6 +239,8 @@ module Thing : sig
 
   val add : t -&gt; y:int -&gt; unit -&gt; int
 end = struct
+  let import_module () = Py.Import.import_module &quot;thing&quot;
+
   type t = Pytypes.pyobject
 
   let is_instance pyo =
@@ -333,5 +335,5 @@ end
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-10-19 18:52:01.583709+00:00
+Build Date UTC : 2021-10-21 04:24:09.607214+00:00
 -->
