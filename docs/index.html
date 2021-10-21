@@ -224,9 +224,7 @@ val add : t -&gt; y:int -&gt; unit -&gt; int
 $ ocamlformat --enable-outside-detected-project lib.ml
 </code></pre>
 <p>And here's the output of the <code>ocamlformat</code> command.</p>
-<pre><code class="language-ocaml">let filter_opt l = List.filter_map Fun.id l
-
-module Thing : sig
+<pre><code class="language-ocaml">module Thing : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -&gt; t option
@@ -239,6 +237,8 @@ module Thing : sig
 
   val add : t -&gt; y:int -&gt; unit -&gt; int
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module &quot;thing&quot;
 
   type t = Pytypes.pyobject
@@ -335,5 +335,5 @@ end
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-10-21 06:16:30.010675+00:00
+Build Date UTC : 2021-10-21 06:36:38.899151+00:00
 -->

@@ -236,9 +236,7 @@ val save : t -&gt; filename:string -&gt; unit -&gt; unit
 </code></pre>
 <p><em>For more info about the options, see the <a href="../getting-started/">getting started</a> example.</em></p>
 <p>For reference, here is the generated source code after running <code>ocamlformat</code>.</p>
-<pre><code class="language-ocaml">let filter_opt l = List.filter_map Fun.id l
-
-module Plotter : sig
+<pre><code class="language-ocaml">module Plotter : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -&gt; t
@@ -253,6 +251,8 @@ module Plotter : sig
 
   val save : t -&gt; filename:string -&gt; unit -&gt; unit
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module &quot;plotter&quot;
 
   type t = Pytypes.pyobject
