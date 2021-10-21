@@ -195,7 +195,7 @@
 <h2 id="nesting">Nesting</h2>
 <p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
 <p>E.g., <code>'a array list</code> will fail.</p>
-<p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s however.</p>
+<p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s (e.g., <code>'a option list</code>); however, this will not work with <code>Or_error.t</code>.</p>
 <h2 id="dictionaries">Dictionaries</h2>
 <p>TODO mention the hack for Python dictionaries...</p>
 <h2 id="tuples">Tuples</h2>
