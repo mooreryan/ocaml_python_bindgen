@@ -219,6 +219,7 @@ class Plotter:
 <pre><code class="language-ocaml">val plot : t -&gt; x:float list -&gt; y:float list -&gt; ?color:string -&gt; unit -&gt; unit
 </code></pre>
 <p>Not bad!  You just make it like any old OCaml optional argument.</p>
+<p><em>Note that while we used <code>float list</code> for <code>x</code> and <code>y</code> here, you may want to use <code>float array</code> instead.</em></p>
 <h3 id="save">save</h3>
 <p>Finally, the <code>save</code> function.  Nothing new to talk about so I'll just put down the spec.</p>
 <pre><code class="language-ocaml">val save : t -&gt; filename:string -&gt; unit -&gt; unit
