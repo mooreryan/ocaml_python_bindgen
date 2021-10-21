@@ -107,6 +107,34 @@ let%expect_test _ =
   [%expect {| (Ok (List (Custom Span.t))) |}]
 
 let%expect_test _ =
+  print_string_or_error @@ Otype.parse "int array";
+  [%expect {| (Ok (Array Int)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "float array";
+  [%expect {| (Ok (Array Float)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "string array";
+  [%expect {| (Ok (Array String)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "bool array";
+  [%expect {| (Ok (Array Bool)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "unit array";
+  [%expect {| (Ok (Array Unit)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "t array";
+  [%expect {| (Ok (Array T)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Span.t array";
+  [%expect {| (Ok (Array (Custom Span.t))) |}]
+
+let%expect_test _ =
   print_string_or_error @@ Otype.parse "Span.t thingy";
   [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
 
@@ -168,6 +196,34 @@ let%expect_test "Converting list types" =
       (Ok "Py.List.to_list_map Py.Bool.to_bool") (Ok "Py.List.to_list_map ignore")
       (Ok "Py.List.to_list_map of_pyobject")
       (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
+      (Error
+       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+
+let%expect_test "Converting array types" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int array";
+      "float array";
+      "string array";
+      "bool array";
+      "unit array";
+      "t array";
+      "Apple_pie.t array";
+      "array array";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+     ((Ok "Py.List.to_array_map Py.Int.to_int")
+      (Ok "Py.List.to_array_map Py.Float.to_float")
+      (Ok "Py.List.to_array_map Py.String.to_string")
+      (Ok "Py.List.to_array_map Py.Bool.to_bool")
+      (Ok "Py.List.to_array_map ignore") (Ok "Py.List.to_array_map of_pyobject")
+      (Ok "Py.List.to_array_map Apple_pie.of_pyobject")
       (Error
        "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
 
@@ -260,10 +316,13 @@ let%expect_test "Converting triples fails" =
   let specs =
     [
       (* For now, some triples don't parse. *)
+      "int Or_error.t array";
       "int Or_error.t list";
       "int Or_error.t Seq.t";
+      "int array option";
       "int list option";
       "int Seq.t option";
+      "int array Or_error.t";
       "int list Or_error.t";
       "int Seq.t Or_error.t";
     ]
@@ -273,6 +332,9 @@ let%expect_test "Converting triples fails" =
   [%expect
     {|
      ((Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
@@ -317,6 +379,56 @@ let%expect_test "Converting option list" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.to_list_map of_pyobject")
      (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
+     (Error
+      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error
+      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+
+let%expect_test "Converting option array" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int option array";
+      "float option array";
+      "string option array";
+      "bool option array";
+      "unit option array";
+      "t option array";
+      "Apple_pie.t option array";
+      "option option array";
+      "int array option";
+      "float array option";
+      "string array option";
+      "bool array option";
+      "unit array option";
+      "t array option";
+      "Apple_pie.t array option";
+      "option array option";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+    ((Ok
+      "Py.List.to_array_map (fun x -> if Py.is_none x then None else Some (Py.Int.to_int x))")
+     (Ok
+      "Py.List.to_array_map (fun x -> if Py.is_none x then None else Some (Py.Float.to_float x))")
+     (Ok
+      "Py.List.to_array_map (fun x -> if Py.is_none x then None else Some (Py.String.to_string x))")
+     (Ok
+      "Py.List.to_array_map (fun x -> if Py.is_none x then None else Some (Py.Bool.to_bool x))")
+     (Error (Failure "Can't have unit option"))
+     (Ok "Py.List.to_array_map of_pyobject")
+     (Ok "Py.List.to_array_map Apple_pie.of_pyobject")
      (Error
       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
      (Error "Parsing Otype failed... : end_of_input")
@@ -421,6 +533,35 @@ let%expect_test "Converting list types" =
       (Error
        "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
 
+let%expect_test "Converting array types" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int array";
+      "float array";
+      "string array";
+      "bool array";
+      "unit array";
+      "t array";
+      "Apple_pie.t array";
+      "array array";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect
+    {|
+     ((Ok "Py.List.of_array_map Py.Int.of_int")
+      (Ok "Py.List.of_array_map Py.Float.of_float")
+      (Ok "Py.List.of_array_map Py.String.of_string")
+      (Ok "Py.List.of_array_map Py.Bool.of_bool")
+      (Error (Failure "Can't use unit here"))
+      (Ok "Py.List.of_array_map to_pyobject")
+      (Ok "Py.List.of_array_map Apple_pie.to_pyobject")
+      (Error
+       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+
 let%expect_test "Converting Seq.t types" =
   let print x =
     print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
@@ -510,10 +651,13 @@ let%expect_test "Converting triples fails" =
   let specs =
     [
       (* For now, some triples don't parse. *)
+      "int Or_error.t array";
       "int Or_error.t list";
       "int Or_error.t Seq.t";
+      "int array option";
       "int list option";
       "int Seq.t option";
+      "int array Or_error.t";
       "int list Or_error.t";
       "int Seq.t Or_error.t";
     ]
@@ -523,6 +667,9 @@ let%expect_test "Converting triples fails" =
   [%expect
     {|
      ((Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
+      (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
       (Error "Parsing Otype failed... : end_of_input")
@@ -567,6 +714,56 @@ let%expect_test "Converting option list" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.of_list_map to_pyobject")
      (Ok "Py.List.of_list_map Apple_pie.to_pyobject")
+     (Error
+      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error
+      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+
+let%expect_test "Converting option array" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int option array";
+      "float option array";
+      "string option array";
+      "bool option array";
+      "unit option array";
+      "t option array";
+      "Apple_pie.t option array";
+      "option option array";
+      "int array option";
+      "float array option";
+      "string array option";
+      "bool array option";
+      "unit array option";
+      "t array option";
+      "Apple_pie.t array option";
+      "option array option";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect
+    {|
+    ((Ok
+      "Py.List.of_array_map (function Some x -> Py.Int.of_int x | None -> Py.none)")
+     (Ok
+      "Py.List.of_array_map (function Some x -> Py.Float.of_float x | None -> Py.none)")
+     (Ok
+      "Py.List.of_array_map (function Some x -> Py.String.of_string x | None -> Py.none)")
+     (Ok
+      "Py.List.of_array_map (function Some x -> Py.Bool.of_bool x | None -> Py.none)")
+     (Error (Failure "Can't have unit option"))
+     (Ok "Py.List.of_array_map to_pyobject")
+     (Ok "Py.List.of_array_map Apple_pie.to_pyobject")
      (Error
       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
      (Error "Parsing Otype failed... : end_of_input")

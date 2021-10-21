@@ -10,6 +10,7 @@ type t =
   | Unit
   | T
   | Custom of string
+  | Array of t
   | List of t
   | Seq of t
   (* The option and or_error variants are a little different...the oarg will
@@ -38,12 +39,14 @@ module P = struct
   let string_ = string "string" <?> "string parser"
   let bool = string "bool" <?> "bool parser"
   let unit = string "unit" <?> "unit parser"
+  let array = string "array" <?> "array parser"
   let list = string "list" <?> "list parser"
   let seq = string "Seq.t" <?> "seq parser"
   let option = string "option" <?> "option parser"
   let or_error = string "Or_error.t" <?> "or_error parser"
 
   (* We allow stuff like [int option list] *)
+  let option_array = string "option array" <?> "option_array parser"
   let option_list = string "option list" <?> "option_list parser"
   let option_seq = string "option Seq.t" <?> "option_seq parser"
 
@@ -105,8 +108,10 @@ module P = struct
           "Second token wasn't list, option, Or_error.t, Seq.t, 'option list', \
            or 'option Seq.t'"
         [
+          lift (fun _ -> Array (Option t)) option_array;
           lift (fun _ -> List (Option t)) option_list;
           lift (fun _ -> Seq (Option t)) option_seq;
+          lift (fun _ -> Array t) array;
           lift (fun _ -> List t) list;
           lift (fun _ -> Seq t) seq;
           lift (fun _ -> Option t) option;
@@ -125,7 +130,8 @@ end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
 
-(* Convert py types to ocaml types. *)
+(* Convert py types to ocaml types. TODO disallow nested mixed compound
+   types. *)
 let rec py_to_ocaml = function
   | Int -> "Py.Int.to_int"
   | Float -> "Py.Float.to_float"
@@ -141,6 +147,10 @@ let rec py_to_ocaml = function
   | Custom s ->
       let name = custom_module_name s in
       [%string "%{name}.of_pyobject"]
+  | Array t -> (
+      match t with
+      | Array _ -> failwith "Can't have nested arrays"
+      | t -> "Py.List.to_array_map " ^ py_to_ocaml t)
   | List t -> (
       match t with
       | List _ -> failwith "Can't have nested lists"
@@ -154,7 +164,8 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | List _ | Seq _ | Or_error _ -> "only basic types can be options"
+      | Array _ | List _ | Seq _ | Or_error _ ->
+          "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string
             "(fun x -> if Py.is_none x then None else Some (%{py_to_ocaml t} \
@@ -164,7 +175,7 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
 
-(* Convert ocaml types to py types. *)
+(* Convert ocaml types to py types. TODO disallow mismatched compound types. *)
 let rec py_of_ocaml = function
   | Int -> "Py.Int.of_int"
   | Float -> "Py.Float.of_float"
@@ -178,6 +189,10 @@ let rec py_of_ocaml = function
   | Custom s ->
       let name = custom_module_name s in
       [%string "%{name}.to_pyobject"]
+  | Array t -> (
+      match t with
+      | Array _ -> failwith "Can't have nested arrays"
+      | t -> "Py.List.of_array_map " ^ py_of_ocaml t)
   | List t -> (
       match t with
       | List _ -> failwith "Can't have nested lists"
@@ -191,7 +206,8 @@ let rec py_of_ocaml = function
       | T | Custom _ -> py_of_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | List _ | Seq _ | Or_error _ -> "only basic types can be options"
+      | Array _ | List _ | Seq _ | Or_error _ ->
+          "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])
   | Or_error t -> (
