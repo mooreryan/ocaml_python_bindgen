@@ -18,7 +18,6 @@ nav:
     - Class & Static Methods: static-methods.md
   - Miscellaneous:
     - Converting `pyobjects` to OCaml types: of-pyobject.md
-    - You can only bind methods, not functions: no-functions.md
     - Handling Tuples: tuples.md
     - Gotchas & Known Bugs: gotchas-bugs.md
 theme:
