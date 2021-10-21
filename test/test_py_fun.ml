@@ -291,6 +291,7 @@ let f () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+(* TODO recheck this test! *)
 (* let%test_unit "attribute returning option_list" =
  *   let val_spec =
  *     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> "
@@ -470,26 +471,19 @@ let%test_unit "everything else CAN return unit" =
       "val f : a:int -> unit -> unit";
     ]
 
-let%test_unit "unit can be in a list or seq return type" =
+let%test_unit "unit can be in a array, list or seq return type" =
   assert_pyml_impls_are Or_error.is_ok
     [
+      "val f : t -> unit array";
       "val f : t -> unit list";
       "val f : t -> unit Seq.t";
+      "val f : unit -> unit array";
       "val f : unit -> unit list";
       "val f : unit -> unit Seq.t";
     ]
 
-(* It's brittle, but these actually throw rather than return Or_error. *)
-let%test_unit "unit can't be in an option or or_error return type" =
-  assert_pyml_impls_throw
-    [
-      "val f : t -> unit option";
-      "val f : unit -> unit option";
-      "val f : t -> unit Or_error.t";
-      "val f : unit -> unit Or_error.t";
-    ]
-
-let%test_unit "unit can be in Seq.t or list in return types" =
+(* TODO can i merge this test with the one above? *)
+let%test_unit "unit can be in Seq.t or list or array in return types" =
   assert_pyml_impls_are Or_error.is_ok
     [
       (* seq *)
@@ -504,6 +498,22 @@ let%test_unit "unit can be in Seq.t or list in return types" =
       "val f : unit -> unit list";
       "val f : t -> a:int -> unit -> unit list";
       "val f : a:int -> unit -> unit list";
+      (* array *)
+      "val f : t -> unit array";
+      "val f : t -> unit -> unit array";
+      "val f : unit -> unit array";
+      "val f : t -> a:int -> unit -> unit array";
+      "val f : a:int -> unit -> unit array";
+    ]
+
+(* It's brittle, but these actually throw rather than return Or_error. *)
+let%test_unit "unit can't be in an option or or_error return type" =
+  assert_pyml_impls_throw
+    [
+      "val f : t -> unit option";
+      "val f : unit -> unit option";
+      "val f : t -> unit Or_error.t";
+      "val f : unit -> unit Or_error.t";
     ]
 
 let%test_unit "unit cannot be in args in functions that aren't 'no arg' python \
@@ -581,6 +591,33 @@ let%test_unit "but one arg positional only class methods not are okay" =
 let%test_unit "these were once bugs..." =
   assert_pyml_impls_are Or_error.is_ok
     [ "val foo : x:Tup_int_string.t -> unit -> unit" ]
+
+let%test_unit "option arrays usage that is okay" =
+  assert_pyml_impls_are Or_error.is_ok
+    [
+      "val f : t -> a:int option array -> unit -> int option array";
+      "val f : t -> a:float option array -> unit -> float option array";
+      "val f : t -> a:string option array -> unit -> int option array";
+      "val f : t -> a:bool option array -> unit -> bool option array";
+      "val f : t -> a:t option array -> unit -> t option array";
+      "val f : t -> a:Apple_pie.t option array -> unit -> Apple_pie.t option \
+       array";
+    ]
+
+let%test_unit "option arrays usage that is NOT okay" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : t -> a:int array option -> unit -> int array option";
+      "val f : t -> a:float array option -> unit -> float array option";
+      "val f : t -> a:string array option -> unit -> int array option";
+      "val f : t -> a:bool array option -> unit -> bool array option";
+      "val f : t -> a:t array option -> unit -> t array option";
+      "val f : t -> a:Apple_pie.t array option -> unit -> Apple_pie.t option \
+       array";
+    ]
+
+let%test_unit "option arrays usage that throws" =
+  assert_pyml_impls_throw [ "val f : t -> unit option array" ]
 
 let%test_unit "option lists usage that is okay" =
   assert_pyml_impls_are Or_error.is_ok
