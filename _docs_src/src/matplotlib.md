@@ -91,8 +91,6 @@ $ pyml_bindgen val_specs.txt plotter Plotter --caml-module=Plotter --of-pyo-ret-
 For reference, here is the generated source code after running `ocamlformat`.
 
 ```ocaml
-let filter_opt l = List.filter_map Fun.id l
-
 module Plotter : sig
   type t
 
@@ -108,6 +106,8 @@ module Plotter : sig
 
   val save : t -> filename:string -> unit -> unit
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module "plotter"
 
   type t = Pytypes.pyobject

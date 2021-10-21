@@ -40,8 +40,6 @@ Run
   $ if [ -f lib.ml ]; then rm lib.ml; fi
   $ pyml_bindgen sigs_no_check.txt silly Silly -c Silly -r no_check -a module > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
-  let filter_opt l = List.filter_map Fun.id l
-  
   module Silly : sig
     type t
   
@@ -53,6 +51,8 @@ Run
   
     val do_nothing : unit -> unit
   end = struct
+    let filter_opt l = List.filter_map Fun.id l
+  
     let import_module () = Py.Import.import_module "silly"
   
     type t = Pytypes.pyobject

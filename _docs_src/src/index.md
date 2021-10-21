@@ -76,8 +76,6 @@ $ ocamlformat --enable-outside-detected-project lib.ml
 And here's the output of the `ocamlformat` command.
 
 ```ocaml
-let filter_opt l = List.filter_map Fun.id l
-
 module Thing : sig
   type t
 
@@ -91,6 +89,8 @@ module Thing : sig
 
   val add : t -> y:int -> unit -> int
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module "thing"
 
   type t = Pytypes.pyobject

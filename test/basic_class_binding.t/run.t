@@ -11,8 +11,6 @@ of_pyobject with no check
   $ if [ -f lib.ml ]; then rm lib.ml; fi
   $ pyml_bindgen sigs_no_check.txt silly Silly --caml-module=Silly --of-pyo-ret-type=no_check > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
-  let filter_opt l = List.filter_map Fun.id l
-  
   module Silly : sig
     type t
   
@@ -43,6 +41,8 @@ of_pyobject with no check
   
     val do_nothing2 : unit -> unit
   end = struct
+    let filter_opt l = List.filter_map Fun.id l
+  
     let import_module () = Py.Import.import_module "silly"
   
     type t = Pytypes.pyobject
@@ -151,8 +151,6 @@ of_pyobject returning option
   $ if [ -f lib.ml ]; then rm lib.ml; fi
   $ pyml_bindgen sigs_option.txt silly Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
-  let filter_opt l = List.filter_map Fun.id l
-  
   module Silly : sig
     type t
   
@@ -183,6 +181,8 @@ of_pyobject returning option
   
     val do_nothing2 : unit -> unit
   end = struct
+    let filter_opt l = List.filter_map Fun.id l
+  
     let import_module () = Py.Import.import_module "silly"
   
     type t = Pytypes.pyobject
@@ -297,8 +297,6 @@ of_pyobject returning Or_error
   $ ocamlformat --enable-outside-detected-project lib.ml
   open! Base
   
-  let filter_opt = List.filter_opt
-  
   module Silly : sig
     type t
   
@@ -329,6 +327,8 @@ of_pyobject returning Or_error
   
     val do_nothing2 : unit -> unit
   end = struct
+    let filter_opt = List.filter_opt
+  
     let import_module () = Py.Import.import_module "silly"
   
     type t = Pytypes.pyobject

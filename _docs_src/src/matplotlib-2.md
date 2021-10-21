@@ -84,8 +84,6 @@ We use `-a class` to specify that we want to generate class-associated methods. 
 
 For both invocations, we pipe the output directly to `ocamlformat`.
 
-For now, `pyml_bindgen` always generates the `filter_opt` helper function.  If you're generating multiple modules and concatenating them, you'll have to delete the function by hand or with `grep` or something.  In our case, I use `grep` to remove the line from the `Figure` generating command.  In later versions, you will be able to control this from the command line.
-
 ### Run `pyml_bindgen`
 
 Here are the commands.
@@ -98,7 +96,6 @@ pyml_bindgen axes_specs.txt matplotlib.axes Axes --caml-module Axes -a class \
 printf "\n" >> py_class.ml
 
 pyml_bindgen figure_specs.txt matplotlib.figure Figure --caml-module Figure -a class \
-  | grep -v 'let filter_opt' \
   | ocamlformat --enable-outside-detected-project --name=a.ml - \
   >> py_class.ml
 ```
@@ -144,8 +141,6 @@ Here is a patch showing the change I mean
 Here's the whole of the generated output including the patch.
 
 ```ocaml
-let filter_opt l = List.filter_map Fun.id l
-
 module Axes : sig
   type t
 
@@ -157,6 +152,8 @@ module Axes : sig
 
   val plot : t -> x:float list -> y:float list -> ?color:string -> unit -> unit
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module "matplotlib.axes"
 
   type t = Pytypes.pyobject
@@ -202,6 +199,8 @@ module Figure : sig
 
   val savefig : t -> fname:string -> unit -> unit
 end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
   let import_module () = Py.Import.import_module "matplotlib.figure"
 
   type t = Pytypes.pyobject
