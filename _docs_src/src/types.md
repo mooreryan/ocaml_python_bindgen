@@ -28,7 +28,7 @@ Note: currently, you're not allowed to have **nested** `array`, `list`, `Seq.t`,
 
 E.g., `'a array list` will fail.
 
-You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s however.
+You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a option list`); however, this will not work with `Or_error.t`.
 
 ## Dictionaries
 
