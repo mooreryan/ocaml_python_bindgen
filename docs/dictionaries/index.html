@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ryan M. Moore">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/dictionaries/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Handling Dictionaries - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Handling Dictionaries";
+    var mkdocs_page_input_path = "dictionaries.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/dictionaries/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/ocaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+<meta property="og:site_name" content="Handling Dictionaries - pyml_bindgen -- OCaml-Python Bindings Generator" />
+
+<meta property="og:type" content="website">
+
+<meta property="og:title" content="Handling Dictionaries - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+<meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/dictionaries/">
+
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Handling Dictionaries - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+  
+
+  
+
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> pyml_bindgen -- OCaml-Python Bindings Generator</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">pyml_bindgen</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib-2/">Matplotlib Example 2</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Handling Dictionaries</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#write-val-specs">Write val specs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#generate-bindings">Generate bindings</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#finish-the-dict-module">Finish the Dict module</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#setup-dune-project-run">Setup Dune project &amp; run</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#wrap-up">Wrap-up</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Rules</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../static-methods/">Class & Static Methods</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Miscellaneous</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">pyml_bindgen -- OCaml-Python Bindings Generator</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Examples & Tutorials &raquo;</li>
+        
+      
+    
+    <li>Handling Dictionaries</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/dictionaries.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="handling-python-dictionaries">Handling Python Dictionaries</h1>
+<p>Let's see how to handle Python <code>Dictionaries</code>.  For now, you need to define a module that has a couple of functions.  For now, we will call it <code>Dict</code>.  You can use a signature or <code>mli</code> file if you want, but to keep it simple, we will leave it out for now.</p>
+<p>Stick the following code in a file called <code>dict.ml</code></p>
+<pre><code class="language-ocaml">type t = Pytypes.pyobject
+
+let to_pyobject x = x
+let of_pyobject x = x
+</code></pre>
+<p>Technically, that would be all you need, but it's not very easy to work with...you would have to create all your own <code>pyobjects</code> by hand.  Yuck!</p>
+<p>The next thing you need is to decide what kind of interface you want your <code>Dict.t</code> to have.  By that I just mean that it would be nice to have a convenient way to get standard "dictionary-like" types into <code>Dict.t</code>.  In this tutorial, we will look at three: an association list, and <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html">Base's</a> <code>Map</code> and <code>Hashtbl</code>.</p>
+<p>Of course, you may want to use something different, and that will work just fine after you see how to do it.</p>
+<h2 id="write-val-specs">Write val specs</h2>
+<p>But first we should look at the Python code we are planning to bind.</p>
+<p><code>silly_map.py</code></p>
+<pre><code class="language-python">def add(d, k, v):
+    d[k] = v
+
+def get(d, k):
+    return d[k]
+</code></pre>
+<p>Just two functions to define a weird little map module: <code>add</code> and <code>get</code>, both of which take a <code>dictionary</code> as their first argument.  The Python dictionary can have pretty much any types for keys and values, but we are going to use it as a <code>string =&gt; string</code> map.  You should choose whatever types make sense for your particular use case.</p>
+<p>Here are the value specs to bind these functions.</p>
+<pre><code class="language-ocaml">val add : d:Dict.t -&gt; k:string -&gt; v:string -&gt; unit -&gt; unit
+val get : d:Dict.t -&gt; k:string -&gt; unit -&gt; string
+</code></pre>
+<h2 id="generate-bindings">Generate bindings</h2>
+<p>Now, let's generate our library code.</p>
+<pre><code>$ pyml_bindgen val_specs.txt silly_map NA \
+  --caml-module=Silly_map -a module -r no_check \
+  | ocamlformat --enable - --name=x.ml \
+  &gt; lib.ml
+</code></pre>
+<p>See that weird <code>NA</code> in the command?  That's because you currently have to pass in a Python class name, even if you are binding module functions.</p>
+<p>The generated OCaml module will be <code>Silly_map</code>.  The other flags specify that we want to bind module associated code and not code associated with a class (<code>-a module</code>), and that we don't want to check the results of any converting code (<code>-r no_check</code>).</p>
+<p>*Note:  For more info on <code>pyml_bindgen</code> CLI args, see <a href="http://localhost:8000/getting-started/#running-pyml_bindgen">here</a>.</p>
+<p>Here's what the generated code looks like:</p>
+<pre><code class="language-ocaml">module Silly_map : sig
+  type t
+
+  val of_pyobject : Pytypes.pyobject -&gt; t
+
+  val to_pyobject : t -&gt; Pytypes.pyobject
+
+  val add : d:Dict.t -&gt; k:string -&gt; v:string -&gt; unit -&gt; unit
+
+  val get : d:Dict.t -&gt; k:string -&gt; unit -&gt; string
+end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
+  let import_module () = Py.Import.import_module &quot;silly_map&quot;
+
+  type t = Pytypes.pyobject
+
+  let of_pyobject pyo = pyo
+
+  let to_pyobject x = x
+
+  let add ~d ~k ~v () =
+    let callable = Py.Module.get (import_module ()) &quot;add&quot; in
+    let kwargs =
+      filter_opt
+        [
+          Some (&quot;d&quot;, Dict.to_pyobject d);
+          Some (&quot;k&quot;, Py.String.of_string k);
+          Some (&quot;v&quot;, Py.String.of_string v);
+        ]
+    in
+    ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+
+  let get ~d ~k () =
+    let callable = Py.Module.get (import_module ()) &quot;get&quot; in
+    let kwargs =
+      filter_opt
+        [ Some (&quot;d&quot;, Dict.to_pyobject d); Some (&quot;k&quot;, Py.String.of_string k) ]
+    in
+    Py.String.to_string
+    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+end
+</code></pre>
+<h2 id="finish-the-dict-module">Finish the <code>Dict</code> module</h2>
+<p>Okay, now that we know a little more about the Python code and our desired interface for the <code>Silly_map</code> module, let's return to the <code>Dict</code> module and fill it out.  Here's the whole thing.  Jump down for some explanations.</p>
+<pre><code class="language-ocaml">open! Base
+
+type t = Pytypes.pyobject
+
+let to_pyobject x = x
+let of_pyobject x = x
+
+let empty () = Py.Dict.create ()
+
+let of_alist x =
+  Py.Dict.of_bindings_map Py.String.of_string Py.String.of_string x
+let to_alist x =
+  Py.Dict.to_bindings_map Py.String.to_string Py.String.to_string x
+
+let of_map x = of_alist @@ Map.to_alist x
+let to_map x = Map.of_alist_exn (module String) @@ to_alist x
+
+let of_hashtbl x = of_alist @@ Hashtbl.to_alist x
+let to_hashtbl x = Hashtbl.of_alist_exn (module String) @@ to_alist x
+
+let print_endline x =
+  Stdio.print_endline @@ Sexp.to_string_hum
+  @@ [%sexp_of: (string * string) list] @@ to_alist x
+</code></pre>
+<p><code>of_alist</code> and <code>to_alist</code> let us connect the <code>Dict</code> module with association lists.</p>
+<p>The <code>Py.Dict.of_bindings_map</code> function takes two functions used to convert OCaml values to Python values, and the association list.  In this case, we're passing in strings, so we use <code>Py.String.of_string</code> to convert an OCaml <code>string</code> to a <code>Pytypes.pyobject</code>.  The <code>to_bindings_map</code> works in an analogous way.</p>
+<p><em>Note: For more info on writing pyml bindings, check out the <a href="https://github.com/thierry-martinez/pyml/blob/master/py.mli">py.mli</a> signature file.</em></p>
+<p>Next, the <code>of/to_map</code> and <code>of/to_hashtbl</code> functions are pretty simple.  Both <code>Map</code> and <code>Hashtbl</code> modules have a <code>of/to_alist</code> functions.  So, we just call the function to convert to/from an association list, then call the matching <code>Dict.of/to_alist</code> function.</p>
+<p>Finally, I threw in a printing function that uses <a href="https://github.com/janestreet/ppx_sexp_conv">sexp_of</a> to convert the <code>alist</code> to a sexp, then print it.</p>
+<h2 id="setup-dune-project-run">Setup Dune project &amp; run</h2>
+<p>Now we're ready to set up a Dune project and write a driver to run the generated code.  Save these two files in the same directory in as the other files.</p>
+<p><code>dune</code></p>
+<pre><code>(executable
+ (name run)
+ (libraries base pyml stdio)
+ (preprocess (pps ppx_jane)))
+</code></pre>
+<p><code>run.ml</code></p>
+<pre><code class="language-ocaml">open! Base
+open Lib
+open Stdio
+
+let () = Py.initialize ()
+
+let d = Dict.empty ()
+
+let () = Silly_map.add ~d ~k:&quot;apple&quot; ~v:&quot;pie&quot; ()
+let () = Silly_map.add ~d ~k:&quot;is&quot; ~v:&quot;good&quot; ()
+
+let () = print_endline @@ Silly_map.get ~d ~k:&quot;apple&quot; ()
+let () = print_endline @@ Silly_map.get ~d ~k:&quot;is&quot; ()
+
+(* Another example. *)
+
+let () = print_endline &quot;~~~~~~~~~~~~~~~~~~~~~~~~~~&quot;
+let () =
+  print_endline
+  @@ Silly_map.get ~d:(Dict.of_alist [ (&quot;apple&quot;, &quot;pie&quot;) ]) ~k:&quot;apple&quot; ()
+
+(* Base.Map *)
+
+let () = print_endline &quot;~~~~~~~~~~~~~~~~~~~~~~~~~~&quot;
+let m = Map.of_alist_exn (module String) [ (&quot;apple&quot;, &quot;pie&quot;) ]
+let d = Dict.of_map m
+let () = Silly_map.add ~d ~k:&quot;is&quot; ~v:&quot;good&quot; ()
+let () = Dict.print_endline d
+
+(* Base.Hashtbl *)
+
+let () = print_endline &quot;~~~~~~~~~~~~~~~~~~~~~~~~~~&quot;
+let ht = Hashtbl.of_alist_exn (module String) [ (&quot;apple&quot;, &quot;pie&quot;) ]
+let d = Dict.of_hashtbl ht
+let () = Silly_map.add ~d ~k:&quot;is&quot; ~v:&quot;good&quot; ()
+let () = Dict.print_endline d
+</code></pre>
+<p>Run it like so:</p>
+<pre><code>$ dune exec ./run.exe
+</code></pre>
+<p>If all goes well, you should see some zany output like this:</p>
+<pre><code>pie
+good
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+pie
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+((apple pie) (is good))
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+((apple pie) (is good))
+</code></pre>
+<h2 id="wrap-up">Wrap-up</h2>
+<p>In this tutorial, we went over a couple of ways to handle Python Dictionaries.  A lot of times, you will need to pass a dictionary to a Python function or return one from a Python function.  Hopefully, you have a good idea of how to do this now!</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../matplotlib-2/" class="btn btn-neutral" title="Matplotlib Example 2"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/mooreryan/ocaml_python_bindgen/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../matplotlib-2/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
