@@ -10,6 +10,7 @@ nav:
     - Getting Started: getting-started.md
     - Matplotlib Example: matplotlib.md
     - Matplotlib Example 2: matplotlib-2.md
+    - Handling Dictionaries: dictionaries.md
   - Rules:
     - Types: types.md
     - Function & Argument Names: names.md
