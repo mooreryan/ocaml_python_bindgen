@@ -1,5 +1,7 @@
 # Handling Python Dictionaries
 
+*Note: This is a simpler way to handle dictionaries.  For a more general, but more complicated way, see [here](dictionaries-2.md).*
+
 Let's see how to handle Python `Dictionaries`.  For now, you need to define a module that has a couple of functions.  For now, we will call it `Dict`.  You can use a signature or `mli` file if you want, but to keep it simple, we will leave it out for now.
 
 Stick the following code in a file called `dict.ml`
