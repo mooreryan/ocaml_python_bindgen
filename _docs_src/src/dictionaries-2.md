@@ -297,6 +297,8 @@ let () =
   print_s @@ [%sexp_of: (int * string list) list] @@ alist
 ```
 
+Check out how we can use a regular `string list` for the `v` argument to `Weird_dict.add` even though we specified the type as `String_list.t`.  Same thing goes for the return type of the `get` function.  It "just works" because of the way we set up the functors earlier.  Nice!
+
 Run it, and if all goes well, you should see something like this:
 
 ```
