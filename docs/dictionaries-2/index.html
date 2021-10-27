@@ -415,6 +415,7 @@ let () =
   let alist = Int_string_list_dict.to_alist d in
   print_s @@ [%sexp_of: (int * string list) list] @@ alist
 </code></pre>
+<p>Check out how we can use a regular <code>string list</code> for the <code>v</code> argument to <code>Weird_dict.add</code> even though we specified the type as <code>String_list.t</code>.  Same thing goes for the return type of the <code>get</code> function.  It "just works" because of the way we set up the functors earlier.  Nice!</p>
 <p>Run it, and if all goes well, you should see something like this:</p>
 <pre><code>$ dune exec ./run.exe
 ((apple 10) (pie 3))
