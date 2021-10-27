@@ -1,5 +1,7 @@
 # Handling Tuples
 
+*Note:  You can find in-depth examples of binding dictionaries [here](dictionaries.md) and [here](dictionaries-2.md).  A lot of the same ideas apply to tuples, and they are currently better explained in those links!*
+
 Tuples are sort of weird....As of now, `pyml_bindgen` can't handle tuples directly :(
 
 For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.  *(Or just write the binding by hand...)*

@@ -38,7 +38,7 @@ OCaml:
 val __init__ : x:int -> unit -> t
 ```
 
-The other thing to note is that the last argument to method bindings must be `unit`.  See [here](todo.md) for more about why that is.
+The other thing to note is that the last argument to method bindings must be `unit`.  This is mainly an artifact of the parsing and code generators, and may change in the future.
 
 ## Binding instance methods
 
@@ -60,8 +60,6 @@ val add : t -> y:int -> unit -> int
 *The [instance methods](instance-methods.md) section has more info on binding instance methods.*
 
 ## Binding static methods
-
-TODO: we only have tests for static methods, but class methods *should* be the same...check it!
 
 Python static methods are methods associated with a class, but that don't have access to class-wide state, or access to object state.  You can still call them on either instances of a class or the class itself, but it won't have access to any of that internal state.
 
@@ -111,7 +109,7 @@ $ pyml_bindgen val_specs.txt thing Thing --caml-module=Thing --of-pyo-ret-type=n
 * The `--caml-module=Thing` option tells `pyml_bindgen` to generate a module and signature called `Thing` based on the val specs you provided.  If you leave this flag out, `pyml_bindgen` will just generate the implementations that you can manually add where you want.
 * The `--of-pyo-ret-type=no_check` argument tells `pyml_bindgen` not to check that the Python class is what you expect it to be.  If there is some weird bug in the Python, or a mistake in your bindings, you'll get a runtime error!  The other options for this are `option` and `or_error`, which will check that Python classes are correct, but you'll have to deal with the possibility of error explicitly.
 
-*For more info on `pyml_bindgen` options, see [here](todo.md).*
+*For more info on `pyml_bindgen` options, see [here](cli-options.md).*
 
 I ran `lib.ml` through `ocamlformat` so it's easier to read here, but of course, that's optional!
 

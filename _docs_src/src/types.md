@@ -1,6 +1,6 @@
 # Types
 
-Not all OCaml types are allowed.  
+Not all OCaml types are allowed.
 
 There are a lot of [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/test) that exercise the rules here.
 
@@ -30,10 +30,8 @@ E.g., `'a array list` will fail.
 
 You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a option list`); however, this will not work with `Or_error.t`.
 
-## Dictionaries
+## Dictionaries & Tuples
 
-TODO mention the hack for Python dictionaries...
+See [here](dictionaries.md) and [here](dictionaries-2.md) for examples of binding dictionaries.
 
-## Tuples
-
-Tuples are a little weird in `pyml_bindgen`.  If you need to pass or return tuples to Python functions, see [here](todo.md).
+If you need to pass or return tuples to Python functions, see [here](tuples.md); however, the same ideas apply to tuples as are covered in the above links for dictionaries.

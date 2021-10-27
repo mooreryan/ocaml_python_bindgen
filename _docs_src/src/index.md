@@ -6,7 +6,7 @@ main: true
 
 <!-- [![Build and Test](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml) [![Build and Test Static](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml) [![Generate Docs](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml) -->
 
-[![code on GitHub](https://img.shields.io/badge/code-GitHub-blue)](https://github.com/mooreryan/ocaml_python_bindgen) 
+[![code on GitHub](https://img.shields.io/badge/code-GitHub-blue)](https://github.com/mooreryan/ocaml_python_bindgen)
 
 <!-- [![GitHub issues](https://img.shields.io/github/issues/mooreryan/ocaml_python_bindgen)](https://github.com/mooreryan/ocaml_python_bindgen/issues)  -->
 
@@ -22,7 +22,7 @@ Getting started with a new package or library and going through lots of docs can
 
 * Read the installing and quick start sections of this page.
 * Then read through the [getting started](getting-started.md) tutorial.  If you only read one page in the docs, make it this one!  It explains most of what you need to know to get started with a simple example, while not getting bogged down in too much details.
-* Next, you can either peruse the [rules](todo.md) for writing value specifications that `pyml_bindgen` can understand, or check out [more examples](todo.md).
+* Next, you can either peruse the rules for writing value specifications that `pyml_bindgen` can understand, or check out more examples.
 
 If you have any questions or issues, please [let me know](https://github.com/mooreryan/ocaml_python_bindgen/issues) about it on GitHub!
 
@@ -41,7 +41,7 @@ $ pyml_bindgen --help
 
 ## Quick start
 
-`pyml_bindgen` is a CLI program that generates OCaml modules that bind Python classes via [pyml](TODO).
+`pyml_bindgen` is a CLI program that generates OCaml modules that bind Python classes via [pyml](https://github.com/thierry-martinez/pyml).
 
 Here's a small example.  Take a Python class, `Thing`.  (Put it in a file called `thing.py`...this means the Python module will be called `thing`.)
 
@@ -56,7 +56,7 @@ class Thing:
 
 Now, look at your Python class and decide how you would like to use this class on the OCaml side.
 
-For now, we will just do a direct translation, keeping in mind the [rules](TODO) for writing value specs that `pyml_bindgen` can process.  Maybe something like this.  (Put it in a file called `val_specs.txt`.)
+For now, we will just do a direct translation, keeping in mind the rules for writing value specs that `pyml_bindgen` can process.  Maybe something like this.  (Put it in a file called `val_specs.txt`.)
 
 ```ocaml
 val __init__ : x:int -> unit -> t
@@ -117,7 +117,7 @@ end = struct
 end
 ```
 
-Check out the [examples](TODO) for more info about using and running `pyml_bindgen`.  Then, check out the [rules](TODO) that you have to follow when writing value specifications that `pyml_bindgen` can read.
+Check out the examples for more info about using and running `pyml_bindgen`.  Then, check out the rules that you have to follow when writing value specifications that `pyml_bindgen` can read.
 
 ## License
 

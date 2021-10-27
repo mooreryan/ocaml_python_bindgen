@@ -19,6 +19,7 @@ nav:
     - Instance Methods: instance-methods.md
     - Class & Static Methods: static-methods.md
   - Miscellaneous:
+    - CLI Options: cli-options.md
     - Converting `pyobjects` to OCaml types: of-pyobject.md
     - Handling Tuples: tuples.md
     - Gotchas & Known Bugs: gotchas-bugs.md

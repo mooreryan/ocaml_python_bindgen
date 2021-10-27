@@ -50,7 +50,7 @@ OCaml:
 val plot : t -> x:float list -> y:float list -> ?color:string -> unit -> unit
 ```
 
-This value spec will generate an `Axes.plot` function actually has a bug.  If you check the docs, you can't actually pass `x` and `y` as keyword arguments.  Oops!  You have to go in and edit the binding by hand.  Below, I will show a [patch file](TODO) with the changes you need to make.
+This value spec will generate an `Axes.plot` function actually has a bug.  If you check the docs, you can't actually pass `x` and `y` as keyword arguments.  Oops!  You have to go in and edit the binding by hand.  Below, I will show a [patch file](https://en.wikipedia.org/wiki/Patch_(Unix)) with the changes you need to make.
 
 You may be thinking, well, that's pretty annoying...I agree!  For this function, I would probably just write it by hand from the start.  I'm showing it here partly as a reminder that I want to change the behaviour of `pyml_bindgen` in a future release to handle methods like this one.  But for now, you have to deal with it yourself :)
 

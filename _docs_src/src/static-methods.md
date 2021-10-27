@@ -21,4 +21,21 @@ val subtract : x:int -> ?y:int -> unit -> int
 
 ## Binding `__init__`
 
-TODO
+`__init__` methods are called when constructing new Python objects.  Here is an example.
+
+Python:
+
+```python
+class Person:
+    def __init__(self, name, age):
+	    self.name = name
+        self.age = age
+```
+
+And the OCaml binding....
+
+```ocaml
+val __init__ : name:string -> age:int -> unit -> t
+```
+
+If you want to generate functions that ensure the class is correct, you can return `t option` or `t Or_error.t` instead.
