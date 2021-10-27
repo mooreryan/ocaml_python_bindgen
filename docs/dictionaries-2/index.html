@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ryan M. Moore">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/dictionaries-2/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Handling Dictionaries 2 - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Handling Dictionaries 2";
+    var mkdocs_page_input_path = "dictionaries-2.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/dictionaries-2/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/ocaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+<meta property="og:site_name" content="Handling Dictionaries 2 - pyml_bindgen -- OCaml-Python Bindings Generator" />
+
+<meta property="og:type" content="website">
+
+<meta property="og:title" content="Handling Dictionaries 2 - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+<meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+<meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
+
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/dictionaries-2/">
+
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Handling Dictionaries 2 - pyml_bindgen -- OCaml-Python Bindings Generator">
+
+  
+
+  
+
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> pyml_bindgen -- OCaml-Python Bindings Generator</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">pyml_bindgen</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../matplotlib-2/">Matplotlib Example 2</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dictionaries/">Handling Dictionaries</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Handling Dictionaries 2</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#python-code">Python code</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#module-types-functors">Module types &amp; functors</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#module-types">Module types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#functors">Functors</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#making-the-needed-modules">Making the needed modules</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-pyml_bindgen">Running pyml_bindgen</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#set-up-dune-project-run-it">Set up Dune project &amp; run it</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#wrap-up">Wrap-up</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Rules</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../static-methods/">Class & Static Methods</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Miscellaneous</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">pyml_bindgen -- OCaml-Python Bindings Generator</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Examples & Tutorials &raquo;</li>
+        
+      
+    
+    <li>Handling Dictionaries 2</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/dictionaries-2.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="handling-python-dictionaries-2">Handling Python Dictionaries 2</h1>
+<p>In the first <a href="../dictionaries/">article</a> about handling Python dictionaries, we wrote a custom <code>Dict</code> module to handle <code>string =&gt; string</code> dictionaries.</p>
+<p>Sometimes when you're binding a large Python project, there will be many different kinds of dictionaries that you need to bind.  Rather than write out a module for each key-value type combination we need, this time let's write some <a href="https://dev.realworldocaml.org/functors.html">functors</a> to help us cut down on the boilerplate.</p>
+<p><em>Note:  This isn't an introduction to functors, so I won't be explaining too many of the functor specific details!</em></p>
+<h2 id="python-code">Python code</h2>
+<p>First let's check out the Python code we're going to be binding.</p>
+<p><code>silly.py</code></p>
+<pre><code class="language-python">class Inventory:
+    def __init__(self, items):
+        self.d = items
+
+    def incr(self, item):
+        self.d[item] += 1
+
+    def decr(self, item):
+        self.d[item] -= 1
+
+
+class WeirdDict:
+    def __init__(self, d):
+        self.d = d
+
+    def add(self, k, v):
+        self.d[k] = v
+
+    def get(self, k):
+        return self.d[k]
+</code></pre>
+<p>As you see, both of these classes are polymorphic with respect to the types they can work with.  But for this example, we are going to constrain there types.  We will say <code>Inventory</code> is a mapping from strings to integers, and <code>WeirdDict</code> is a mapping from integers to string lists.</p>
+<p>Here are the value specifications.</p>
+<p><code>inventory_val_specs.txt</code></p>
+<pre><code>val __init__ : items:String_int_dict.t -&gt; unit -&gt; t option
+val d : t -&gt; String_int_dict.t option
+val incr : t -&gt; item:string -&gt; unit -&gt; unit
+val decr : t -&gt; item:string -&gt; unit -&gt; unit
+</code></pre>
+<p><code>weird_dict_val_specs.txt</code></p>
+<pre><code>val __init__ : d:Int_string_list_dict.t -&gt; unit -&gt; t option
+val d : t -&gt; Int_string_list_dict.t option
+val add : t -&gt; k:Int.t -&gt; v:String_list.t -&gt; unit -&gt; unit
+val get : t -&gt; k:Int.t -&gt; unit -&gt; String_list.t
+</code></pre>
+<p>A couple notable things here.</p>
+<p>First, we are putting in some modules that haven't yet been defined: <code>String_int_dict</code>, <code>Int_string_list_dict</code>, and <code>String_list</code>.  We will get to them below.  You may think, yuck, I don't want to have to deal with a custom type <code>String_list</code> instead of using <code>string list</code>.  Don't worry, it will all work out nicely :)</p>
+<p>Second, we're going to be checking the Python class of everything that goes through an <code>of_pyobject</code> function.  (Both in the functors we write, and in the <code>pyml_bindgen</code> app using <code>-r option</code>.)  Most of the previous examples haven't bothered with checking the return types to keep things simple.  Since this example is more involved anyway, let's go ahead and check the types!</p>
+<h2 id="module-types-functors">Module types &amp; functors</h2>
+<p>Now let's write some functors!</p>
+<p><em>Note that I will be making use of features from <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html">Base</a> and <a href="https://github.com/janestreet/ppx_jane">ppx_jane</a> in this example.</em></p>
+<p><em>Put the code in this section into a file called <code>pyobjectable.ml</code>.  Don't forget to put <code>open! Base</code> at the top!</em></p>
+<h3 id="module-types">Module types</h3>
+<p>First we define a module type called <code>Pyobjectable.S</code> (<code>S</code> for signature), that has a type <code>t</code> and two functions, <code>of_pyobject</code> and <code>to_pyobject</code>.</p>
+<p><em>Note on naming:  Pyobjectable =&gt; Something that can be turned into a pyobject and back.  It's named this way to match the Base naming scheme.</em></p>
+<pre><code class="language-ocaml">module type S = sig
+  type t
+
+  val of_pyobject : Pytypes.pyobject -&gt; t
+  val to_pyobject : t -&gt; Pytypes.pyobject
+end
+</code></pre>
+<p>We will mint another module type that is specific to lists.</p>
+<pre><code class="language-ocaml">module type S_list = sig
+  include module type of List
+  type element
+  type t = element list
+  val of_pyobject : Pytypes.pyobject -&gt; element list
+  val to_pyobject : element list -&gt; Pytypes.pyobject
+end
+</code></pre>
+<p>Next, a module type to describe things that can be used as keys in our dictionaries.</p>
+<pre><code class="language-ocaml">module type S_dict_key = sig
+  type t [@@deriving hash, sexp]
+
+  include Comparable.S with type t := t
+  include S with type t := t
+end
+</code></pre>
+<p>The <code>hash</code>, <code>sexp</code> derives plus including <code>Comparable.S</code> allow us to use <code>S_dict_key</code> as a key in both <code>Base.Map</code> and <code>Base.Hashtbl</code> modules.  And of course, we also include <code>S</code> because we want it to be pyobjectable.</p>
+<p>Finally, we make a <code>Pydict</code> module type.  This type will be helpful when converting values into and out of <code>pyobjects</code>.</p>
+<pre><code class="language-ocaml">module type Pydict = sig
+  type t
+  type key
+  type value
+  type map
+  type hashtbl
+
+  val of_pyobject : Pytypes.pyobject -&gt; t option
+  val to_pyobject : t -&gt; Pytypes.pyobject
+
+  val of_alist : (key * value) list -&gt; t
+  val to_alist : t -&gt; (key * value) list
+
+  val of_map : map -&gt; t
+  val to_map : t -&gt; map
+
+  val of_hashtbl : hashtbl -&gt; t
+  val to_hashtbl : t -&gt; hashtbl
+end
+</code></pre>
+<p>In this case, we're saying that we want <code>Pydicts</code> to know how to convert to and from <code>pyobjects</code>, association lists, <code>maps</code>, and <code>hashtbls</code>.</p>
+<p>Notice how we return <code>t option</code> in the <code>of_pyobject</code> function.  This way we can be (a little more) sure that the type is correct.  I say a little more because we won't be checking that the types of the keys and values inside the Python dictionary are what we say they are, just that the object is in fact, a Python dictionary.</p>
+<h3 id="functors">Functors</h3>
+<p>Now let's write two functors that use the above types.</p>
+<p>First, a functor to make pyobjectable lists (<code>S_list</code>):</p>
+<pre><code class="language-ocaml">module Make_list (Element : S) : S_list with type element := Element.t = struct
+  include List
+  type t = Element.t list
+  let of_pyobject pyo = Py.List.to_list_map Element.of_pyobject pyo
+  let to_pyobject l = Py.List.of_list_map Element.to_pyobject l
+end
+</code></pre>
+<p>Next, a functor to make <code>Pydicts</code>.</p>
+<pre><code class="language-ocaml">module Make_pydict (Key : S_dict_key) (Value : S) :
+  Pydict
+    with type key := Key.t
+    with type value := Value.t
+    with type map := Value.t Map.M(Key).t
+    with type hashtbl := Value.t Hashtbl.M(Key).t = struct
+  type t = Pytypes.pyobject
+
+  let of_pyobject x = if Py.Dict.check x then Some x else None
+  let to_pyobject x = x
+
+  let of_alist = Py.Dict.of_bindings_map Key.to_pyobject Value.to_pyobject
+  let to_alist = Py.Dict.to_bindings_map Key.of_pyobject Value.of_pyobject
+
+  let of_map map = of_alist @@ Map.to_alist map
+  let to_map t = Map.of_alist_exn (module Key) @@ to_alist t
+
+  let of_hashtbl ht = of_alist @@ Hashtbl.to_alist ht
+  let to_hashtbl t = Hashtbl.of_alist_exn (module Key) @@ to_alist t
+end
+</code></pre>
+<h2 id="making-the-needed-modules">Making the needed modules</h2>
+<p>Now that we have our functors, let's make the modules that we specified in the value specs above.</p>
+<p>Put the following in a file called <code>extensions.ml</code></p>
+<pre><code class="language-ocaml">open! Base
+
+module Int = struct
+  include Int
+  let of_pyobject pyo = Py.Int.to_int pyo
+  let to_pyobject i = Py.Int.of_int i
+end
+
+module String = struct
+  include String
+  let of_pyobject pyo = Py.String.to_string pyo
+  let to_pyobject i = Py.String.of_string i
+end
+
+module String_list = Pyobjectable.Make_list (String)
+module String_int_dict = Pyobjectable.Make_pydict (String) (Int)
+module Int_string_list_dict = Pyobjectable.Make_pydict (Int) (String_list)
+</code></pre>
+<p>A couple of notes here:</p>
+<ul>
+<li>We're extending <code>Int</code> and <code>String</code> modules so that they will be <code>Pyobjectable</code>.  This code we need to write by hand because each basic OCaml type has its own special way of converting to and from a <code>pyobject</code>.</li>
+<li>You will note that we didn't have to do anything special to ensure that <code>Int</code> was okay to use as a <code>S_dict_key</code>.  Since we're using Base, and given the way we wrote the functor, it's all taken care of.</li>
+<li><code>String_list</code> is a "special" list that knows how to turn <code>string list</code> values to and from <code>pyobjects</code>.</li>
+<li>Finally, we use our extended <code>Int</code> and <code>String</code> along with <code>String_list</code> to make the <code>*_dict</code> modules that we put in our val specs.</li>
+</ul>
+<h2 id="running-pyml_bindgen">Running <code>pyml_bindgen</code></h2>
+<p>Now that we have all our machinery set up, we're ready to run <code>pyml_bindgen</code>.</p>
+<pre><code>$ printf &quot;open Extensions\n&quot; &gt; lib.ml
+$ pyml_bindgen inventory_val_specs.txt silly Inventory --caml-module Inventory \
+  | ocamlformat --enable --name=a.ml - &gt;&gt; lib.ml
+$ printf &quot;\n&quot; &gt;&gt; lib.ml
+$ pyml_bindgen weird_dict_val_specs.txt silly WeirdDict --caml-module Weird_dict \
+  | ocamlformat --enable --name=a.ml - &gt;&gt; lib.ml
+</code></pre>
+<p>I interspersed some extra code and spaces between the <code>pyml_bindgen</code> calls using <code>printf</code>.</p>
+<p>If you need more explanation of the <code>pyml_bindgen</code> options used above, see <a href="../getting-started/">here</a>.</p>
+<h2 id="set-up-dune-project-run-it">Set up Dune project &amp; run it</h2>
+<p>Now we're ready to set up a Dune project and write a driver to run the generated code. Save these two files in the same directory in as the other files.</p>
+<p><code>dune</code></p>
+<pre><code>(executable
+ (name run)
+ (libraries base pyml stdio)
+ (preprocess (pps ppx_jane)))
+</code></pre>
+<p><code>run.ml</code></p>
+<pre><code class="language-ocaml">open! Base
+open! Stdio
+open! Extensions
+open! Lib
+
+let () = Py.initialize ()
+
+let items = String_int_dict.of_alist [ (&quot;apple&quot;, 10); (&quot;pie&quot;, 3) ]
+let items' = String_int_dict.to_alist items
+let () = print_s @@ [%sexp_of: (string * int) list] @@ items'
+
+let inventory = Option.value_exn (Inventory.__init__ ~items ())
+
+let () = Inventory.incr inventory ~item:&quot;apple&quot; ()
+let () = Inventory.decr inventory ~item:&quot;pie&quot; ()
+
+let () =
+  let d = Option.value_exn (Inventory.d inventory) in
+  print_s @@ [%sexp_of: (string * int) list] @@ String_int_dict.to_alist d
+
+(* This is the WRONG WAY to do it... *)
+let () =
+  let pyo = Inventory.to_pyobject inventory in
+  match String_int_dict.of_pyobject pyo with
+  | Some pyo' -&gt;
+      print_s @@ [%sexp_of: (string * int) list]
+      @@ String_int_dict.to_alist pyo'
+  | None -&gt;
+      print_endline
+        &quot;Couldn't convert the pyobject to String_int_dict!  Moving on...&quot;
+
+
+(* Now for the weird dict *)
+
+let d =
+  Int_string_list_dict.of_alist
+    [ (1, [ &quot;apple&quot;; &quot;pie&quot; ]); (2, [ &quot;is&quot;; &quot;good&quot; ]) ]
+
+let weird = Option.value_exn (Weird_dict.__init__ ~d ())
+let () = Weird_dict.add weird ~k:3 ~v:[ &quot;peach&quot;; &quot;cobbler&quot; ] ()
+
+let () =
+  assert (
+    List.equal String.equal [ &quot;peach&quot;; &quot;cobbler&quot; ]
+      (Weird_dict.get weird ~k:3 ()))
+
+let () =
+  let d = Option.value_exn (Weird_dict.d weird) in
+  let alist = Int_string_list_dict.to_alist d in
+  print_s @@ [%sexp_of: (int * string list) list] @@ alist
+</code></pre>
+<p>Run it, and if all goes well, you should see something like this:</p>
+<pre><code>$ dune exec ./run.exe
+((apple 10) (pie 3))
+((apple 11) (pie 2))
+Couldn't convert the pyobject to String_int_dict!  Moving on...
+((1 (apple pie)) (2 (is good)) (3 (peach cobbler)))
+</code></pre>
+<h2 id="wrap-up">Wrap-up</h2>
+<p>In this tutorial, we built upon the <a href="../dictionaries/">first dictionary tutorial</a> by using functors to avoid having to write the dictionary helper modules by hand.</p>
+<p>While you might think functors are overkill for this little example, there are real Python projects that have lots of different dictionaries that you need to use.  For example, <a href="https://spacy.io/">spaCy</a> has more than 10 different kinds of dictionaries to bind!  Writing all that by hand will get tedious :)</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../dictionaries/" class="btn btn-neutral" title="Handling Dictionaries"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/mooreryan/ocaml_python_bindgen/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../dictionaries/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
