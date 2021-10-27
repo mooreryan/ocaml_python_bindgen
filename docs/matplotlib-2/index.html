@@ -147,6 +147,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
@@ -221,7 +223,7 @@
 <p>OCaml:</p>
 <pre><code class="language-ocaml">val plot : t -&gt; x:float list -&gt; y:float list -&gt; ?color:string -&gt; unit -&gt; unit
 </code></pre>
-<p>This value spec will generate an <code>Axes.plot</code> function actually has a bug.  If you check the docs, you can't actually pass <code>x</code> and <code>y</code> as keyword arguments.  Oops!  You have to go in and edit the binding by hand.  Below, I will show a <a href="TODO">patch file</a> with the changes you need to make.</p>
+<p>This value spec will generate an <code>Axes.plot</code> function actually has a bug.  If you check the docs, you can't actually pass <code>x</code> and <code>y</code> as keyword arguments.  Oops!  You have to go in and edit the binding by hand.  Below, I will show a <a href="https://en.wikipedia.org/wiki/Patch_(Unix)">patch file</a> with the changes you need to make.</p>
 <p>You may be thinking, well, that's pretty annoying...I agree!  For this function, I would probably just write it by hand from the start.  I'm showing it here partly as a reminder that I want to change the behaviour of <code>pyml_bindgen</code> in a future release to handle methods like this one.  But for now, you have to deal with it yourself :)</p>
 <p><em>Note that while we used <code>float list</code> for <code>x</code> and <code>y</code> here, you may want to use <code>float array</code> instead.</em></p>
 <h3 id="figuresavefig"><code>Figure.savefig</code></h3>

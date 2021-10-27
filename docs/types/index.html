@@ -112,9 +112,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#nesting">Nesting</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dictionaries">Dictionaries</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tuples">Tuples</a>
+    <li class="toctree-l2"><a class="reference internal" href="#dictionaries-tuples">Dictionaries &amp; Tuples</a>
     </li>
     </ul>
                     </li>
@@ -129,6 +127,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
@@ -177,7 +177,7 @@
             <div class="section">
               
                 <h1 id="types">Types</h1>
-<p>Not all OCaml types are allowed.  </p>
+<p>Not all OCaml types are allowed.</p>
 <p>There are a lot of <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test">tests</a> that exercise the rules here.</p>
 <h2 id="function-arguments">Function arguments</h2>
 <p>For function arguments, you can use</p>
@@ -198,10 +198,9 @@
 <p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
 <p>E.g., <code>'a array list</code> will fail.</p>
 <p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s (e.g., <code>'a option list</code>); however, this will not work with <code>Or_error.t</code>.</p>
-<h2 id="dictionaries">Dictionaries</h2>
-<p>TODO mention the hack for Python dictionaries...</p>
-<h2 id="tuples">Tuples</h2>
-<p>Tuples are a little weird in <code>pyml_bindgen</code>.  If you need to pass or return tuples to Python functions, see <a href="../todo/">here</a>.</p>
+<h2 id="dictionaries-tuples">Dictionaries &amp; Tuples</h2>
+<p>See <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a> for examples of binding dictionaries.</p>
+<p>If you need to pass or return tuples to Python functions, see <a href="../tuples/">here</a>; however, the same ideas apply to tuples as are covered in the above links for dictionaries.</p>
               
             </div>
           </div>

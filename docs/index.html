@@ -133,6 +133,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="cli-options/">CLI Options</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="tuples/">Handling Tuples</a>
@@ -179,7 +181,7 @@
                 <h1 id="ocaml-python-bindings-generator">OCaml-Python Bindings Generator</h1>
 <!-- [![Build and Test](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test.yml) [![Build and Test Static](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/build_and_test_static.yml) [![Generate Docs](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml/badge.svg?branch=main)](https://github.com/mooreryan/ocaml_python_bindgen/actions/workflows/generate_docs.yml) -->
 
-<p><a href="https://github.com/mooreryan/ocaml_python_bindgen"><img alt="code on GitHub" src="https://img.shields.io/badge/code-GitHub-blue" /></a> </p>
+<p><a href="https://github.com/mooreryan/ocaml_python_bindgen"><img alt="code on GitHub" src="https://img.shields.io/badge/code-GitHub-blue" /></a></p>
 <!-- [![GitHub issues](https://img.shields.io/github/issues/mooreryan/ocaml_python_bindgen)](https://github.com/mooreryan/ocaml_python_bindgen/issues)  -->
 
 <!-- [![Coverage Status](https://coveralls.io/repos/github/mooreryan/ocaml_python_bindgen/badge.svg?branch=main)](https://coveralls.io/github/mooreryan/ocaml_python_bindgen?branch=main) -->
@@ -191,7 +193,7 @@
 <ul>
 <li>Read the installing and quick start sections of this page.</li>
 <li>Then read through the <a href="getting-started/">getting started</a> tutorial.  If you only read one page in the docs, make it this one!  It explains most of what you need to know to get started with a simple example, while not getting bogged down in too much details.</li>
-<li>Next, you can either peruse the <a href="todo/">rules</a> for writing value specifications that <code>pyml_bindgen</code> can understand, or check out <a href="todo/">more examples</a>.</li>
+<li>Next, you can either peruse the rules for writing value specifications that <code>pyml_bindgen</code> can understand, or check out more examples.</li>
 </ul>
 <p>If you have any questions or issues, please <a href="https://github.com/mooreryan/ocaml_python_bindgen/issues">let me know</a> about it on GitHub!</p>
 <h2 id="installing">Installing</h2>
@@ -204,7 +206,7 @@ $ pyml_bindgen --help
 ... help screen should show up ...
 </code></pre>
 <h2 id="quick-start">Quick start</h2>
-<p><code>pyml_bindgen</code> is a CLI program that generates OCaml modules that bind Python classes via <a href="TODO">pyml</a>.</p>
+<p><code>pyml_bindgen</code> is a CLI program that generates OCaml modules that bind Python classes via <a href="https://github.com/thierry-martinez/pyml">pyml</a>.</p>
 <p>Here's a small example.  Take a Python class, <code>Thing</code>.  (Put it in a file called <code>thing.py</code>...this means the Python module will be called <code>thing</code>.)</p>
 <pre><code class="language-python">class Thing:
     def __init__(self, x):
@@ -214,7 +216,7 @@ $ pyml_bindgen --help
         return self.x + y
 </code></pre>
 <p>Now, look at your Python class and decide how you would like to use this class on the OCaml side.</p>
-<p>For now, we will just do a direct translation, keeping in mind the <a href="TODO">rules</a> for writing value specs that <code>pyml_bindgen</code> can process.  Maybe something like this.  (Put it in a file called <code>val_specs.txt</code>.)</p>
+<p>For now, we will just do a direct translation, keeping in mind the rules for writing value specs that <code>pyml_bindgen</code> can process.  Maybe something like this.  (Put it in a file called <code>val_specs.txt</code>.)</p>
 <pre><code class="language-ocaml">val __init__ : x:int -&gt; unit -&gt; t
 
 val x : t -&gt; int
@@ -266,7 +268,7 @@ end = struct
     Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end
 </code></pre>
-<p>Check out the <a href="TODO">examples</a> for more info about using and running <code>pyml_bindgen</code>.  Then, check out the <a href="TODO">rules</a> that you have to follow when writing value specifications that <code>pyml_bindgen</code> can read.</p>
+<p>Check out the examples for more info about using and running <code>pyml_bindgen</code>.  Then, check out the rules that you have to follow when writing value specifications that <code>pyml_bindgen</code> can read.</p>
 <h2 id="license">License</h2>
 <h3 id="software">Software</h3>
 <p><a href="https://github.com/mooreryan/ocaml_python_bindgen"><img alt="license MIT or Apache
@@ -337,5 +339,5 @@ end
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-10-27 20:08:36.243526+00:00
+Build Date UTC : 2021-10-27 20:23:57.625445+00:00
 -->

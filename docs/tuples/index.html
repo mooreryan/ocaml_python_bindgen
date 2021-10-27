@@ -117,6 +117,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Handling Tuples</a>
@@ -167,6 +169,7 @@
             <div class="section">
               
                 <h1 id="handling-tuples">Handling Tuples</h1>
+<p><em>Note:  You can find in-depth examples of binding dictionaries <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a>.  A lot of the same ideas apply to tuples, and they are currently better explained in those links!</em></p>
 <p>Tuples are sort of weird....As of now, <code>pyml_bindgen</code> can't handle tuples directly :(</p>
 <p>For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.  <em>(Or just write the binding by hand...)</em></p>
 <p>Say you need to get an <code>int * string</code> tuple in and out of Python.  You should make a module something like this:</p>

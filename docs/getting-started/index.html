@@ -131,6 +131,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
@@ -203,7 +205,7 @@
 <p>OCaml:</p>
 <pre><code class="language-ocaml">val __init__ : x:int -&gt; unit -&gt; t
 </code></pre>
-<p>The other thing to note is that the last argument to method bindings must be <code>unit</code>.  See <a href="../todo/">here</a> for more about why that is.</p>
+<p>The other thing to note is that the last argument to method bindings must be <code>unit</code>.  This is mainly an artifact of the parsing and code generators, and may change in the future.</p>
 <h2 id="binding-instance-methods">Binding instance methods</h2>
 <p>Instance methods are those that are called on instances of a Python class.  In Python, instance methods take <code>self</code> (a reference to the object) as the first argument.  So when binding instance methods with <code>pyml_bindgen</code>, the first argument must be <code>t</code>.  The middle arguments should be named (or optional) and the final argument should be <code>unit</code>.</p>
 <p>Python:</p>
@@ -215,7 +217,6 @@
 </code></pre>
 <p><em>The <a href="../instance-methods/">instance methods</a> section has more info on binding instance methods.</em></p>
 <h2 id="binding-static-methods">Binding static methods</h2>
-<p>TODO: we only have tests for static methods, but class methods <em>should</em> be the same...check it!</p>
 <p>Python static methods are methods associated with a class, but that don't have access to class-wide state, or access to object state.  You can still call them on either instances of a class or the class itself, but it won't have access to any of that internal state.</p>
 <p>Binding these with <code>pyml_bindgen</code> is pretty much like writing val specs for regular OCaml functions, except that each argument must be named (or optional) and the final argument must be <code>unit</code>.</p>
 <p>Python:</p>
@@ -245,7 +246,7 @@ def sub(a, b):
 <li>The <code>--caml-module=Thing</code> option tells <code>pyml_bindgen</code> to generate a module and signature called <code>Thing</code> based on the val specs you provided.  If you leave this flag out, <code>pyml_bindgen</code> will just generate the implementations that you can manually add where you want.</li>
 <li>The <code>--of-pyo-ret-type=no_check</code> argument tells <code>pyml_bindgen</code> not to check that the Python class is what you expect it to be.  If there is some weird bug in the Python, or a mistake in your bindings, you'll get a runtime error!  The other options for this are <code>option</code> and <code>or_error</code>, which will check that Python classes are correct, but you'll have to deal with the possibility of error explicitly.</li>
 </ul>
-<p><em>For more info on <code>pyml_bindgen</code> options, see <a href="../todo/">here</a>.</em></p>
+<p><em>For more info on <code>pyml_bindgen</code> options, see <a href="../cli-options/">here</a>.</em></p>
 <p>I ran <code>lib.ml</code> through <code>ocamlformat</code> so it's easier to read here, but of course, that's optional!</p>
 <pre><code>$ ocamlformat lib.ml --enable-outside-detected-project
 </code></pre>
