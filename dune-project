@@ -27,6 +27,7 @@
    ocaml
   ; Test-only deps
   (core_kernel :with-test)
+  (ocamlformat :with-test)
   (ppx_inline_test :with-test)
   (ppx_expect :with-test)
   ; Dev deps

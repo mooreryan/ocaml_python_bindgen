@@ -19,6 +19,7 @@ depends: [
   "stdio"
   "ocaml"
   "core_kernel" {with-test}
+  "ocamlformat" {with-test}
   "ppx_inline_test" {with-test}
   "ppx_expect" {with-test}
   "bisect_ppx" {dev}
