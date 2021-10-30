@@ -6,7 +6,7 @@ maintainer: ["Ryan M. Moore"]
 authors: ["Ryan M. Moore"]
 license: "MIT"
 homepage: "https://github.com/mooreryan/pyml_bindgen"
-doc: "https://github.com/mooreryan/pyml_bindgen"
+doc: "https://mooreryan.github.io/ocaml_python_bindgen/"
 bug-reports: "https://github.com/mooreryan/pyml_bindgen/issues"
 depends: [
   "dune" {>= "2.8"}
@@ -14,10 +14,10 @@ depends: [
   "base"
   "cmdliner"
   "little_logger"
+  "ppx_jane"
   "re2"
   "stdio"
   "ocaml"
-  "ppx_jane"
   "core_kernel" {with-test}
   "ppx_inline_test" {with-test}
   "ppx_expect" {with-test}

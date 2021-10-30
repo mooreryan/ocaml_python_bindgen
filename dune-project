@@ -12,7 +12,7 @@
  (authors "Ryan M. Moore")
  (homepage "https://github.com/mooreryan/pyml_bindgen")
  (source (github mooreryan/pyml_bindgen))
- (documentation "https://github.com/mooreryan/pyml_bindgen")
+ (documentation "https://mooreryan.github.io/ocaml_python_bindgen/")
  (bug_reports "https://github.com/mooreryan/pyml_bindgen/issues")
  (synopsis "Generate pyml bindings from OCaml value specifications")
  (depends
@@ -21,10 +21,10 @@
    base
    cmdliner
    little_logger
+   ppx_jane
    re2
    stdio
    ocaml
-   ppx_jane
   ; Test-only deps
   (core_kernel :with-test)
   (ppx_inline_test :with-test)
