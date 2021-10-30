@@ -10,21 +10,20 @@ Binding tuples
 
   $ if [ -f tmp ]; then rm tmp; fi
   $ pyml_bindgen sigs.txt silly Silly --caml-module=Silly --of-pyo-ret-type=no_check > tmp
-  $ sed -i 's/module Silly/and Silly/' tmp
 
-Now here is something brittle...
+Cat the files and run.
 
-  $ grep 'let filter_opt' tmp > a
-  $ grep -v 'let filter_opt' tmp > c
-  $ cat a lib_ml.txt c > lib.ml
+  $ cat lib_ml.txt > lib.ml
+  $ printf "\n" >> lib.ml
+  $ cat tmp >> lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
-  let filter_opt l = List.filter_map Fun.id l
-  module rec Tuple_int_string : sig
+  module Tuple_int_string : sig
     type t
   
     val make : int -> string -> t
   
     val to_pyobject : t -> Pytypes.pyobject
+  
     val of_pyobject : Pytypes.pyobject -> t
   
     val print_endline : t -> unit
@@ -43,7 +42,7 @@ Now here is something brittle...
     let print_endline (i, s) = print_endline @@ string_of_int i ^ " " ^ s
   end
   
-  and Silly : sig
+  module Silly : sig
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
@@ -52,6 +51,8 @@ Now here is something brittle...
   
     val foo : x:Tuple_int_string.t -> unit -> Tuple_int_string.t
   end = struct
+    let filter_opt l = List.filter_map Fun.id l
+  
     let import_module () = Py.Import.import_module "silly"
   
     type t = Pytypes.pyobject

@@ -1,9 +1,10 @@
-module rec Tuple_int_string : sig
+module Tuple_int_string : sig
   type t
 
   val make : int -> string -> t
 
   val to_pyobject : t -> Pytypes.pyobject
+
   val of_pyobject : Pytypes.pyobject -> t
 
   val print_endline : t -> unit
