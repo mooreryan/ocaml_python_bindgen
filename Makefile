@@ -14,12 +14,16 @@ test_coverage:
 test_coverage_open: test_coverage
 	$(BROWSER) _coverage/index.html
 
+.PHONY: send_coverage
+send_coverage: test_coverage
+	bisect-ppx-report send-to Coveralls --coverage-path $(TEST_COV_D)
+
 .PHONY: build_release
 build_release:
 	dune build --profile=release
 
-.PHONY: install
-install: build_release
+.PHONY: install_release
+install_release: build_release
 	dune install --profile=release
 
 .PHONY: test
