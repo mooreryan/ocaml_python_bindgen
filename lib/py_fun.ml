@@ -35,6 +35,8 @@ type t =
       return_type : Otype.t;
       args : [ `Labeled of Oarg.labeled | `Optional of Oarg.optional ] list;
     }
+  | Todo_function of string
+  | Not_implemented_function of string
 [@@deriving sexp]
 
 (* Python Attribute specs look like this: val : t -> 'a *)
@@ -126,24 +128,42 @@ let parse_class_or_module_method associated_with fun_name args =
           Some (constructor fun_name return_type args associated_with)
       | _ -> None)
 
+let parse_todo_placeholder fun_name args =
+  match List.length args with
+  | 1 ->
+      let arg = List.hd_exn args in
+      if Oarg.is_positional_todo arg then Some (Todo_function fun_name)
+      else None
+  | _ -> None
+
+let parse_not_implemented_placeholder fun_name args =
+  match List.length args with
+  | 1 ->
+      let arg = List.hd_exn args in
+      if Oarg.is_positional_not_implemented arg then
+        Some (Not_implemented_function fun_name)
+      else None
+  | _ -> None
+
 (* [associated_with] is ignored unless the parsing matches a class method. *)
 let create ?(associated_with = `Class) { Oarg.fun_name; args } =
   match
     ( parse_attribute fun_name args,
       parse_instance_method fun_name args,
-      parse_class_or_module_method associated_with fun_name args )
+      parse_class_or_module_method associated_with fun_name args,
+      parse_todo_placeholder fun_name args,
+      parse_not_implemented_placeholder fun_name args )
   with
-  | Some py_fun, None, None -> return py_fun
-  | None, Some py_fun, None -> return py_fun
-  | None, None, Some py_fun -> (
+  | Some py_fun, None, None, None, None
+  | None, Some py_fun, None, None, None
+  | None, None, None, Some py_fun, None
+  | None, None, None, None, Some py_fun ->
+      return py_fun
+  | None, None, Some py_fun, None, None -> (
       match associated_with with
       | `Class -> return py_fun
       | `Module -> return py_fun)
-  | Some _, Some _, Some _ -> error_string "all three matched"
-  | Some _, None, Some _ -> error_string "first and third matched"
-  | Some _, Some _, None -> error_string "first and second matched"
-  | None, Some _, Some _ -> error_string "second and third matched"
-  | None, None, None -> error_string "none matched"
+  | _ -> error_string "could not create val_spec"
 
 let labeled_arg_to_kwarg_spec arg =
   let name = Oarg.labeled_name arg in
@@ -261,3 +281,7 @@ let pyml_impl class_name = function
       | _ -> class_method_impl ~class_name ~fun_name return_type args)
   | Module_function { fun_name; return_type; args } ->
       module_function_impl fun_name return_type args
+  | Todo_function fun_name ->
+      [%string "let %{fun_name} () = failwith \"todo: %{fun_name}\""]
+  | Not_implemented_function fun_name ->
+      [%string "let %{fun_name} () = failwith \"not implemented: %{fun_name}\""]

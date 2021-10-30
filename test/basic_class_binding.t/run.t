@@ -12,6 +12,10 @@ of_pyobject with no check
   $ pyml_bindgen sigs_no_check.txt silly Silly --caml-module=Silly --of-pyo-ret-type=no_check > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
   module Silly : sig
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
@@ -40,7 +44,15 @@ of_pyobject with no check
     val bar : a:int -> b:int -> unit -> int
   
     val do_nothing2 : unit -> unit
+  
+    val hello : 'a todo
+  
+    val world : 'a not_implemented
   end = struct
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     let filter_opt l = List.filter_map Fun.id l
   
     let import_module () = Py.Import.import_module "silly"
@@ -135,6 +147,10 @@ of_pyobject with no check
       let callable = Py.Object.find_attr_string class_ "do_nothing2" in
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let hello () = failwith "todo: hello"
+  
+    let world () = failwith "not implemented: world"
   end
   $ dune exec ./run_no_check.exe 2> /dev/null
   x: 1
@@ -152,6 +168,10 @@ of_pyobject returning option
   $ pyml_bindgen sigs_option.txt silly Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml
   $ ocamlformat --enable-outside-detected-project lib.ml
   module Silly : sig
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t option
@@ -180,7 +200,15 @@ of_pyobject returning option
     val bar : a:int -> b:int -> unit -> int
   
     val do_nothing2 : unit -> unit
+  
+    val hello : 'a todo
+  
+    val world : 'a not_implemented
   end = struct
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     let filter_opt l = List.filter_map Fun.id l
   
     let import_module () = Py.Import.import_module "silly"
@@ -279,6 +307,10 @@ of_pyobject returning option
       let callable = Py.Object.find_attr_string class_ "do_nothing2" in
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let hello () = failwith "todo: hello"
+  
+    let world () = failwith "not implemented: world"
   end
   $ dune exec ./run_option.exe 2> /dev/null
   x: 1
@@ -298,6 +330,10 @@ of_pyobject returning Or_error
   open! Base
   
   module Silly : sig
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t Or_error.t
@@ -326,7 +362,15 @@ of_pyobject returning Or_error
     val bar : a:int -> b:int -> unit -> int
   
     val do_nothing2 : unit -> unit
+  
+    val hello : 'a todo
+  
+    val world : 'a not_implemented
   end = struct
+    type 'a todo = unit -> 'a
+  
+    type 'a not_implemented = unit -> 'a
+  
     let filter_opt = List.filter_opt
   
     let import_module () = Py.Import.import_module "silly"
@@ -427,8 +471,12 @@ of_pyobject returning Or_error
       let callable = Py.Object.find_attr_string class_ "do_nothing2" in
       let kwargs = filter_opt [] in
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+  
+    let hello () = failwith "todo: hello"
+  
+    let world () = failwith "not implemented: world"
   end
-  $ dune exec ./run_or_error.exe 2> /dev/null
+  $ dune exec ./run_or_error.exe
   x: 1
   y: 2
   foo: 33

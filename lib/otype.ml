@@ -9,6 +9,8 @@ type t =
   | Bool
   | Unit
   | T
+  | Todo
+  | Not_implemented
   | Custom of string
   | Array of t
   | List of t
@@ -24,6 +26,8 @@ type t =
 
 let is_unit = function Unit -> true | _ -> false
 let is_t = function T -> true | _ -> false
+let is_todo = function Todo -> true | _ -> false
+let is_not_implemented = function Not_implemented -> true | _ -> false
 
 module P = struct
   open Angstrom
@@ -44,6 +48,8 @@ module P = struct
   let seq = string "Seq.t" <?> "seq parser"
   let option = string "option" <?> "option parser"
   let or_error = string "Or_error.t" <?> "or_error parser"
+  let todo = string "'a todo" <?> "todo parser"
+  let not_implemented = string "'a not_implemented" <?> "not_implemented parser"
 
   (* We allow stuff like [int option list] *)
   let option_array = string "option array" <?> "option_array parser"
@@ -120,12 +126,20 @@ module P = struct
     in
     p <?> "compound_otype parser"
 
-  let compound_or_basic =
-    choice ~failure_msg:"Expected compound or basic otype"
-      [ compound_otype; basic_otype ]
-    <?> "compound_or_basic parser"
+  let placeholder_otype =
+    choice ~failure_msg:"Token wasn't an placeholder otype"
+      [
+        lift (fun _ -> Todo) todo;
+        lift (fun _ -> Not_implemented) not_implemented;
+      ]
+    <?> "placeholder_otype parser"
 
-  let parser_ = spaces *> compound_or_basic <* spaces <?> "parser_"
+  let parser_ =
+    let p =
+      choice ~failure_msg:"otype parser_ failed"
+        [ compound_otype; basic_otype; placeholder_otype ]
+    in
+    spaces *> p <* spaces <?> "parser_"
 end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
@@ -143,6 +157,8 @@ let rec py_to_ocaml = function
   (* Note: T.of_pyobject converts the pyobject INTO the OCaml module type. It's
      opposite of the others. *)
   | T -> "of_pyobject"
+  | Todo -> ""
+  | Not_implemented -> ""
   (* Note: See comment for T. *)
   | Custom s ->
       let name = custom_module_name s in
@@ -164,7 +180,7 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | Array _ | List _ | Seq _ | Or_error _ ->
+      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
           "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string
@@ -186,6 +202,8 @@ let rec py_of_ocaml = function
   (* Watch out! T.to_pyobject converts the OCaml module TO the python type. It's
      opposite of the others. *)
   | T -> "to_pyobject"
+  | Todo -> ""
+  | Not_implemented -> ""
   (* Watch out! See comment for T. *)
   | Custom s ->
       let name = custom_module_name s in
@@ -207,7 +225,7 @@ let rec py_of_ocaml = function
       | T | Custom _ -> py_of_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | Array _ | List _ | Seq _ | Or_error _ ->
+      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
           "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])

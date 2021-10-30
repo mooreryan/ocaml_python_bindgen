@@ -70,8 +70,7 @@ let%expect_test _ =
   print_string_or_error @@ Otype.parse "apple";
   [%expect
     {|
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype") |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int";
@@ -105,8 +104,7 @@ let%expect_test _ =
   print_string_or_error @@ Otype.parse "apple list";
   [%expect
     {|
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype") |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int list";
@@ -184,12 +182,66 @@ let%expect_test _ =
   print_string_or_error @@ Otype.parse "";
   [%expect
     {|
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype") |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int Seq.t";
   [%expect {| (Ok (Seq Int)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a todo";
+  [%expect {| (Ok Todo) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a not_implemented";
+  [%expect {| (Ok Not_implemented) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'b todo";
+  [%expect
+    {| (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'b not_implemented";
+  [%expect
+    {| (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a pizza";
+  [%expect
+    {| (Error "Parsing Otype failed... parser_: otype parser_ failed") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a todo list";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a todo seq";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a todo option";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a todo Or_error.t";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a not_implemented list";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a not_implemented seq";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a not_implemented option";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "'a not_implemented Or_error.t";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
 
 (* Converting pytypes to ocaml types *)
 
@@ -218,8 +270,7 @@ let%expect_test "Converting list types" =
       (Ok "Py.List.to_list_map Py.Bool.to_bool") (Ok "Py.List.to_list_map ignore")
       (Ok "Py.List.to_list_map of_pyobject")
       (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting array types" =
   let print x =
@@ -246,8 +297,7 @@ let%expect_test "Converting array types" =
       (Ok "Py.List.to_array_map Py.Bool.to_bool")
       (Ok "Py.List.to_array_map ignore") (Ok "Py.List.to_array_map of_pyobject")
       (Ok "Py.List.to_array_map Apple_pie.of_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting Seq.t types" =
   let print x =
@@ -274,8 +324,7 @@ let%expect_test "Converting Seq.t types" =
       (Ok "Py.Iter.to_seq_map Py.Bool.to_bool") (Ok "Py.Iter.to_seq_map ignore")
       (Ok "Py.Iter.to_seq_map of_pyobject")
       (Ok "Py.Iter.to_seq_map Apple_pie.of_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option types" =
   let print x =
@@ -303,8 +352,7 @@ let%expect_test "Converting option types" =
      (Ok "(fun x -> if Py.is_none x then None else Some (Py.Bool.to_bool x))")
      (Error (Failure "Can't have unit option")) (Ok of_pyobject)
      (Ok Apple_pie.of_pyobject)
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting Or_error types" =
   let print x =
@@ -331,8 +379,7 @@ let%expect_test "Converting Or_error types" =
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Ok of_pyobject) (Ok Apple_pie.of_pyobject)
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Most nesting fails" =
   let specs =
@@ -419,8 +466,7 @@ let%expect_test "Converting option list" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.to_list_map of_pyobject")
      (Ok "Py.List.to_list_map Apple_pie.of_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -428,8 +474,7 @@ let%expect_test "Converting option list" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option array" =
   let print x =
@@ -469,8 +514,7 @@ let%expect_test "Converting option array" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.to_array_map of_pyobject")
      (Ok "Py.List.to_array_map Apple_pie.of_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -478,8 +522,7 @@ let%expect_test "Converting option array" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option seq" =
   let print x =
@@ -519,8 +562,7 @@ let%expect_test "Converting option seq" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.Iter.to_seq_map of_pyobject")
      (Ok "Py.Iter.to_seq_map Apple_pie.of_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -528,9 +570,31 @@ let%expect_test "Converting option seq" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype"))
+     (Error "Parsing Otype failed... parser_: otype parser_ failed"))
 |}]
+
+let%expect_test "Converting todo and not_implemented" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "'a todo";
+      "'a not_implemented";
+      "'b todo";
+      "'b not_implemented";
+      "'a apple_pie";
+      "'b apple_pie";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+    ((Ok "") (Ok "")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 (******************************************************)
 
@@ -562,8 +626,7 @@ let%expect_test "Converting list types" =
       (Error (Failure "Can't use unit here"))
       (Ok "Py.List.of_list_map to_pyobject")
       (Ok "Py.List.of_list_map Apple_pie.to_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting array types" =
   let print x =
@@ -591,8 +654,7 @@ let%expect_test "Converting array types" =
       (Error (Failure "Can't use unit here"))
       (Ok "Py.List.of_array_map to_pyobject")
       (Ok "Py.List.of_array_map Apple_pie.to_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting Seq.t types" =
   let print x =
@@ -620,8 +682,7 @@ let%expect_test "Converting Seq.t types" =
       (Error (Failure "Can't use unit here"))
       (Ok "Py.Iter.of_seq_map to_pyobject")
       (Ok "Py.Iter.of_seq_map Apple_pie.to_pyobject")
-      (Error
-       "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option types" =
   let print x =
@@ -648,8 +709,7 @@ let%expect_test "Converting option types" =
      (Ok "(function Some x -> Py.Bool.of_bool x | None -> Py.none)")
      (Error (Failure "Can't have unit option")) (Ok to_pyobject)
      (Ok Apple_pie.to_pyobject)
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting Or_error types" =
   let print x =
@@ -676,8 +736,7 @@ let%expect_test "Converting Or_error types" =
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Error (Failure "you can only have <t> Or_error.t or <custom> Or_error.t"))
      (Ok to_pyobject) (Ok Apple_pie.to_pyobject)
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Most nesting fails" =
   let specs =
@@ -765,8 +824,7 @@ let%expect_test "Converting option list" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.of_list_map to_pyobject")
      (Ok "Py.List.of_list_map Apple_pie.to_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -774,8 +832,7 @@ let%expect_test "Converting option list" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option array" =
   let print x =
@@ -815,8 +872,7 @@ let%expect_test "Converting option array" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.List.of_array_map to_pyobject")
      (Ok "Py.List.of_array_map Apple_pie.to_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -824,8 +880,7 @@ let%expect_test "Converting option array" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")) |}]
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
 
 let%expect_test "Converting option seq" =
   let print x =
@@ -865,8 +920,7 @@ let%expect_test "Converting option seq" =
      (Error (Failure "Can't have unit option"))
      (Ok "Py.Iter.of_seq_map to_pyobject")
      (Ok "Py.Iter.of_seq_map Apple_pie.to_pyobject")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
@@ -874,6 +928,28 @@ let%expect_test "Converting option seq" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error
-      "Parsing Otype failed... parser_ > compound_or_basic parser: Expected compound or basic otype"))
+     (Error "Parsing Otype failed... parser_: otype parser_ failed"))
 |}]
+
+let%expect_test "Converting todo and not_implemented" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "'a todo";
+      "'a not_implemented";
+      "'b todo";
+      "'b not_implemented";
+      "'a apple_pie";
+      "'b apple_pie";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect
+    {|
+    ((Ok "") (Ok "")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")
+     (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]

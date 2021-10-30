@@ -291,6 +291,28 @@ let f () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+let%test_unit "todo placeholder" =
+  let val_spec =
+    Or_error.ok_exn @@ Oarg.parse_val_spec "val apple_pie : 'a todo"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect = clean {| let apple_pie () = failwith "todo: apple_pie" |} in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
+let%test_unit "not_implemented placeholder" =
+  let val_spec =
+    Or_error.ok_exn @@ Oarg.parse_val_spec "val apple_pie : 'a not_implemented"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean {| let apple_pie () = failwith "not implemented: apple_pie" |}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
 (* TODO recheck this test! *)
 (* let%test_unit "attribute returning option_list" =
  *   let val_spec =
@@ -672,3 +694,26 @@ let%test_unit "option Seq.ts usage that is NOT okay" =
 
 let%test_unit "option Seq.ts usage that throws" =
   assert_pyml_impls_throw [ "val f : t -> unit option Seq.t" ]
+
+(* Placeholder types *)
+
+let%test_unit "todo and not_implemented by themselves are okay" =
+  assert_pyml_impls_are Or_error.is_ok
+    [ "val f : 'a todo"; "val f : 'a not_implemented" ]
+
+let%test_unit "todo and not_implemented can't be with other stuff" =
+  assert_pyml_impls_are Or_error.is_error
+    [
+      "val f : t -> 'a todo -> unit";
+      "val f : t -> 'a not_implemented -> unit";
+      "val f : t -> 'a todo -> unit -> unit";
+      "val f : t -> 'a not_implemented -> unit -> unit";
+      "val f : 'a todo -> unit";
+      "val f : 'a not_implemented -> unit";
+      "val f : 'a todo -> unit -> unit";
+      "val f : 'a not_implemented -> unit -> unit";
+      "val f : unit -> 'a todo -> unit";
+      "val f : unit ->'a not_implemented -> unit";
+      "val f : unit ->'a todo -> unit -> unit";
+      "val f : unit ->'a not_implemented -> unit -> unit";
+    ]

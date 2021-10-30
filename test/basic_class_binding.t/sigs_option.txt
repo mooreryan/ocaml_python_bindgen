@@ -15,3 +15,7 @@ val return_opt_array : t -> a:string option array -> unit -> string option array
 # Class method
 val bar : a:int -> b:int -> unit -> int
 val do_nothing2 : unit -> unit
+
+# Placeholders
+val hello : 'a todo
+val world : 'a not_implemented    

@@ -49,6 +49,14 @@ let is_positional_t = function
   | Positional { type_ } -> Otype.is_t type_
   | Labeled _ | Optional _ -> false
 
+let is_positional_todo = function
+  | Positional { type_ } -> Otype.is_todo type_
+  | Labeled _ | Optional _ -> false
+
+let is_positional_not_implemented = function
+  | Positional { type_ } -> Otype.is_not_implemented type_
+  | Labeled _ | Optional _ -> false
+
 let parse_labeled_or_optional_non_unit args =
   let open Or_error in
   Or_error.all @@ Array.to_list
