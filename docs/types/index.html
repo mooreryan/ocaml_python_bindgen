@@ -114,6 +114,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#dictionaries-tuples">Dictionaries &amp; Tuples</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#placeholders">Placeholders</a>
+    </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
@@ -201,6 +203,18 @@
 <h2 id="dictionaries-tuples">Dictionaries &amp; Tuples</h2>
 <p>See <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a> for examples of binding dictionaries.</p>
 <p>If you need to pass or return tuples to Python functions, see <a href="../tuples/">here</a>; however, the same ideas apply to tuples as are covered in the above links for dictionaries.</p>
+<h2 id="placeholders">Placeholders</h2>
+<p>There are two placeholders you can use: <code>todo</code> and <code>not_implemented</code>.</p>
+<p>If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use <code>not_implemented</code>.  If you are planning to come back and implement a function later, you can use <code>todo</code>.</p>
+<pre><code class="language-ocaml">val f : 'a todo
+val g : 'a not_implemented
+</code></pre>
+<p>These are special in that you can't just use them anywhere, it has to be exactly as above.</p>
+<p>The generated functions for the above signatures will be like this:</p>
+<pre><code class="language-ocaml">let f () = failwith &quot;todo: f&quot;
+let g () = failwith &quot;not implemented: g&quot;
+</code></pre>
+<p>So if a user actually calls these functions, the program will throw.</p>
               
             </div>
           </div>
