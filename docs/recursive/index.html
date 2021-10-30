@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Ryan M. Moore">
-  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/attributes/">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/recursive/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Attributes & Properties - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <title>Recursive Classes - pyml_bindgen -- OCaml-Python Bindings Generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Attributes & Properties";
-    var mkdocs_page_input_path = "attributes.md";
-    var mkdocs_page_url = "/ocaml_python_bindgen/attributes/";
+    var mkdocs_page_name = "Recursive Classes";
+    var mkdocs_page_input_path = "recursive.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/recursive/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -44,22 +44,22 @@
   
 
 
-<meta property="og:site_name" content="Attributes & Properties - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Recursive Classes - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Attributes & Properties - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Recursive Classes - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/attributes/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/recursive/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Attributes & Properties - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Recursive Classes - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -90,7 +90,7 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
-                <ul>
+                <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
@@ -101,22 +101,28 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dictionaries-2/">Handling Dictionaries 2</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../recursive/">Recursive Classes</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Recursive Classes</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#value-specs">Value specs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run-pyml_bindgen">Run pyml_bindgen</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fix-the-output">Fix the output</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-the-generated-modules">Using the generated modules</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#wrap-up">Wrap-up</a>
+    </li>
+    </ul>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
-                <ul class="current">
+                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Attributes & Properties</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#rules">Rules</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
-    </li>
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
                     </li>
@@ -155,14 +161,14 @@
     
       
         
-          <li>Rules &raquo;</li>
+          <li>Examples & Tutorials &raquo;</li>
         
       
     
-    <li>Attributes & Properties</li>
+    <li>Recursive Classes</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/attributes.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/recursive.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -174,21 +180,108 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="attributes-properties">Attributes &amp; Properties</h1>
-<p>Value specifications that take a single argument <code>t</code> will be interpreted as bindings to Python attributes or properties.</p>
-<p>Value specs for attributes and properties look like this:</p>
-<pre><code class="language-ocaml">val f : t -&gt; 'a
+                <h1 id="binding-recursive-classes">Binding Recursive Classes</h1>
+<p>You will often run into cases in which you need to bind classes that are cyclical.  Here's an example:</p>
+<pre><code class="language-python">class Foo:
+    @staticmethod
+    def make_bar():
+        return Bar()
+
+class Bar:
+    @staticmethod
+    def make_foo():
+        return Foo()
 </code></pre>
-<h2 id="rules">Rules</h2>
-<ul>
-<li>The first and only function argument must be <code>t</code>.</li>
-<li>The return type can be any of the types mentioned <a href="#allowed-types">above</a>.</li>
-</ul>
-<h2 id="examples">Examples</h2>
-<pre><code class="language-ocaml">val x : t -&gt; int
-val name : t -&gt; string
-val price : t -&gt; float
+<p><code>Foo</code> has a method that returns a <code>Bar</code> object, and <code>Bar</code> has a method that returns a <code>Foo</code> object.</p>
+<p>While this works fine in Python, we have to be more explicit in OCaml to use recursive modules. Technically, <code>pyml_bindgen</code> doesn't handle recursive modules.  But it is simple enough to edit the output by hand.  Let's see.</p>
+<h2 id="value-specs">Value specs</h2>
+<p>Since there are two classes to bind, we will make two val spec files.</p>
+<p><code>foo_val_specs.txt</code></p>
+<pre><code class="language-ocaml">val make_bar : unit -&gt; Bar.t
 </code></pre>
+<p><code>bar_val_specs.txt</code></p>
+<pre><code class="language-ocaml">val make_foo : unit -&gt; Foo.t
+</code></pre>
+<h2 id="run-pyml_bindgen">Run <code>pyml_bindgen</code></h2>
+<p>Now, run <code>pyml_bindgen</code> with some extra shell commands to make the output look nicer.</p>
+<pre><code>pyml_bindgen foo_val_specs.txt silly Foo --caml-module Foo -r no_check \
+  | ocamlformat --enable --name=a.ml - &gt; lib.ml
+
+printf &quot;\n&quot; &gt;&gt; lib.ml
+
+pyml_bindgen bar_val_specs.txt silly Bar --caml-module Bar -r no_check \
+  | ocamlformat --enable --name=a.ml - &gt;&gt; lib.ml
+</code></pre>
+<h2 id="fix-the-output">Fix the output</h2>
+<p>If you were to try and compile that code, you'd get a lot of errors including about unknown<code>Bar</code> module.</p>
+<p>To fix it, change <code>module Foo : sig</code> to <code>module rec Foo : sig</code> and <code>module Bar : sig</code> to <code>and Bar : sig</code>.</p>
+<p>Once you do that, everything will compile fine :)</p>
+<p>Here is what the output should look like:</p>
+<pre><code class="language-ocaml">module rec Foo : sig
+  type t
+
+  val of_pyobject : Pytypes.pyobject -&gt; t
+
+  val to_pyobject : t -&gt; Pytypes.pyobject
+
+  val make_bar : unit -&gt; Bar.t
+end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
+  let import_module () = Py.Import.import_module &quot;silly&quot;
+
+  type t = Pytypes.pyobject
+
+  let of_pyobject pyo = pyo
+
+  let to_pyobject x = x
+
+  let make_bar () =
+    let class_ = Py.Module.get (import_module ()) &quot;Foo&quot; in
+    let callable = Py.Object.find_attr_string class_ &quot;make_bar&quot; in
+    let kwargs = filter_opt [] in
+    Bar.of_pyobject
+    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+end
+
+and Bar : sig
+  type t
+
+  val of_pyobject : Pytypes.pyobject -&gt; t
+
+  val to_pyobject : t -&gt; Pytypes.pyobject
+
+  val make_foo : unit -&gt; Foo.t
+end = struct
+  let filter_opt l = List.filter_map Fun.id l
+
+  let import_module () = Py.Import.import_module &quot;silly&quot;
+
+  type t = Pytypes.pyobject
+
+  let of_pyobject pyo = pyo
+
+  let to_pyobject x = x
+
+  let make_foo () =
+    let class_ = Py.Module.get (import_module ()) &quot;Bar&quot; in
+    let callable = Py.Object.find_attr_string class_ &quot;make_foo&quot; in
+    let kwargs = filter_opt [] in
+    Foo.of_pyobject
+    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+end
+</code></pre>
+<h2 id="using-the-generated-modules">Using the generated modules</h2>
+<p>You can use the generated modules as you would any others.</p>
+<pre><code class="language-ocaml">open Lib
+
+let () = Py.initialize ()
+
+let (_bar : Bar.t) = Foo.make_bar ()
+let (_foo : Foo.t) = Bar.make_foo ()
+</code></pre>
+<h2 id="wrap-up">Wrap-up</h2>
+<p>You may come across cyclic classes when binding Python code.  If you want to bind them in OCaml as it, you will need to use recursive module.  For now, <code>pyml_bindgen</code> won't generate them for you automatically, but it is not <em>too</em> bad to change them by hand :)</p>
               
             </div>
           </div>
@@ -196,10 +289,10 @@ val price : t -&gt; float
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../instance-methods/" class="btn btn-neutral float-right" title="Instance Methods">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../names/" class="btn btn-neutral" title="Function & Argument Names"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../dictionaries-2/" class="btn btn-neutral" title="Handling Dictionaries 2"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -229,10 +322,10 @@ val price : t -&gt; float
         </span>
     
     
-      <span><a href="../names/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../dictionaries-2/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../instance-methods/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -9,7 +9,7 @@
   <meta name="author" content="Ryan M. Moore">
   <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/static-methods/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Class & Static Methods - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <title>Class & Static Methods; Functions - pyml_bindgen -- OCaml-Python Bindings Generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,7 +18,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Class & Static Methods";
+    var mkdocs_page_name = "Class & Static Methods; Functions";
     var mkdocs_page_input_path = "static-methods.md";
     var mkdocs_page_url = "/ocaml_python_bindgen/static-methods/";
   </script>
@@ -44,11 +44,11 @@
   
 
 
-<meta property="og:site_name" content="Class & Static Methods - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Class & Static Methods; Functions - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Class & Static Methods - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Class & Static Methods; Functions - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
@@ -59,7 +59,7 @@
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Class & Static Methods - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Class & Static Methods; Functions - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -101,6 +101,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dictionaries-2/">Handling Dictionaries 2</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../recursive/">Recursive Classes</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
                 <ul class="current">
@@ -112,13 +114,15 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../instance-methods/">Instance Methods</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Class & Static Methods</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Class & Static Methods; Functions</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#rules">Rules</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#binding-__init__">Binding __init__</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a>
     </li>
     </ul>
                     </li>
@@ -159,7 +163,7 @@
         
       
     
-    <li>Class & Static Methods</li>
+    <li>Class & Static Methods; Functions</li>
     <li class="wy-breadcrumbs-aside">
       
         <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/static-methods.md"
@@ -174,7 +178,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="class-static-methods">Class &amp; Static Methods</h1>
+                <h1 id="class-static-methods-functions">Class &amp; Static Methods; Functions</h1>
 <p>Value specs for class/static methods look like this:</p>
 <pre><code class="language-ocaml">val f : a:'a -&gt; ?b:'b -&gt; ... -&gt; unit -&gt; 'c
 </code></pre>
@@ -200,6 +204,9 @@ val subtract : x:int -&gt; ?y:int -&gt; unit -&gt; int
 <pre><code class="language-ocaml">val __init__ : name:string -&gt; age:int -&gt; unit -&gt; t
 </code></pre>
 <p>If you want to generate functions that ensure the class is correct, you can return <code>t option</code> or <code>t Or_error.t</code> instead.</p>
+<h2 id="functions">Functions</h2>
+<p>You can also bind functions that are not associated with a class.</p>
+<p>The rules are the same for the class and static methods.  To tell <code>pyml_bindgen</code> that you are actually binding module functions rather than class methods, you have to pass in a command line option <code>--associated-with module</code>.</p>
               
             </div>
           </div>
