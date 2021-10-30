@@ -30,5 +30,6 @@
   (ocamlformat :with-test)
   (ppx_inline_test :with-test)
   (ppx_expect :with-test)
+  (pyml :with-test)
   ; Dev deps
   (bisect_ppx :dev)))

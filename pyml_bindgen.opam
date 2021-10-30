@@ -22,6 +22,7 @@ depends: [
   "ocamlformat" {with-test}
   "ppx_inline_test" {with-test}
   "ppx_expect" {with-test}
+  "pyml" {with-test}
   "bisect_ppx" {dev}
   "odoc" {with-doc}
 ]
