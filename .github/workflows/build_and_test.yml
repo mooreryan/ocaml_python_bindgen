@@ -1,0 +1,47 @@
+name: Build and test
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'staging'
+
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        ocaml-compiler:
+          - 4.12.0
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          dune-cache: true
+          cache-prefix: v1-${{ matrix.os }}
+
+      - run: opam install . --deps-only --with-doc --with-test
+
+      - run: opam exec -- make build_release
+
+      - run: opam exec -- make install_release
+
+      - run: opam exec -- make test
+
+      - run: opam exec -- make send_coverage
+        if: matrix.ocaml-compiler == '4.12.0'
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}

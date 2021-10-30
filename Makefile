@@ -13,3 +13,15 @@ test_coverage:
 .PHONY: test_coverage_open
 test_coverage_open: test_coverage
 	$(BROWSER) _coverage/index.html
+
+.PHONY: build_release
+build_release:
+	dune build --profile=release
+
+.PHONY: install
+install: build_release
+	dune install --profile=release
+
+.PHONY: test
+test:
+	dune runtest
