@@ -12,12 +12,13 @@ nav:
     - Matplotlib Example 2: matplotlib-2.md
     - Handling Dictionaries: dictionaries.md
     - Handling Dictionaries 2: dictionaries-2.md
+    - Recursive Classes: recursive.md
   - Rules:
     - Types: types.md
     - Function & Argument Names: names.md
     - Attributes & Properties: attributes.md
     - Instance Methods: instance-methods.md
-    - Class & Static Methods: static-methods.md
+    - Class & Static Methods; Functions: static-methods.md
   - Miscellaneous:
     - CLI Options: cli-options.md
     - Converting `pyobjects` to OCaml types: of-pyobject.md
