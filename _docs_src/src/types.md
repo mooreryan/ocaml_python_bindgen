@@ -35,3 +35,25 @@ You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a op
 See [here](dictionaries.md) and [here](dictionaries-2.md) for examples of binding dictionaries.
 
 If you need to pass or return tuples to Python functions, see [here](tuples.md); however, the same ideas apply to tuples as are covered in the above links for dictionaries.
+
+## Placeholders
+
+There are two placeholders you can use: `todo` and `not_implemented`.
+
+If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use `not_implemented`.  If you are planning to come back and implement a function later, you can use `todo`.
+
+```ocaml
+val f : 'a todo
+val g : 'a not_implemented
+```
+
+These are special in that you can't just use them anywhere, it has to be exactly as above.
+
+The generated functions for the above signatures will be like this:
+
+```ocaml
+let f () = failwith "todo: f"
+let g () = failwith "not implemented: g"
+```
+
+So if a user actually calls these functions, the program will throw.
