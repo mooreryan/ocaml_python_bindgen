@@ -6,6 +6,53 @@ Generate Python bindings with [pyml](https://github.com/thierry-martinez/pyml) d
 
 While you *could* write all your Python bindings by hand, it can be tedious and it gets old real quick.  While `pyml_bindgen` can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖
 
+## Quick start
+
+You have a Python class you want to bind and use in OCaml.  (Filename: `adder.py`)
+
+```python
+class Adder:
+    @staticmethod
+    def add(x, y):
+        return x + y
+```
+
+To do so, you write OCaml value specifications for the class and methods you want to bind.  (Filename: `val_specs.txt`)
+
+```ocaml
+val add : x:int -> y:int -> unit -> int
+```
+
+Then, you run `pyml_bindgen`.
+
+```
+$ pyml_bindgen val_specs.txt adder Adder --caml-module Adder > lib.ml
+```
+
+Now you can use your generated functions in your OCaml code.  (Filename: `run.ml`)
+
+```ocaml
+open Lib
+
+let () = Py.initialize ()
+
+let result = Adder.add ~x:1 ~y:2 ()
+
+let () = assert (result = 3)
+```
+
+Finally, set up a dune file and run it.
+
+```
+(executable
+ (name run)
+ (libraries pyml))
+```
+
+```
+$ dune exec ./run.exe
+```
+
 ## Documentation
 
 For information on installing and using `pyml_bindgen`, check out the [docs](https://mooreryan.github.io/ocaml_python_bindgen/).
