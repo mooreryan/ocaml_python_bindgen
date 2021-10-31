@@ -10,10 +10,10 @@
  (license "MIT")
  (maintainers "Ryan M. Moore")
  (authors "Ryan M. Moore")
- (homepage "https://github.com/mooreryan/pyml_bindgen")
- (source (github mooreryan/pyml_bindgen))
+ (homepage "https://github.com/mooreryan/ocaml_python_bindgen")
+ (source (github mooreryan/ocaml_python_bindgen))
  (documentation "https://mooreryan.github.io/ocaml_python_bindgen/")
- (bug_reports "https://github.com/mooreryan/pyml_bindgen/issues")
+ (bug_reports "https://github.com/mooreryan/ocaml_python_bindgen/issues")
  (synopsis "Generate pyml bindings from OCaml value specifications")
  (depends
    ; Runtime deps
