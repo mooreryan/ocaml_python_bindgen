@@ -1,7 +1,6 @@
 open! Base
 open! Stdio
 open! Lib
-open Little_logger
 open Or_error.Let_syntax
 
 let spaces = Re2.create_exn "[ \n]+"
@@ -100,7 +99,7 @@ let print_impls ~shared_impls ~impls ~import_module_impl ~needs_base ~needs_todo
   List.iter impls ~f:print_dbl_endline
 
 let abort ?(exit_code = 1) msg =
-  Logger.sfatal msg;
+  prerr_endline ("ERROR: " ^ msg);
   Caml.exit exit_code
 
 (* TODO you could do a similar check with the option returning sigs mixed with
@@ -131,7 +130,6 @@ let run
       of_pyo_ret_type;
       associated_with;
     } =
-  Logger.set_log_level Logger.Level.Debug;
   let _x = caml_module in
   let import_module_impl = Shared.gen_import_module_impl py_module in
   let shared_signatures = Shared.gen_all_signatures of_pyo_ret_type in

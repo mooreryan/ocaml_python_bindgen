@@ -20,7 +20,6 @@
    angstrom
    base
    cmdliner
-   little_logger
    ppx_jane
    re2
    stdio

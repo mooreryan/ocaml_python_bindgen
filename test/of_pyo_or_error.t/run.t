@@ -15,7 +15,7 @@ Sigs with t no_check, but requesting or_error fail.
   $ pyml_bindgen silly_sigs_no_check.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=or_error > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Or_error return type, but Or_error was not found in the sigs.
+  ERROR: You said you wanted Or_error return type, but Or_error was not found in the sigs.
 
 Sigs with t option, but requesting or_error fail.
 
@@ -23,7 +23,7 @@ Sigs with t option, but requesting or_error fail.
   $ pyml_bindgen silly_sigs_option.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=or_error > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Or_error return type, but Or_error was not found in the sigs.
+  ERROR: You said you wanted Or_error return type, but Or_error was not found in the sigs.
 
 Mixed return types will fail.
 
@@ -31,7 +31,7 @@ Mixed return types will fail.
   $ pyml_bindgen silly_sigs_no_check_option.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=or_error > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Or_error return type, but Or_error was not found in the sigs.
+  ERROR: You said you wanted Or_error return type, but Or_error was not found in the sigs.
 
 If you have no_check or option mixed in with or error, and you request
 or_error, pyml_bindgen will NOT fail.  But compiling the result, WILL

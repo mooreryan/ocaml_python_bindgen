@@ -25,7 +25,7 @@ Sigs with t Or_error.t, but requesting option fail.
   $ pyml_bindgen silly_sigs_or_error.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Option return type, but Or_error was found in the sigs.
+  ERROR: You said you wanted Option return type, but Or_error was found in the sigs.
 
 
 Mixed return types will give if you try to run the code.  pyml_bindgen
@@ -44,10 +44,10 @@ If Or_error is present in the signatures but not passed correct
   $ pyml_bindgen silly_sigs_no_check_or_error.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Option return type, but Or_error was found in the sigs.
+  ERROR: You said you wanted Option return type, but Or_error was found in the sigs.
 
   $ if [ -f lib.ml ]; then rm lib.ml; fi
   $ pyml_bindgen silly_sigs_option_or_error.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml 2> err
   [1]
   $ bash "${SANITIZE_LOGS}" err
-  F, [DATE TIME PID] FATAL -- You said you wanted Option return type, but Or_error was found in the sigs.
+  ERROR: You said you wanted Option return type, but Or_error was found in the sigs.
