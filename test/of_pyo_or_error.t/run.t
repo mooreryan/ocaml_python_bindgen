@@ -41,10 +41,10 @@ fail.
   $ pyml_bindgen silly_sigs_no_check_or_error.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=or_error > lib.ml
   $ dune exec ./hi.exe 2> err
   [1]
-  $ grep -i --silent 'signature mismatch' err
+  $ grep -i -q 'signature mismatch' err
 
   $ if [ -f lib.ml ]; then rm lib.ml; fi
   $ pyml_bindgen silly_sigs_option_or_error.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=or_error > lib.ml
   $ dune exec ./hi.exe 2> err
   [1]
-  $ grep -i --silent 'signature mismatch' err
+  $ grep -i -q 'signature mismatch' err

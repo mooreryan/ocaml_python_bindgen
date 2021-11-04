@@ -17,7 +17,7 @@ error if you try to run the code.
   $ pyml_bindgen silly_sigs_no_check.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml
   $ dune exec ./hi.exe 2> err
   [1]
-  $ grep -i --silent 'signature mismatch' err
+  $ grep -i -q 'signature mismatch' err
 
 Sigs with t Or_error.t, but requesting option fail.
 
@@ -35,7 +35,7 @@ program will run fine however...
   $ pyml_bindgen silly_sigs_no_check_option.txt silly_mod Silly --caml-module=Silly --of-pyo-ret-type=option > lib.ml
   $ dune exec ./hi.exe 2> err
   [1]
-  $ grep -i --silent 'signature mismatch' err
+  $ grep -i -q 'signature mismatch' err
 
 If Or_error is present in the signatures but not passed correct
 --of-pyo-ret-type, it's an error.
