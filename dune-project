@@ -6,7 +6,7 @@
 
 (package
  (name pyml_bindgen)
- (version 0.1.0)
+ (version 0.1.1)
  (license "MIT")
  (maintainers "Ryan M. Moore")
  (authors "Ryan M. Moore")
@@ -17,18 +17,18 @@
  (synopsis "Generate pyml bindings from OCaml value specifications")
  (depends
    ; Runtime deps
-   angstrom
-   base
+  (angstrom (>= "0.15.0"))
+  (base (>= "v0.12"))
    cmdliner
-   ppx_jane
-   re2
-   stdio
-   ocaml
+  (ppx_jane (>= "v0.12"))
+  (re2 (>= "v0.12"))
+  (stdio (>= "v0.12"))
+  (ocaml (>= "4.08.0"))
   ; Test-only deps
-  (core_kernel :with-test)
+  (core_kernel (and (>= "v0.12") :with-test))
   (ocamlformat :with-test)
-  (ppx_inline_test :with-test)
-  (ppx_expect :with-test)
+  (ppx_inline_test (and (>= "v0.12") :with-test))
+  (ppx_expect (and (>= "v0.12") :with-test))
   (pyml :with-test)
   ; Dev deps
   (bisect_ppx :dev)))
