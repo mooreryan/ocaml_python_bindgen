@@ -6,7 +6,7 @@
 
 (package
  (name pyml_bindgen)
- (version 0.1.1)
+ (version 0.1.2)
  (license "MIT")
  (maintainers "Ryan M. Moore")
  (authors "Ryan M. Moore")
@@ -19,12 +19,15 @@
    ; Runtime deps
   (angstrom (>= "0.15.0"))
   (base (>= "v0.12"))
-   cmdliner
-  (ppx_jane (>= "v0.12"))
+  (cmdliner (>= "1.0"))
+  (ppx_let (>= "v0.12"))
+  (ppx_sexp_conv (>= "v0.12"))
+  (ppx_string (>= "v0.12"))
   (re2 (>= "v0.12"))
   (stdio (>= "v0.12"))
   (ocaml (>= "4.08.0"))
   ; Test-only deps
+  (conf-python-3-dev (and (>= "1") :with-test))
   (core_kernel (and (>= "v0.12") :with-test))
   (ocamlformat :with-test)
   (ppx_inline_test (and (>= "v0.12") :with-test))

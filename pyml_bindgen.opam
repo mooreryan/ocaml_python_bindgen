@@ -12,11 +12,14 @@ depends: [
   "dune" {>= "2.8"}
   "angstrom" {>= "0.15.0"}
   "base" {>= "v0.12"}
-  "cmdliner"
-  "ppx_jane" {>= "v0.12"}
+  "cmdliner" {>= "1.0"}
+  "ppx_let" {>= "v0.12"}
+  "ppx_sexp_conv" {>= "v0.12"}
+  "ppx_string" {>= "v0.12"}
   "re2" {>= "v0.12"}
   "stdio" {>= "v0.12"}
   "ocaml" {>= "4.08.0"}
+  "conf-python-3-dev" {>= "1" & with-test}
   "core_kernel" {>= "v0.12" & with-test}
   "ocamlformat" {with-test}
   "ppx_inline_test" {>= "v0.12" & with-test}
