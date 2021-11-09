@@ -8,7 +8,13 @@ While you *could* write all your Python bindings by hand, it can be tedious and 
 
 ## Quick start
 
-You have a Python class you want to bind and use in OCaml.  (Filename: `adder.py`)
+First, install `pyml_bindgen`.  It is available on [Opam](https://opam.ocaml.org/packages/pyml_bindgen/).
+
+```
+$ opam install pyml_bindgen
+```
+
+Say you have a Python class you want to bind and use in OCaml.  (Filename: `adder.py`)
 
 ```python
 class Adder:

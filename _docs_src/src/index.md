@@ -28,7 +28,13 @@ If you have any questions or issues, please [let me know](https://github.com/moo
 
 ## Installing
 
-`pyml_bindgen` is a [Dune](https://dune.readthedocs.io/en/stable/) project, so you *should* be able to clone the repository and build it with `dune` as long as you have the proper dependencies installed 🤞
+`pyml_bindgen` is available on [Opam](https://opam.ocaml.org/packages/pyml_bindgen/).  You can install it in the normal way:
+
+```
+$ opam install pyml_bindgen
+```
+
+You can also install from source.  `pyml_bindgen` is a [Dune](https://dune.readthedocs.io/en/stable/) project, so you *should* be able to clone the repository and build it with `dune` as long as you have the proper dependencies installed 🤞
 
 ```
 $ git clone https://github.com/mooreryan/pyml_bindgen.git
