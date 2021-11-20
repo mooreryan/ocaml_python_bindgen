@@ -90,7 +90,7 @@ We will mint another module type that is specific to lists.
 
 ```ocaml
 module type S_list = sig
-  include module type of List
+  include module type of struct include List end
   type element
   type t = element list
   val of_pyobject : Pytypes.pyobject -> element list
