@@ -1,6 +1,7 @@
 ## Unreleased
 
-NA
+* Update docs
+* Add full examples in the `examples` directory
 
 ## 0.1.2 (2021-12-07)
 
