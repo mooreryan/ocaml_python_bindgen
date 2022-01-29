@@ -1,0 +1,14 @@
+(executable
+ (name run)
+ (libraries pyml))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (target lib.ml)
+ (action
+  (with-stdout-to
+   lib.ml
+   (pipe-stdout
+    (run %{bin:pyml_bindgen} val_specs.txt adder Adder --caml-module Adder)
+    (run ocamlformat --name lib.ml --enable-outside-detected-project -)))))
