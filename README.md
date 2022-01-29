@@ -63,6 +63,8 @@ $ dune exec ./run.exe
 
 For information on installing and using `pyml_bindgen`, check out the [docs](https://mooreryan.github.io/ocaml_python_bindgen/).
 
+Additionally, you can find examples in the [examples](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples) directory.  One neat thing about these examples is that you can see how to write Dune [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule) to automatically generate your `pyml` bindings.
+
 ## License
 
 [![license MIT or Apache

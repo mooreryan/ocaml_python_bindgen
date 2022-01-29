@@ -47,6 +47,8 @@ $ pyml_bindgen --help
 
 ## Quick start
 
+*Note: You can find full examples in the [examples](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples) directory on GitHub.  One neat thing about the examples there is that you can see how to write Dune [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule) to automatically generate your `pyml` bindings.*
+
 `pyml_bindgen` is a CLI program that generates OCaml modules that bind Python classes via [pyml](https://github.com/thierry-martinez/pyml).
 
 Here's a small example.  Take a Python class, `Thing`.  (Put it in a file called `thing.py`...this means the Python module will be called `thing`.)
