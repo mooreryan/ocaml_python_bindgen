@@ -25,8 +25,11 @@ type t =
 [@@deriving sexp]
 
 let is_unit = function Unit -> true | _ -> false
+
 let is_t = function T -> true | _ -> false
+
 let is_todo = function Todo -> true | _ -> false
+
 let is_not_implemented = function Not_implemented -> true | _ -> false
 
 module P = struct
@@ -39,21 +42,34 @@ module P = struct
 
   (* Parsers for each of the Otype variants. *)
   let int = string "int" <?> "int parser"
+
   let float = string "float" <?> "float parser"
+
   let string_ = string "string" <?> "string parser"
+
   let bool = string "bool" <?> "bool parser"
+
   let unit = string "unit" <?> "unit parser"
+
   let array = string "array" <?> "array parser"
+
   let list = string "list" <?> "list parser"
+
   let seq = string "Seq.t" <?> "seq parser"
+
   let option = string "option" <?> "option parser"
+
   let or_error = string "Or_error.t" <?> "or_error parser"
+
   let todo = string "'a todo" <?> "todo parser"
+
   let not_implemented = string "'a not_implemented" <?> "not_implemented parser"
 
   (* We allow stuff like [int option list] *)
   let option_array = string "option array" <?> "option_array parser"
+
   let option_list = string "option list" <?> "option_list parser"
+
   let option_seq = string "option Seq.t" <?> "option_seq parser"
 
   (* If you just do string "t", then any arg names that start with t will blow

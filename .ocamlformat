@@ -1,0 +1,3 @@
+profile = default
+version = 0.20.1
+module-item-spacing=sparse

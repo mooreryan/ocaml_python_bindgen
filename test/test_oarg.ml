@@ -9,7 +9,8 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a not_implemented";
-  [%expect {| (Ok ((fun_name f) (args ((Positional ((type_ Not_implemented))))))) |}]
+  [%expect
+    {| (Ok ((fun_name f) (args ((Positional ((type_ Not_implemented))))))) |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo option";
@@ -21,21 +22,24 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args ((Positional ((type_ Todo))) (Positional ((type_ Unit))))))) |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a not_implemented -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args ((Positional ((type_ Not_implemented))) (Positional ((type_ Unit))))))) |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo -> unit -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args
@@ -44,7 +48,8 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a not_implemented -> unit -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args
@@ -53,7 +58,8 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : unit -> 'a todo -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args
@@ -62,7 +68,8 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : unit -> 'a not_implemented -> unit";
-  [%expect {|
+  [%expect
+    {|
     (Ok
      ((fun_name f)
       (args

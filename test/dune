@@ -7,6 +7,4 @@
 
 (cram
  (applies_to :whole_subtree)
- (deps
-   %{bin:pyml_bindgen}
-   ./helpers/sanitize_logs))
+ (deps %{bin:pyml_bindgen} ./helpers/sanitize_logs))

@@ -5,6 +5,7 @@ let gen_import_module_impl py_module =
   [%string {| let import_module () = Py.Import.import_module "%{py_module}" |}]
 
 let gen_type_sig () = "type t"
+
 let gen_type_impl () = "type t = Pytypes.pyobject"
 
 let gen_of_pyobject_sig = function
@@ -84,6 +85,7 @@ let of_pyobject pyo =
       "let of_pyobject pyo = pyo"
 
 let gen_to_pyobject_sig () = "val to_pyobject : t -> Pytypes.pyobject"
+
 let gen_to_pyobject_impl () = "let to_pyobject x = x"
 
 let gen_all_signatures of_pyo_return_type =

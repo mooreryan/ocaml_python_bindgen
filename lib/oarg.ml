@@ -7,6 +7,7 @@ open! Base
 (* posistional can be an option type...'optional' refers to ?a:string and stuff
    like that. *)
 type positional = { type_ : Otype.t } [@@deriving sexp]
+
 type labeled = { name : string; type_ : Otype.t } [@@deriving sexp]
 
 (* Kind of confusing, but these are not things like a:string option, but
@@ -14,13 +15,17 @@ type labeled = { name : string; type_ : Otype.t } [@@deriving sexp]
 type optional = { name : string; type_ : Otype.t } [@@deriving sexp]
 
 let make_positional type_ : positional = { type_ }
+
 let make_labeled name type_ : labeled = { name; type_ }
+
 let make_optional name type_ : optional = { name; type_ }
 
 let optional_name (x : optional) : string = x.name
+
 let optional_type (x : optional) : Otype.t = x.type_
 
 let labeled_name (x : labeled) : string = x.name
+
 let labeled_type (x : labeled) : Otype.t = x.type_
 
 type t = Positional of positional | Labeled of labeled | Optional of optional
@@ -76,8 +81,11 @@ module P = struct
   let spaces = take_while Utils.is_space
 
   let val_ = spaces *> string "val" <* spaces
+
   let arrow = spaces *> string "->" <* spaces
+
   let colon = spaces *> string ":" <* spaces
+
   let question_mark = spaces *> string "?" <* spaces
 
   let all_underscores = Re2.create_exn "^_+$"

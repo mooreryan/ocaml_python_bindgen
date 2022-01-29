@@ -29,7 +29,7 @@
   ; Test-only deps
   (conf-python-3-dev (and (>= "1") :with-test))
   (core_kernel (and (>= "v0.12") :with-test))
-  (ocamlformat (and (>= "0.19.0") (< "0.20.0") :with-test))
+  (ocamlformat (and (>= "0.20.0") (< "0.21.0") :with-test))
   (ppx_inline_test (and (>= "v0.12") :with-test))
   (ppx_expect (and (>= "v0.12") :with-test))
   (pyml :with-test)

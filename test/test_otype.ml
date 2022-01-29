@@ -1,6 +1,5 @@
 open! Core_kernel
 open Lib
-
 module Q = Quickcheck
 module QG = Quickcheck.Generator
 

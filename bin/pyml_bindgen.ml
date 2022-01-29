@@ -4,13 +4,17 @@ open! Lib
 open Or_error.Let_syntax
 
 let spaces = Re2.create_exn "[ \n]+"
+
 let squash_spaces s = Re2.rewrite_exn ~template:" " spaces s
+
 let clean s = String.strip @@ squash_spaces s
 
 let all_whitespace = Re2.create_exn "^\\s*$"
+
 let is_comment = Re2.create_exn "^\\s*#"
 
 let todo_type = "type 'a todo = unit -> 'a"
+
 let not_implemented_type = "type 'a not_implemented = unit -> 'a"
 
 let gen_pyml_impl ~associated_with ~py_class ~signature =
@@ -27,7 +31,9 @@ let clean_signatures data =
   |> List.map ~f:(String.concat ~sep:" ")
 
 let or_error_re = Re2.create_exn "Or_error\\.t"
+
 let todo_re = Re2.create_exn "'a todo"
+
 let not_implemented_re = Re2.create_exn "'a not_implemented"
 
 (* This would give false positives if the Or_error is in something other than
@@ -36,6 +42,7 @@ let not_implemented_re = Re2.create_exn "'a not_implemented"
 let check_needs_base s = Re2.matches or_error_re s
 
 let check_needs_todo s = Re2.matches todo_re s
+
 let check_needs_not_implemented s = Re2.matches not_implemented_re s
 
 let read_signatures_file fname =
