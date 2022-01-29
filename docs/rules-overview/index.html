@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Ryan M. Moore">
-  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/types/">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Types - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <title>Overview - pyml_bindgen -- OCaml-Python Bindings Generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Types";
-    var mkdocs_page_input_path = "types.md";
-    var mkdocs_page_url = "/ocaml_python_bindgen/types/";
+    var mkdocs_page_name = "Overview";
+    var mkdocs_page_input_path = "rules-overview.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/rules-overview/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -44,22 +44,22 @@
   
 
 
-<meta property="og:site_name" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/types/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Types - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -106,21 +106,11 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="../rules-overview/">Overview</a>
-                    </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Types</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Overview</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#function-arguments">Function arguments</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#return-types">Return types</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#nesting">Nesting</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dictionaries-tuples">Dictionaries &amp; Tuples</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#placeholders">Placeholders</a>
-    </li>
     </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../names/">Function & Argument Names</a>
                     </li>
@@ -169,10 +159,10 @@
         
       
     
-    <li>Types</li>
+    <li>Overview</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/types.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/rules-overview.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -184,43 +174,9 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="types">Types</h1>
-<p>Not all OCaml types are allowed.</p>
-<p>There are a lot of <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test">tests</a> that exercise the rules here.</p>
-<h2 id="function-arguments">Function arguments</h2>
-<p>For function arguments, you can use</p>
-<ul>
-<li><code>float</code></li>
-<li><code>string</code></li>
-<li><code>bool</code></li>
-<li><code>t</code> (i.e., the main type of the current module)</li>
-<li>Other module types (e.g., <code>Span.t</code>, <code>Doc.t</code>, <code>Apple_pie.t</code>)</li>
-<li>Arrays of any of the above types</li>
-<li>Lists of any of the above types</li>
-<li>Seq.t of any of the above types</li>
-<li><code>'a option</code>, <code>'a option array</code>, <code>'a option list</code>, <code>'a option Seq.t</code></li>
-</ul>
-<h2 id="return-types">Return types</h2>
-<p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>.  However, you cannot use <code>unit array</code>, <code>unit list</code>, or <code>unit Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
-<h2 id="nesting">Nesting</h2>
-<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
-<p>E.g., <code>'a array list</code> will fail.</p>
-<p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s (e.g., <code>'a option list</code>); however, this will not work with <code>Or_error.t</code>.</p>
-<h2 id="dictionaries-tuples">Dictionaries &amp; Tuples</h2>
-<p>See <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a> for examples of binding dictionaries.</p>
-<p>If you need to pass or return tuples to Python functions, see <a href="../tuples/">here</a>; however, the same ideas apply to tuples as are covered in the above links for dictionaries.</p>
-<h2 id="placeholders">Placeholders</h2>
-<p>There are two placeholders you can use: <code>todo</code> and <code>not_implemented</code>.</p>
-<p>If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use <code>not_implemented</code>.  If you are planning to come back and implement a function later, you can use <code>todo</code>.</p>
-<pre><code class="language-ocaml">val f : 'a todo
-val g : 'a not_implemented
-</code></pre>
-<p>These are special in that you can't just use them anywhere, it has to be exactly as above.</p>
-<p>The generated functions for the above signatures will be like this:</p>
-<pre><code class="language-ocaml">let f () = failwith &quot;todo: f&quot;
-let g () = failwith &quot;not implemented: g&quot;
-</code></pre>
-<p>So if a user actually calls these functions, the program will throw.</p>
+                <h1 id="rules-overview">Rules Overview</h1>
+<p>The following pages are an informal description of some of the rules you have to follow when using <code>pyml_bindgen</code>.</p>
+<p>I will try and keep them updated and (reasonably) complete.  However, if you really want to know how something is working, you may want to have a look at the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/test">tests</a>.</p>
               
             </div>
           </div>
@@ -228,10 +184,10 @@ let g () = failwith &quot;not implemented: g&quot;
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../names/" class="btn btn-neutral float-right" title="Function & Argument Names">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../rules-overview/" class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../recursive/" class="btn btn-neutral" title="Recursive Classes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -261,10 +217,10 @@ let g () = failwith &quot;not implemented: g&quot;
         </span>
     
     
-      <span><a href="../rules-overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../recursive/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../names/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
