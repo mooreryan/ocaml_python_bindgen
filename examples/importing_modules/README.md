@@ -160,4 +160,4 @@ $ run.exe
 
 ## Automating binding generation
 
-Running `pyml_bindgen` by hand isn't always the most fun.  You can have Dune automatically update the bindings for you whenever the specs files change using Dune's [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule).  The `dune` file in this directory has rules for auto-generating the OCaml modules.  The cool thing is that if you update one of the specs files, Dune will automatically pick up the change and regenerate the OCaml files...nice!
+Running `pyml_bindgen` by hand isn't always the most fun.  You can have Dune automatically update the bindings for you whenever the specs files change using Dune's [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule).  The `dune` file in the `lib` directory has rules for auto-generating the OCaml modules.  The cool thing is that if you update one of the specs files, Dune will automatically pick up the change and regenerate the OCaml files...nice!
