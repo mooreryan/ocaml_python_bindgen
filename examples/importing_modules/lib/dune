@@ -1,0 +1,85 @@
+(library
+ (name importing_modules_lib)
+ (libraries pyml))
+
+(rule
+ ;; The file produced by this rule will be called `lib.ml`.
+ (target magic_dust.ml)
+ ;; Put the resulting lib.ml file in this directory.  When you run
+ ;; `dune clean`, it will be removed.
+ (mode
+  (promote (until-clean)))
+ ;; We need to give the action access to the files in the `specs` dir.
+ (deps
+  (source_tree specs))
+ (action
+  ;; We use `progn` to run multiple commands one after the other.
+  (progn
+   ;; `with-stdout-to` will collect all standard output of anything
+   ;; inside of it.
+   (with-stdout-to
+    ;; Output of commands in this sexp will be collected in `magic_dust.ml`.
+    magic_dust.ml
+    ;; We use `progn` again to run mulitple commands.  The output of
+    ;; both will go into `magic_dust.ml`.
+    (progn
+     ;; The first time we run `pyml_bindgen` to generate the `Hearts`
+     ;; module.
+     (run
+      %{bin:pyml_bindgen}
+      ./specs/magic_dust/hearts.txt
+      ;; The python module is in `./py/magic_dust/hearts.py`.  See
+      ;; the README for why we specify the module like this.
+      magic_dust.hearts
+      NA
+      --caml-module
+      Hearts
+      --associated-with
+      module)
+     ;; We run `pyml_bindgen` again to generate the `Sparkles` module.
+     ;; Both of these will be in the `Magic_dust` OCaml module.
+     (run
+      %{bin:pyml_bindgen}
+      ./specs/magic_dust/sparkles.txt
+      magic_dust.sparkles
+      NA
+      --caml-module
+      Sparkles
+      --associated-with
+      module)))
+   ;; Finally we format the `magic_dust.ml` file so it looks nice.
+   (run ocamlformat magic_dust.ml --inplace))))
+
+;; This rule is similar to the previous, though it generates the
+;; `Silly_math` OCaml module.
+
+(rule
+ (target silly_math.ml)
+ (mode
+  (promote (until-clean)))
+ (deps
+  (source_tree specs))
+ (action
+  (progn
+   (with-stdout-to
+    silly_math.ml
+    (progn
+     (run
+      %{bin:pyml_bindgen}
+      specs/silly_math/adder/add.txt
+      silly_math.adder.add
+      NA
+      --caml-module
+      Add
+      --associated-with
+      module)
+     (run
+      %{bin:pyml_bindgen}
+      specs/silly_math/subtracter/subtract.txt
+      silly_math.subtracter.subtract
+      NA
+      --caml-module
+      Subtract
+      --associated-with
+      module)))
+   (run ocamlformat silly_math.ml --inplace))))

@@ -1,0 +1,2 @@
+def hearts():
+    return('hearts...')
