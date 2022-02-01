@@ -1,0 +1,3 @@
+# pr_value got parsed as pr_, val, ue like that by the binary, but not the lib code.
+val add_feature : t -> pr_name:string -> pr_value:string -> unit -> unit val add_feature2 : t -> pr_name:string -> pr_value:string -> unit -> unit
+val add_feature3 : t -> pr_name:string -> pr_value:string -> unit -> unit

@@ -23,8 +23,11 @@ let gen_pyml_impl ~associated_with ~py_class ~signature =
   return @@ clean @@ Py_fun.pyml_impl py_class py_fun
 
 let clean_signatures data =
+  (* Match like this because we don't want to split any strings containg
+     val...e.g., pr_value, silly_val, etc. *)
+  let re = Re2.create_exn "^val\\s+|\\s+val\\s+" in
   data
-  |> Re2.split ~include_matches:true (Re2.create_exn "val")
+  |> Re2.split ~include_matches:true re
   |> List.filter_map ~f:(fun s ->
          if Re2.matches all_whitespace s then None else Some (clean s))
   |> List.chunks_of ~length:2

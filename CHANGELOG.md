@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Fix bug in val spec parsing
 * Update docs
 * Add full examples in the `examples` directory
 
