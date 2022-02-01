@@ -247,8 +247,6 @@ is pretty unlikely that you will find that in your Python code :)
   [1]
   $ grep 'This will break' err
   20 |         """This will break :) {pyml_bindgen_string_literal| any |pyml_bindgen_string_literal}."""
-  $ grep Error err
-  Error: Syntax error
 
 Gives good error when the specified python file doesn't exist.
 
