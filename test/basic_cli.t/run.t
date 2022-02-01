@@ -9,7 +9,7 @@ No arguments.
 Version screen
 
   $ pyml_bindgen --version
-  0.1.0
+  0.1.3-alpha
 
 Help screen
 
