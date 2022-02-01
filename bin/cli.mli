@@ -7,6 +7,7 @@ type opts = {
   caml_module : string option;
   of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
   associated_with : [ `Class | `Module ];
+  embed_python_source : string option;
 }
 
 val parse_cli : unit -> (opts, int) Result.t

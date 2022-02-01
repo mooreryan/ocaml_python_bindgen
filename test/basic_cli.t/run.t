@@ -41,6 +41,11 @@ Help screen
          -c CAML_MODULE, --caml-module=CAML_MODULE
              Write full module and signature
   
+         -e PYTHON_SOURCE, --embed-python-source=PYTHON_SOURCE
+             Use this option to embed Python source code directly in the OCaml
+             binary. In this way, you won't have to ensure the Python
+             interpreter can find the module at runtime.
+  
          --help[=FMT] (default=auto)
              Show this help in format FMT. The value FMT must be one of `auto',
              `pager', `groff' or `plain'. With `auto', the format is `pager` or

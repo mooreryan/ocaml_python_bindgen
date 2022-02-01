@@ -10,10 +10,11 @@ type opts = {
   caml_module : string option;
   of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
   associated_with : [ `Class | `Module ];
+  embed_python_source : string option;
 }
 
 let make_opts signatures py_module py_class caml_module of_pyo_ret_type
-    associated_with =
+    associated_with embed_python_source =
   {
     signatures;
     py_module;
@@ -21,6 +22,7 @@ let make_opts signatures py_module py_class caml_module of_pyo_ret_type
     caml_module;
     of_pyo_ret_type;
     associated_with;
+    embed_python_source;
   }
 
 let signatures_term =
@@ -76,10 +78,22 @@ let associated_with_term =
     & opt argv_conv `Class
     & info [ "a"; "associated-with" ] ~doc ~docv:"ASSOCIATED_WITH")
 
+let embed_python_source_term =
+  let doc =
+    "Use this option to embed Python source code directly in the OCaml \
+     binary.  In this way, you won't have to ensure the Python interpreter can \
+     find the module at runtime."
+  in
+  Arg.(
+    value
+    & opt (some non_dir_file) None
+    & info [ "e"; "embed-python-source" ] ~docv:"PYTHON_SOURCE" ~doc)
+
 let term =
   Term.(
     const make_opts $ signatures_term $ py_module_term $ py_class_term
-    $ caml_module_term $ of_pyo_ret_type_term $ associated_with_term)
+    $ caml_module_term $ of_pyo_ret_type_term $ associated_with_term
+    $ embed_python_source_term)
 
 let info =
   let doc = "generate pyml bindings for a set of signatures" in

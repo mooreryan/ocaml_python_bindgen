@@ -1,8 +1,24 @@
 open! Base
 
 (** Note, this one isn't included in the "all" functions below. *)
-let gen_import_module_impl py_module =
-  [%string {| let import_module () = Py.Import.import_module "%{py_module}" |}]
+let gen_import_module_impl ?python_source py_module =
+  match python_source with
+  | None ->
+      [%string
+        {| let import_module () = Py.Import.import_module "%{py_module}" |}]
+  | Some file_name ->
+      let source = Utils.read_python_source file_name in
+      [%string
+        "let import_module () =\n\
+        \  let source = \
+         {pyml_bindgen_string_literal|%{source}|pyml_bindgen_string_literal} in\n\
+        \  let filename = \
+         {pyml_bindgen_string_literal|%{file_name}|pyml_bindgen_string_literal} \
+         in\n\
+        \  let bytecode = Py.compile ~filename ~source `Exec in\n\
+        \  Py.Import.exec_code_module \
+         {pyml_bindgen_string_literal|%{py_module}|pyml_bindgen_string_literal} \
+         bytecode"]
 
 let gen_type_sig () = "type t"
 

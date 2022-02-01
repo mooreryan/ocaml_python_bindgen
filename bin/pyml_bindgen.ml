@@ -139,9 +139,12 @@ let run
       caml_module;
       of_pyo_ret_type;
       associated_with;
+      embed_python_source;
     } =
   let _x = caml_module in
-  let import_module_impl = Shared.gen_import_module_impl py_module in
+  let import_module_impl =
+    Shared.gen_import_module_impl ?python_source:embed_python_source py_module
+  in
   let shared_signatures = Shared.gen_all_signatures of_pyo_ret_type in
   let shared_impls =
     Shared.gen_all_functions of_pyo_ret_type (`Custom py_class)

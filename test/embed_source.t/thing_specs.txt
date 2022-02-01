@@ -1,0 +1,2 @@
+val __init__ : color:string -> unit -> t
+val __str__ : t -> unit -> string
