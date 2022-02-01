@@ -1,5 +1,7 @@
 (lang dune 2.8)
 
+(name pyml_bindgen)
+ 
 (generate_opam_files true)
 
 (cram enable)
