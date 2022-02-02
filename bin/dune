@@ -5,4 +5,4 @@
  (instrumentation
   (backend bisect_ppx))
  (preprocess
-  (pps ppx_jane)))
+  (pps ppx_let ppx_string)))
