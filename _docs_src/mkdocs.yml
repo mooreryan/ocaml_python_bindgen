@@ -24,6 +24,7 @@ nav:
     - Auto-generating bindings: auto-gen-bindings.md
     - CLI Options: cli-options.md
     - Converting `pyobjects` to OCaml types: of-pyobject.md
+    - Embedding Python source: embedding-python.md
     - Handling Tuples: tuples.md
     - Gotchas & Known Bugs: gotchas-bugs.md
 theme:

@@ -1,3 +1,3 @@
 # Gotchas & Known Bugs
 
-Nothing to see here... O_o
+* You cannot bind Python properties or attributes that return `None`.  So, `val f : t -> unit` will currently fail.
