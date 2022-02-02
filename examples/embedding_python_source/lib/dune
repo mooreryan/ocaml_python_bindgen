@@ -1,0 +1,39 @@
+(library
+ (name embedding_py_source_lib)
+ (libraries pyml))
+
+(rule
+ ;; The file produced by this rule will be called `math.ml`.
+ (target math.ml)
+ ;; Put the resulting math.ml file in this directory.  When you run
+ ;; `dune clean`, it will be removed.
+ (mode
+  (promote (until-clean)))
+  ;; We need to give the action access to the files in the `specs` dir.
+ (deps
+  (source_tree specs)
+  ;; We also need to give access to the Python source directory.
+  (source_tree ../py))
+ (action
+  ;; `pyml_bindgen` outputs directly to stdout, so we need to redirect
+  ;; the stdout to `math.ml`.  We do this using `with-stdout-to`.
+  (with-stdout-to
+   ;; This is the name of the file to which the output of the
+   ;; following command will be directed.
+   math.ml
+   ;; This step isn't necessary, but I use `ocamlformat` for
+   ;; everything, so I would like to have the output of
+   ;; `pyml_bindgen` also processed by `ocamlformat`.  `pipe-stdout`
+   ;; takes the stdout of the first `run` command and pipes it to the
+   ;; stdin of the second `run` command.
+   (pipe-stdout
+    ;; Here is the acutal `pyml_bindgen` command to generate the
+    ;; bindings.
+    (run %{bin:pyml_bindgen} specs/adder.txt adder Adder --caml-module Adder
+         ;; This option tells `pyml_bindgen` that you want to embed
+         ;; the Python code into the generated OCaml module.  It will
+         ;; be evaluated at runtime.  Note how we refer to the path as
+         ;; specified in `source_tree` above.
+         --embed-python-source ../py/math/adder.py)
+    ;; And finally, process the bindings code with ocamlformat.
+    (run ocamlformat --name math.ml -)))))

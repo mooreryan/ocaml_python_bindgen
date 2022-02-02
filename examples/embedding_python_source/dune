@@ -1,0 +1,3 @@
+(executable
+ (name run)
+ (libraries embedding_py_source_lib pyml))
