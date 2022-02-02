@@ -23,9 +23,10 @@ Check the generated source.
   $ cat person.ml
   let filter_opt l = List.filter_map Fun.id l
   
-  let import_module () =
-    let source =
-      {pyml_bindgen_string_literal|class Person:
+  let py_module =
+    lazy
+      (let source =
+         {pyml_bindgen_string_literal|class Person:
       def __init__(self, name, age):
           self.name = name
           self.age = age
@@ -33,13 +34,15 @@ Check the generated source.
       def __str__(self):
           return(f'Person -- name: {self.name}, age: {self.age}')
   |pyml_bindgen_string_literal}
-    in
-    let filename =
-      {pyml_bindgen_string_literal|person.py|pyml_bindgen_string_literal}
-    in
-    let bytecode = Py.compile ~filename ~source `Exec in
-    Py.Import.exec_code_module
-      {pyml_bindgen_string_literal|person|pyml_bindgen_string_literal} bytecode
+       in
+       let filename =
+         {pyml_bindgen_string_literal|person.py|pyml_bindgen_string_literal}
+       in
+       let bytecode = Py.compile ~filename ~source `Exec in
+       Py.Import.exec_code_module
+         {pyml_bindgen_string_literal|person|pyml_bindgen_string_literal} bytecode)
+  
+  let import_module () = Lazy.force py_module
   
   type t = Pytypes.pyobject
   
@@ -76,9 +79,10 @@ Now try a module inside a package.
   $ cat person2.ml
   let filter_opt l = List.filter_map Fun.id l
   
-  let import_module () =
-    let source =
-      {pyml_bindgen_string_literal|class Person:
+  let py_module =
+    lazy
+      (let source =
+         {pyml_bindgen_string_literal|class Person:
       def __init__(self, name, age):
           self.name = name
           self.age = age
@@ -86,13 +90,16 @@ Now try a module inside a package.
       def __str__(self):
           return(f'Person -- name: {self.name}, age: {self.age}')
   |pyml_bindgen_string_literal}
-    in
-    let filename =
-      {pyml_bindgen_string_literal|py/cool_package/person2.py|pyml_bindgen_string_literal}
-    in
-    let bytecode = Py.compile ~filename ~source `Exec in
-    Py.Import.exec_code_module
-      {pyml_bindgen_string_literal|person2|pyml_bindgen_string_literal} bytecode
+       in
+       let filename =
+         {pyml_bindgen_string_literal|py/cool_package/person2.py|pyml_bindgen_string_literal}
+       in
+       let bytecode = Py.compile ~filename ~source `Exec in
+       Py.Import.exec_code_module
+         {pyml_bindgen_string_literal|person2|pyml_bindgen_string_literal}
+         bytecode)
+  
+  let import_module () = Lazy.force py_module
   
   type t = Pytypes.pyobject
   
@@ -157,7 +164,9 @@ And run it.
   end = struct
     let filter_opt l = List.filter_map Fun.id l
   
-    let import_module () = Py.Import.import_module "person"
+    let py_module = lazy (Py.Import.import_module "person")
+  
+    let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
@@ -196,9 +205,10 @@ And run it.
   end = struct
     let filter_opt l = List.filter_map Fun.id l
   
-    let import_module () =
-      let source =
-        {pyml_bindgen_string_literal|class Thing:
+    let py_module =
+      lazy
+        (let source =
+           {pyml_bindgen_string_literal|class Thing:
       """A thing is pretty basic.  It does have a color though!"""
   
       def __init__(self, color):
@@ -208,13 +218,16 @@ And run it.
       def __str__(self):
           return(f'Thing -- color: {self.color}')
   |pyml_bindgen_string_literal}
-      in
-      let filename =
-        {pyml_bindgen_string_literal|thing.py|pyml_bindgen_string_literal}
-      in
-      let bytecode = Py.compile ~filename ~source `Exec in
-      Py.Import.exec_code_module
-        {pyml_bindgen_string_literal|thing|pyml_bindgen_string_literal} bytecode
+         in
+         let filename =
+           {pyml_bindgen_string_literal|thing.py|pyml_bindgen_string_literal}
+         in
+         let bytecode = Py.compile ~filename ~source `Exec in
+         Py.Import.exec_code_module
+           {pyml_bindgen_string_literal|thing|pyml_bindgen_string_literal}
+           bytecode)
+  
+    let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   

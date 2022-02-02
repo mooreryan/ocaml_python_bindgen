@@ -9,7 +9,9 @@ module Adder : sig
 end = struct
   let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module "adder"
+  let py_module = lazy (Py.Import.import_module "adder")
+
+  let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
 

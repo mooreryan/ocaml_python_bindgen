@@ -9,7 +9,9 @@ module Hearts : sig
 end = struct
   let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module "magic_dust.hearts"
+  let py_module = lazy (Py.Import.import_module "magic_dust.hearts")
+
+  let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
 
@@ -39,7 +41,9 @@ module Sparkles : sig
 end = struct
   let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module "magic_dust.sparkles"
+  let py_module = lazy (Py.Import.import_module "magic_dust.sparkles")
+
+  let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
 

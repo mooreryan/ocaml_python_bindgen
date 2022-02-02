@@ -55,7 +55,9 @@ of_pyobject with no check
   
     let filter_opt l = List.filter_map Fun.id l
   
-    let import_module () = Py.Import.import_module "silly"
+    let py_module = lazy (Py.Import.import_module "silly")
+  
+    let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
@@ -211,7 +213,9 @@ of_pyobject returning option
   
     let filter_opt l = List.filter_map Fun.id l
   
-    let import_module () = Py.Import.import_module "silly"
+    let py_module = lazy (Py.Import.import_module "silly")
+  
+    let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
@@ -373,7 +377,9 @@ of_pyobject returning Or_error
   
     let filter_opt = List.filter_opt
   
-    let import_module () = Py.Import.import_module "silly"
+    let py_module = lazy (Py.Import.import_module "silly")
+  
+    let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
