@@ -31,6 +31,7 @@ depends: [
   "core_bench" {>= "v0.12" & dev}
   "odoc" {with-doc}
 ]
+dev-repo: "git+https://github.com/mooreryan/ocaml_python_bindgen.git"
 build: [
   ["dune" "subst"] {dev}
   [
@@ -40,9 +41,8 @@ build: [
     name
     "-j"
     jobs
-    "@install"
-    "@runtest" {with-test}
+    "@install" {arch != "x86_32"}
+    "@runtest" {with-test & arch != "x86_32"}
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/mooreryan/ocaml_python_bindgen.git"
