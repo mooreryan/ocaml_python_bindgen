@@ -1,5 +1,10 @@
 ## Unreleased
 
+NA
+
+## 0.2.0 (2022-02-02)
+
+* Allow embedding Python source directly into generated OCaml module with the `--embed-python-source` CLI option.  See this [issue](https://github.com/mooreryan/ocaml_python_bindgen/issues/5) for more info.
 * Fix bug in val spec parsing
 * Update docs
 * Add full examples in the `examples` directory
@@ -10,7 +15,7 @@
 
 ## 0.1.1 (2021-11-04)
 
-* Update lower bounds for dependencies.
+* Update lower bounds for dependencies
 * Fix tests to work with BusyBox/Alpine `grep` command
 
 ## 0.1.0 (2021-10-31)
