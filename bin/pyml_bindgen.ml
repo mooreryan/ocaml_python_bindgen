@@ -141,7 +141,6 @@ let run
       associated_with;
       embed_python_source;
     } =
-  let _x = caml_module in
   let import_module_impl =
     Shared.gen_import_module_impl ?python_source:embed_python_source py_module
   in
