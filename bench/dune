@@ -15,5 +15,3 @@
 ;      (run %{bin:pyml_bindgen} val_specs.txt adder Adder --caml-module Adder)
 ;      (run %{bin:pyml_bindgen} val_specs.txt adder Adder --caml-module Adder_embedded --embed-python-source=adder.py)))
 ;     (run ocamlformat --inplace --name lib.ml lib.ml))))
-
-

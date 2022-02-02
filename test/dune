@@ -3,7 +3,13 @@
  (libraries core_kernel lib re2)
  (inline_tests)
  (preprocess
-  (pps ppx_assert ppx_let ppx_sexp_conv ppx_string ppx_inline_test ppx_expect)))
+  (pps
+   ppx_assert
+   ppx_let
+   ppx_sexp_conv
+   ppx_string
+   ppx_inline_test
+   ppx_expect)))
 
 (cram
  (applies_to :whole_subtree)

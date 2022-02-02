@@ -9,7 +9,7 @@
  ;; `dune clean`, it will be removed.
  (mode
   (promote (until-clean)))
-  ;; We need to give the action access to the files in the `specs` dir.
+ ;; We need to give the action access to the files in the `specs` dir.
  (deps
   (source_tree specs)
   ;; We also need to give access to the Python source directory.
@@ -29,11 +29,18 @@
    (pipe-stdout
     ;; Here is the acutal `pyml_bindgen` command to generate the
     ;; bindings.
-    (run %{bin:pyml_bindgen} specs/adder.txt adder Adder --caml-module Adder
-         ;; This option tells `pyml_bindgen` that you want to embed
-         ;; the Python code into the generated OCaml module.  It will
-         ;; be evaluated at runtime.  Note how we refer to the path as
-         ;; specified in `source_tree` above.
-         --embed-python-source ../py/math/adder.py)
+    (run
+     %{bin:pyml_bindgen}
+     specs/adder.txt
+     adder
+     Adder
+     --caml-module
+     Adder
+     ;; This option tells `pyml_bindgen` that you want to embed
+     ;; the Python code into the generated OCaml module.  It will
+     ;; be evaluated at runtime.  Note how we refer to the path as
+     ;; specified in `source_tree` above.
+     --embed-python-source
+     ../py/math/adder.py)
     ;; And finally, process the bindings code with ocamlformat.
     (run ocamlformat --name math.ml -)))))
