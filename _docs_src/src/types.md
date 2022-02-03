@@ -18,6 +18,23 @@ For function arguments, you can use
 * Seq.t of any of the above types
 * `'a option`, `'a option array`, `'a option list`, `'a option Seq.t`
 
+Note that your types must be newly minted modules.  E.g.,
+
+```ocaml
+(* This is okay *)
+module Doc = struct
+  type t
+  let of_pyobject ...
+  let to_pyobject ...
+  ...
+end
+
+(* But this is not *)
+type doc
+let doc_of_pyobject ...
+let doc_to_pyobject ...
+```
+
 ## Return types
 
 For return types, you can use all of the above types plus `unit`, and `'a Or_error.t` for types `'a` other than `unit`.  However, you cannot use `unit array`, `unit list`, or `unit Seq.t`.  This is because I haven't decided the best way to handle `unit` and `None` (that's Python's `None`) quite yet!
