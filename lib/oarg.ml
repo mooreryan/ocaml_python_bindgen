@@ -64,7 +64,7 @@ let is_positional_not_implemented = function
 
 let parse_labeled_or_optional_non_unit args =
   let open Or_error in
-  Or_error.all @@ Array.to_list
+  all @@ Array.to_list
   @@ Array.map args ~f:(function
        | Positional _ -> error_string "can't be positional"
        | Labeled { type_; name } ->

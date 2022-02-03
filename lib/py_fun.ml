@@ -2,6 +2,10 @@ open! Base
 open Or_error
 open Or_error.Let_syntax
 
+type py_fun_args =
+  [ `Labeled of Oarg.labeled | `Optional of Oarg.optional ] list
+[@@deriving sexp]
+
 (* All non- [t] args have to be named. All of the functions with named args need
    to end in unit -> 'ret_type *)
 type t =
@@ -17,7 +21,7 @@ type t =
       (* this can be empty. eg val f : t -> unit -> 'a. penultimate arg IS
          ALWAYS UNIT, so it is dropped. t -> 'a -> unit -> 'b, 'a would be in
          here. *)
-      args : [ `Labeled of Oarg.labeled | `Optional of Oarg.optional ] list;
+      args : py_fun_args;
     }
   (* [val f : a:'a -> ... -> 'b] *)
   | Class_method of {
@@ -26,13 +30,13 @@ type t =
       (* this can be empty. eg val f : unit -> 'a. penultimate arg (which may be
          first arg) IS ALWAYS UNIT, so it is dropped. 'a -> unit -> 'b, 'a would
          be in here. f : unit -> 'a would be like Class.f() -> 'a in python. *)
-      args : [ `Labeled of Oarg.labeled | `Optional of Oarg.optional ] list;
+      args : py_fun_args;
     }
   (* Same info as class method but the impl is different. *)
   | Module_function of {
       fun_name : string;
       return_type : Otype.t;
-      args : [ `Labeled of Oarg.labeled | `Optional of Oarg.optional ] list;
+      args : py_fun_args;
     }
   | Todo_function of string
   | Not_implemented_function of string
