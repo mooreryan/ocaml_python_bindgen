@@ -952,3 +952,57 @@ let%expect_test "Converting todo and not_implemented" =
      (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... parser_: otype parser_ failed")
      (Error "Parsing Otype failed... parser_: otype parser_ failed")) |}]
+
+(* Note: this test is here because I found a bug in the Otype.py_to_ocaml, and
+   py_of_ocaml functions. The current tests don't pick up this bug as the parser
+   doesn't allow things that would trigger it to hit the function. So test them
+   explicitly here. *)
+let%expect_test "only basic types can be options (py_to_ocaml)" =
+  let otypes =
+    [
+      Otype.Option (Array Int);
+      Otype.Option (List Int);
+      Otype.Option (Seq Int);
+      Otype.Option (Or_error Int);
+      Otype.Option Todo;
+      Otype.Option Not_implemented;
+    ]
+  in
+  let results =
+    List.map
+      ~f:(fun otype -> Or_error.try_with (fun () -> Otype.py_to_ocaml otype))
+      otypes
+  in
+  print_s @@ [%sexp_of: string Or_error.t list] results;
+  [%expect {|
+    ((Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))) |}]
+
+let%expect_test "only basic types can be options (py_of_ocaml)" =
+  let otypes =
+    [
+      Otype.Option (Array Int);
+      Otype.Option (List Int);
+      Otype.Option (Seq Int);
+      Otype.Option (Or_error Int);
+      Otype.Option Todo;
+      Otype.Option Not_implemented;
+    ]
+  in
+  let results =
+    List.map
+      ~f:(fun otype -> Or_error.try_with (fun () -> Otype.py_of_ocaml otype))
+      otypes
+  in
+  print_s @@ [%sexp_of: string Or_error.t list] results;
+  [%expect {|
+    ((Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))
+     (Error (Failure "only basic types can be options"))) |}]

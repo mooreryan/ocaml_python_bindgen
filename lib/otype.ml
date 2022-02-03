@@ -197,7 +197,7 @@ let rec py_to_ocaml = function
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
-          "only basic types can be options"
+          failwith "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string
             "(fun x -> if Py.is_none x then None else Some (%{py_to_ocaml t} \
@@ -242,7 +242,7 @@ let rec py_of_ocaml = function
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
-          "only basic types can be options"
+          failwith "only basic types can be options"
       | Int | Float | String | Bool ->
           [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])
   | Or_error t -> (
