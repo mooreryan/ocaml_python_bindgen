@@ -159,13 +159,10 @@ let create ?(associated_with = `Class) { Oarg.fun_name; args } =
   with
   | Some py_fun, None, None, None, None
   | None, Some py_fun, None, None, None
+  | None, None, Some py_fun, None, None
   | None, None, None, Some py_fun, None
   | None, None, None, None, Some py_fun ->
       return py_fun
-  | None, None, Some py_fun, None, None -> (
-      match associated_with with
-      | `Class -> return py_fun
-      | `Module -> return py_fun)
   | _ -> error_string "could not create val_spec"
 
 let labeled_arg_to_kwarg_spec arg =
