@@ -122,8 +122,6 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="rules-overview/">Overview</a>
-                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="types/">Types</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="names/">Function & Argument Names</a>
@@ -137,13 +135,9 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="auto-gen-bindings/">Auto-generating bindings</a>
-                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="cli-options/">CLI Options</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="of-pyobject/">Converting `pyobjects` to OCaml types</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="embedding-python/">Embedding Python source</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="tuples/">Handling Tuples</a>
                     </li>
@@ -217,7 +211,6 @@ $ pyml_bindgen --help
 ... help screen should show up ...
 </code></pre>
 <h2 id="quick-start">Quick start</h2>
-<p><em>Note: You can find full examples in the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a> directory on GitHub.  One neat thing about the examples there is that you can see how to write Dune <a href="https://dune.readthedocs.io/en/stable/dune-files.html#rule">rules</a> to automatically generate your <code>pyml</code> bindings.</em></p>
 <p><code>pyml_bindgen</code> is a CLI program that generates OCaml modules that bind Python classes via <a href="https://github.com/thierry-martinez/pyml">pyml</a>.</p>
 <p>Here's a small example.  Take a Python class, <code>Thing</code>.  (Put it in a file called <code>thing.py</code>...this means the Python module will be called <code>thing</code>.)</p>
 <pre><code class="language-python">class Thing:
@@ -351,5 +344,5 @@ end
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-02-06 18:51:20.293532+00:00
+Build Date UTC : 2022-02-06 18:55:05.790333+00:00
 -->
