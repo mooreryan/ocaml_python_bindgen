@@ -14,11 +14,15 @@ let%expect_test _ =
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo option";
-  [%expect {| (Error "Parsing val_spec failed... : end_of_input") |}]
+  [%expect {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: option") |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a not_implemented option";
-  [%expect {| (Error "Parsing val_spec failed... : end_of_input") |}]
+  [%expect {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: option") |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo -> unit";

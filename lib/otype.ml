@@ -35,6 +35,7 @@ let is_not_implemented = function Not_implemented -> true | _ -> false
 module P = struct
   open Angstrom
   open Angstrom.Let_syntax
+  include Utils.Angstrom_helpers
 
   let spaces = take_while Utils.is_space
 
@@ -152,10 +153,10 @@ module P = struct
 
   let parser_ =
     let p =
-      choice ~failure_msg:"otype parser_ failed"
+      choice ~failure_msg:"not a compound, basic, or placeholder otype"
         [ compound_otype; basic_otype; placeholder_otype ]
     in
-    spaces *> p <* spaces <?> "parser_"
+    spaces *> p <* spaces <?> "otype parser"
 end
 
 let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'

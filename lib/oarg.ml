@@ -77,6 +77,7 @@ let parse_labeled_or_optional_non_unit args =
 module P = struct
   open! Angstrom
   open! Angstrom.Let_syntax
+  include Utils.Angstrom_helpers
 
   let spaces = take_while Utils.is_space
 
@@ -140,16 +141,20 @@ module P = struct
 
   (* e.g., val f : int -> fruit:string -> unit*)
   let val_spec =
-    let%bind _val = val_ in
-    (* function names and arg names parse the same *)
-    let%bind fun_name = arg_name in
-    let%bind _colon = colon in
-    let%bind args = args in
-    return { fun_name; args } <?> "val_spec parser"
+    let p =
+      let%bind _val = val_ in
+      (* function names and arg names parse the same *)
+      let%bind fun_name = arg_name in
+      let%bind _colon = colon in
+      let%bind args = args in
+      return { fun_name; args }
+    in
+    p <* eoi <?> "val_spec parser"
 end
 
 let parse_val_spec s =
   let s = String.strip s in
-  match Angstrom.parse_string ~consume:Angstrom.Consume.All P.val_spec s with
+  (* We use prefix here as [val_spec] has a custom end of input check. *)
+  match Angstrom.parse_string ~consume:Angstrom.Consume.Prefix P.val_spec s with
   | Ok val_spec -> Or_error.return val_spec
   | Error err -> Or_error.errorf "Parsing val_spec failed... %s" err
