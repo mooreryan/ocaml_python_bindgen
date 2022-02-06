@@ -202,20 +202,6 @@
 <li>Seq.t of any of the above types</li>
 <li><code>'a option</code>, <code>'a option array</code>, <code>'a option list</code>, <code>'a option Seq.t</code></li>
 </ul>
-<p>Note that your types must be newly minted modules.  E.g.,</p>
-<pre><code class="language-ocaml">(* This is okay *)
-module Doc = struct
-  type t
-  let of_pyobject ...
-  let to_pyobject ...
-  ...
-end
-
-(* But this is not *)
-type doc
-let doc_of_pyobject ...
-let doc_to_pyobject ...
-</code></pre>
 <h2 id="return-types">Return types</h2>
 <p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>.  However, you cannot use <code>unit array</code>, <code>unit list</code>, or <code>unit Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
 <h2 id="nesting">Nesting</h2>
