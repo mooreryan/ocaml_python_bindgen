@@ -1,0 +1,3 @@
+val __init__ : name:string -> unit -> t Or_error.t
+val eat : t -> fly:Creature.Bug.Fly.t -> unit -> unit
+val hunger : t -> int

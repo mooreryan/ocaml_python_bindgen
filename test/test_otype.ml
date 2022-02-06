@@ -685,6 +685,19 @@ let%expect_test "Converting todo and not_implemented" =
      (Error
       "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype")) |}]
 
+let%expect_test "Nested custom modules" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [ "Apple.Pie.t"; "Good.Apple.Pie.t"; "Good_to.Eat_apple.Pie_always.t" ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+    ((Ok Apple.Pie.of_pyobject) (Ok Good.Apple.Pie.of_pyobject)
+     (Ok Good_to.Eat_apple.Pie_always.of_pyobject)) |}]
+
 (******************************************************)
 
 (* Converting ocaml types to python types *)
@@ -1122,6 +1135,7 @@ let%expect_test "Nested custom modules" =
     [ "Apple.Pie.t"; "Good.Apple.Pie.t"; "Good_to.Eat_apple.Pie_always.t" ]
   in
   print @@ List.map specs ~f:parse_then_py_of_ocaml;
-  [%expect {|
+  [%expect
+    {|
     ((Ok Apple.Pie.to_pyobject) (Ok Good.Apple.Pie.to_pyobject)
      (Ok Good_to.Eat_apple.Pie_always.to_pyobject)) |}]

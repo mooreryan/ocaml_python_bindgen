@@ -84,6 +84,33 @@ let pie t ~a ?b ~cat ?what () =
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
   [%test_result: string] actual ~expect
 
+let%test_unit "instance method, nested modules" =
+  let val_spec =
+    Or_error.ok_exn
+    @@ Oarg.parse_val_spec
+         "val foo : t -> a:Animal.Four_legs.Cat.t -> unit -> \
+          Silly.Times.Are_fun.t"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let class_name = "Apple" in
+  let expect =
+    clean
+      {|
+let foo t ~a () =
+  let callable = Py.Object.find_attr_string t "foo" in
+  let kwargs =
+    filter_opt
+      [
+        Some ("a", Animal.Four_legs.Cat.to_pyobject a);
+      ]
+  in
+  Silly.Times.Are_fun.of_pyobject
+  @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+|}
+  in
+  let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
+  [%test_result: string] actual ~expect
+
 let%test_unit "instance method that returns unit" =
   let val_spec =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> unit -> unit"
@@ -583,9 +610,6 @@ let%test_unit "Seq.t is for class methods" =
       "val f : a:Token.t Seq.t -> unit -> Token.t Seq.t";
       "val f : a:Apple_pie.t Seq.t -> unit -> Apple_pie.t Seq.t";
     ]
-
-(* Note, for now you can only return [t option] or [<custom> option] and
-   Or_error. *)
 
 let%test_unit "'no arg' class methods are okay" =
   assert_pyml_impls_are Or_error.is_ok
