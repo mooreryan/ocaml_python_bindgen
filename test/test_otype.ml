@@ -1113,3 +1113,15 @@ let%expect_test "only basic types can be options (py_of_ocaml)" =
      (Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))) |}]
+
+let%expect_test "Nested custom modules" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [ "Apple.Pie.t"; "Good.Apple.Pie.t"; "Good_to.Eat_apple.Pie_always.t" ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect {|
+    ((Ok Apple.Pie.to_pyobject) (Ok Good.Apple.Pie.to_pyobject)
+     (Ok Good_to.Eat_apple.Pie_always.to_pyobject)) |}]

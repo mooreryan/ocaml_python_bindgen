@@ -165,7 +165,7 @@ module P = struct
     spaces *> p <* spaces <?> "otype parser"
 end
 
-let custom_module_name s = List.hd_exn @@ String.split s ~on:'.'
+let custom_module_name s = String.chop_suffix_exn s ~suffix:".t"
 
 (* Convert py types to ocaml types. Some of these failwith things are prevented
    because we only construct otypes with the parsing functions.... *)
