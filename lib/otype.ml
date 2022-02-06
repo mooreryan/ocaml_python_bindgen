@@ -90,20 +90,26 @@ module P = struct
     in
     p <?> "t parser"
 
-  (* Custom "types" ...e.g., Doc.t, Span.t, Silly_thing.t. Fails if it is Seq.t
-     or Or_error.t. *)
+  (* Custom "types" ...e.g., Doc.t, Span.t, Silly_thing.t, Apple_pie.Is_good.t.
+     Fails if it is Seq.t or Or_error.t. Fails for stuff like
+     Apple_pie.Is_good.stuff (must end in .t). Or Apple.pie_good. *)
   let custom =
-    let%bind c = peek_char_fail in
+    (* A single module identifier *)
+    let id =
+      let%bind first = satisfy Utils.is_capital_letter in
+      let%bind rest = take_while Utils.is_ok_for_name in
+      return [%string "%{first#Char}%{rest}"]
+    in
+    let ids = sep_by1 dot id in
+    let dot_t = string ".t" in
     let p =
-      if Utils.is_capital_letter c then
-        let%bind name = take_while Utils.is_ok_for_name in
-        let%bind dot = dot in
-        let%bind t = t in
-        match name ^ dot ^ t with
-        | "Seq.t" -> fail "custom cannot be Seq.t"
-        | "Or_error.t" -> fail "custom cannot be Or_error.t"
-        | s -> return s
-      else fail "first letter should be capital"
+      let%bind names = ids in
+      let name = String.concat ~sep:"." names in
+      let%bind dot_t = dot_t in
+      match name ^ dot_t with
+      | "Seq.t" -> fail "custom cannot be Seq.t"
+      | "Or_error.t" -> fail "custom cannot be Or_error.t"
+      | s -> return s
     in
     p <?> "custom parser"
 

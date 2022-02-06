@@ -251,6 +251,72 @@ let%expect_test _ =
   print_string_or_error @@ Otype.parse "'a not_implemented Or_error.t";
   [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
 
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Apple.Pie.t";
+  [%expect {| (Ok (Custom Apple.Pie.t)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good.Apple.Pie.t";
+  [%expect {| (Ok (Custom Good.Apple.Pie.t)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good_to.Eat_apple.Pie_always.t";
+  [%expect {| (Ok (Custom Good_to.Eat_apple.Pie_always.t)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Apple.Pie.thing";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good.Apple.Pie.thing";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good_to.Eat_apple.Pie_always.thing";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Apple.pie.t";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good.apple.Pie.t";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good_to.eat_apple.Pie_always.t";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Apple.Pie";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good.Apple.Pie";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "Good_to.Eat_apple.Pie_always";
+  [%expect
+    {|
+    (Error
+     "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
+
 (* Converting pytypes to ocaml types *)
 
 let%expect_test "Converting list types" =
@@ -1013,7 +1079,8 @@ let%expect_test "only basic types can be options (py_to_ocaml)" =
       otypes
   in
   print_s @@ [%sexp_of: string Or_error.t list] results;
-  [%expect {|
+  [%expect
+    {|
     ((Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))
@@ -1038,7 +1105,8 @@ let%expect_test "only basic types can be options (py_of_ocaml)" =
       otypes
   in
   print_s @@ [%sexp_of: string Or_error.t list] results;
-  [%expect {|
+  [%expect
+    {|
     ((Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))
      (Error (Failure "only basic types can be options"))
