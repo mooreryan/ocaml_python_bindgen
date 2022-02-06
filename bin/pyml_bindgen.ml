@@ -63,7 +63,8 @@ let read_signatures_file fname =
 let gen_pyml_impls ~associated_with ~py_class ~signatures =
   List.map signatures ~f:(fun signature ->
       let impl = gen_pyml_impl ~associated_with ~py_class ~signature in
-      Or_error.tag impl ~tag:[%string "Error generating spec for %{signature}"])
+      Or_error.tag impl
+        ~tag:[%string "Error generating spec for '%{signature}'"])
 
 let parse_cli_args () =
   match Sys.get_argv () with

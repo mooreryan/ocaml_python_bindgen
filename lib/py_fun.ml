@@ -149,7 +149,7 @@ let parse_not_implemented_placeholder fun_name args =
   | _ -> None
 
 (* [associated_with] is ignored unless the parsing matches a class method. *)
-let create ?(associated_with = `Class) { Oarg.fun_name; args } =
+let create ?(associated_with = `Class) ({ Oarg.fun_name; args } as val_spec) =
   match
     ( parse_attribute fun_name args,
       parse_instance_method fun_name args,
@@ -163,7 +163,21 @@ let create ?(associated_with = `Class) { Oarg.fun_name; args } =
   | None, None, None, Some py_fun, None
   | None, None, None, None, Some py_fun ->
       return py_fun
-  | _ -> error_string "could not create val_spec"
+  | _ ->
+      let vs = Oarg.sexp_of_val_spec val_spec in
+      (* We break up the sexp so it prints nicer. *)
+      error_s
+      @@ Sexp.List
+           [
+             Sexp.Atom "Could not create py function from val_spec.";
+             Sexp.Atom
+               "Val specs must specify attributes, instance, class, or module \
+                methods, or placeholders.";
+             Sexp.Atom
+               "Unless you're defining an attribute, don't forget the \
+                penultimate unit argument!";
+             Sexp.List [ Sexp.Atom "The bad val_spec was:"; vs ];
+           ]
 
 let labeled_arg_to_kwarg_spec arg =
   let name = Oarg.labeled_name arg in

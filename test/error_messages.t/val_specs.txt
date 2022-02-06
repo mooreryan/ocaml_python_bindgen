@@ -1,0 +1,3 @@
+val foo : t -> int
+val bad : t -> apple:int -> int
+val bar : a:int -> b:int -> unit -> int
