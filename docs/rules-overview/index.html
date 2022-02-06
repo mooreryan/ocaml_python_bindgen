@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Ryan M. Moore">
-  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/gotchas-bugs/">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Gotchas & Known Bugs - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <title>Overview - pyml_bindgen -- OCaml-Python Bindings Generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Gotchas & Known Bugs";
-    var mkdocs_page_input_path = "gotchas-bugs.md";
-    var mkdocs_page_url = "/ocaml_python_bindgen/gotchas-bugs/";
+    var mkdocs_page_name = "Overview";
+    var mkdocs_page_input_path = "rules-overview.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/rules-overview/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -44,22 +44,22 @@
   
 
 
-<meta property="og:site_name" content="Gotchas & Known Bugs - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Gotchas & Known Bugs - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/gotchas-bugs/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Gotchas & Known Bugs - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -105,8 +105,10 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Rules</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../rules-overview/">Overview</a>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Overview</a>
+    <ul class="current">
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
                     </li>
@@ -120,7 +122,7 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Miscellaneous</span></p>
-                <ul class="current">
+                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
@@ -131,9 +133,7 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Gotchas & Known Bugs</a>
-    <ul class="current">
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
                     </li>
                 </ul>
       </div>
@@ -157,14 +157,14 @@
     
       
         
-          <li>Miscellaneous &raquo;</li>
+          <li>Rules &raquo;</li>
         
       
     
-    <li>Gotchas & Known Bugs</li>
+    <li>Overview</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/gotchas-bugs.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/rules-overview.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -176,10 +176,9 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="gotchas-known-bugs">Gotchas &amp; Known Bugs</h1>
-<ul>
-<li>You cannot bind Python properties or attributes that return <code>None</code>.  So, <code>val f : t -&gt; unit</code> will currently fail.</li>
-</ul>
+                <h1 id="rules-overview">Rules Overview</h1>
+<p>The following pages are an informal description of some of the rules you have to follow when using <code>pyml_bindgen</code>.</p>
+<p>I will try and keep them updated and (reasonably) complete.  However, if you really want to know how something is working, you may want to have a look at the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/test">tests</a>.</p>
               
             </div>
           </div>
@@ -187,8 +186,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-        <a href="../tuples/" class="btn btn-neutral" title="Handling Tuples"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+        <a href="../recursive/" class="btn btn-neutral" title="Recursive Classes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -218,8 +219,10 @@
         </span>
     
     
-      <span><a href="../tuples/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../recursive/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

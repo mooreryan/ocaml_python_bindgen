@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/auto-gen-bindings/</loc>
+         <lastmod>2022-02-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/cli-options/</loc>
          <lastmod>2022-02-06</lastmod>
          <changefreq>daily</changefreq>
@@ -22,6 +27,11 @@
     </url>
     <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/dictionaries/</loc>
+         <lastmod>2022-02-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/embedding-python/</loc>
          <lastmod>2022-02-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -62,6 +72,11 @@
     </url>
     <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/recursive/</loc>
+         <lastmod>2022-02-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/</loc>
          <lastmod>2022-02-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
