@@ -1,6 +1,18 @@
 ## Unreleased
 
-NA
+### Added
+
+* Allow nested module types in val specs (e.g., `Food.Dessert.Apple_pie.t`)
+* Allow using `Pytypes.pyobject` and `Py.Object.t` in val specs
+* Better error messages when parser or `py_fun` creation fails
+
+### Changed
+
+* Updated docs
+
+### Fixed
+
+* Fix some small `otype` bugs
 
 ## 0.2.0 (2022-02-02)
 
