@@ -17,6 +17,7 @@ For function arguments, you can use
 * Lists of any of the above types
 * Seq.t of any of the above types
 * `'a option`, `'a option array`, `'a option list`, `'a option Seq.t`
+* `Pytypes.pyobject` or `Py.Object.t` if you need to deal with `pytypes` directly
 
 Note that your types must be newly minted modules.  E.g.,
 
@@ -47,11 +48,19 @@ E.g., `'a array list` will fail.
 
 You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a option list`); however, this will not work with `Or_error.t`.
 
+## Pytypes
+
+Sometimes you may want to deal directly with `Pytypes.pyobject` (a.k.a. `Py.Object.t`).  Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason.  Regardless, you can use `Pytypes.pyobject` or `Py.Object.t` for this.  Of course, you will be leaking a bit of the `pyml` implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.
+
+Note that you currently are not allowed to nest `pytypes` in any of the containers or monads.
+
 ## Dictionaries & Tuples
 
 See [here](dictionaries.md) and [here](dictionaries-2.md) for examples of binding dictionaries.
 
 If you need to pass or return tuples to Python functions, see [here](tuples.md); however, the same ideas apply to tuples as are covered in the above links for dictionaries.
+
+Alternatively, you could mark them as `Pytypes.pyobject` or `Py.Object.t` and let the caller deal with them in some way.
 
 ## Placeholders
 
