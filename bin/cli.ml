@@ -1,7 +1,7 @@
 open! Base
 open Cmdliner
 
-let version = "0.2.0"
+let version = "0.3.0-SNAPSHOT"
 
 type opts = {
   signatures : string;
