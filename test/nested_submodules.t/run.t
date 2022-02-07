@@ -5,20 +5,6 @@ code if it is properly formatted.
 Setup env
 
   $ export SANITIZE_LOGS=$PWD/../helpers/sanitize_logs
-  $ tree
-  .
-  |-- creature.ml -> ../../../../../default/test/nested_submodules.t/creature.ml
-  |-- dune -> ../../../../../default/test/nested_submodules.t/dune
-  |-- run.t -> ../../../../../default/test/nested_submodules.t/run.t
-  |-- run_no_check.ml -> ../../../../../default/test/nested_submodules.t/run_no_check.ml
-  |-- run_option.ml -> ../../../../../default/test/nested_submodules.t/run_option.ml
-  |-- run_or_error.ml -> ../../../../../default/test/nested_submodules.t/run_or_error.ml
-  |-- silly.py -> ../../../../../default/test/nested_submodules.t/silly.py
-  |-- specs_no_check.txt -> ../../../../../default/test/nested_submodules.t/specs_no_check.txt
-  |-- specs_option.txt -> ../../../../../default/test/nested_submodules.t/specs_option.txt
-  `-- specs_or_error.txt -> ../../../../../default/test/nested_submodules.t/specs_or_error.txt
-  
-  0 directories, 10 files
 
 of_pyobject with no check
 
@@ -64,9 +50,7 @@ of_pyobject with no check
   
     let hunger t = Py.Int.to_int @@ Py.Object.find_attr_string t "hunger"
   end
-  $ dune exec ./run_no_check.exe #2> /dev/null
-  Info: Creating file dune-project with this contents:
-  | (lang dune 2.9)
+  $ dune exec ./run_no_check.exe 2> /dev/null
   10
   5
   done
@@ -119,7 +103,7 @@ of_pyobject returning option
   
     let hunger t = Py.Int.to_int @@ Py.Object.find_attr_string t "hunger"
   end
-  $ dune exec ./run_option.exe #2> /dev/null
+  $ dune exec ./run_option.exe 2> /dev/null
   10
   5
   done
@@ -176,7 +160,7 @@ of_pyobject returning Or_error
   
     let hunger t = Py.Int.to_int @@ Py.Object.find_attr_string t "hunger"
   end
-  $ dune exec ./run_or_error.exe
+  $ dune exec ./run_or_error.exe 2> /dev/null
   10
   5
   done
