@@ -1,6 +1,16 @@
 open! Base
 open! Stdio
 
+(* TODO there are some things that the parser disallows with Pytypes.pyobject
+   that this code will process. It's currently not always dealt with here
+   properly since the parser won't let it through, but you should probably
+   change it at some point. *)
+
+(* This is used for Py_obj identity functions. TODO it does lead to a bunch of
+   anonymous little identity functions littered throughout the generate code,
+   but it's not a big deal. *)
+let ident_fun = "(fun x -> x)"
+
 (* Be aware that there is no char type here like in ocaml. *)
 type t =
   | Int
@@ -22,6 +32,7 @@ type t =
      A.t option] would be allowed. *)
   | Option of t
   | Or_error of t
+  | Py_obj
 [@@deriving sexp]
 
 let is_unit = function Unit -> true | _ -> false
@@ -73,6 +84,10 @@ module P = struct
 
   let option_seq = string "option Seq.t" <?> "option_seq parser"
 
+  let pytypes_pyobject = string "Pytypes.pyobject" <?> "pytypes_pyobject parser"
+
+  let py_object_t = string "Py.Object.t" <?> "py_object_t parser"
+
   (* If you just do string "t", then any arg names that start with t will blow
      up parsing. This is pretty hacky... *)
   let t =
@@ -112,6 +127,14 @@ module P = struct
       | s -> return s
     in
     p <?> "custom parser"
+
+  let py_obj_otype =
+    choice ~failure_msg:"Token was not py_obj"
+      [
+        lift (fun _ -> Py_obj) pytypes_pyobject;
+        lift (fun _ -> Py_obj) py_object_t;
+      ]
+    <?> "py_obj parser"
 
   (* Not a list, seq, option, etc. Just the type. *)
   let basic_otype =
@@ -160,7 +183,7 @@ module P = struct
   let parser_ =
     let p =
       choice ~failure_msg:"not a compound, basic, or placeholder otype"
-        [ compound_otype; basic_otype; placeholder_otype ]
+        [ py_obj_otype; compound_otype; basic_otype; placeholder_otype ]
     in
     spaces *> p <* spaces <?> "otype parser"
 end
@@ -205,7 +228,7 @@ let rec py_to_ocaml = function
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
           failwith "only basic types can be options"
-      | Int | Float | String | Bool ->
+      | Int | Float | String | Bool | Py_obj ->
           [%string
             "(fun x -> if Py.is_none x then None else Some (%{py_to_ocaml t} \
              x))"])
@@ -213,6 +236,7 @@ let rec py_to_ocaml = function
       match t with
       | T | Custom _ -> py_to_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
+  | Py_obj -> ident_fun
 
 (* Convert ocaml types to py types. Some of these failwith things are prevented
    because we only construct otypes with the parsing functions.... *)
@@ -250,12 +274,13 @@ let rec py_of_ocaml = function
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
           failwith "only basic types can be options"
-      | Int | Float | String | Bool ->
+      | Int | Float | String | Bool | Py_obj ->
           [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])
   | Or_error t -> (
       match t with
       | T | Custom _ -> py_of_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
+  | Py_obj -> ident_fun
 
 (* Parse a otype from a string *)
 let parse s =

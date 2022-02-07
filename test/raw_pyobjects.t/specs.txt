@@ -1,0 +1,3 @@
+val concat1 : x:Pytypes.pyobject -> y:Pytypes.pyobject -> unit -> Pytypes.pyobject
+val concat2 : x:Py.Object.t -> y:Py.Object.t -> unit -> Py.Object.t
+val concat3 : x:int -> y:Py.Object.t -> unit -> int

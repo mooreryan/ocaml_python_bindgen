@@ -1,0 +1,4 @@
+(executable
+ (name run)
+ (libraries base pyml stdio)
+ (preprocess (pps ppx_sexp_conv)))
