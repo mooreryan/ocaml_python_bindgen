@@ -11,12 +11,12 @@ type py_fun_args =
 type t =
   (* [val f : t -> 'a]. Properties and attributes are both treated as
      attributes. *)
-  | Attribute of { fun_name : string; return_type : Otype.t }
+  | Attribute of { ml_fun_name : string; return_type : Otype.t }
   (* [val f : t -> a:'a -> ... -> unit -> 'b]. Instance methods that take no
      arguments will take [t] and [unit] in spacy.ml code. E.g., [val f : t ->
      unit -> a] would be something like this in python: [t.f() -> 'a] *)
   | Instance_method of {
-      fun_name : string;
+      ml_fun_name : string;
       return_type : Otype.t;
       (* this can be empty. eg val f : t -> unit -> 'a. penultimate arg IS
          ALWAYS UNIT, so it is dropped. t -> 'a -> unit -> 'b, 'a would be in
@@ -25,7 +25,7 @@ type t =
     }
   (* [val f : a:'a -> ... -> 'b] *)
   | Class_method of {
-      fun_name : string;
+      ml_fun_name : string;
       return_type : Otype.t;
       (* this can be empty. eg val f : unit -> 'a. penultimate arg (which may be
          first arg) IS ALWAYS UNIT, so it is dropped. 'a -> unit -> 'b, 'a would
@@ -34,7 +34,7 @@ type t =
     }
   (* Same info as class method but the impl is different. *)
   | Module_function of {
-      fun_name : string;
+      ml_fun_name : string;
       return_type : Otype.t;
       args : py_fun_args;
     }
@@ -43,7 +43,7 @@ type t =
 [@@deriving sexp]
 
 (* Python Attribute specs look like this: val : t -> 'a *)
-let parse_attribute fun_name args =
+let parse_attribute ml_fun_name args =
   let ary = Array.of_list args in
   match Array.length ary with
   | 2 -> (
@@ -54,7 +54,7 @@ let parse_attribute fun_name args =
       match (first_good, second_good) with
       | true, true ->
           let return_type = Oarg.type_ return_type_arg in
-          Some (Attribute { fun_name; return_type })
+          Some (Attribute { ml_fun_name; return_type })
       | _, _ -> None)
   | _n -> None
 
@@ -65,7 +65,7 @@ let parse_attribute fun_name args =
    arg. So to keep things the same across the api, all instance methods will
    have the final unit argument :) Then the signature should end in ... -> unit
    -> 'a. *)
-let parse_instance_method fun_name args =
+let parse_instance_method ml_fun_name args =
   (* Minimum of three args: t -> unit -> 'a *)
   let ary = Array.of_list args in
   let nargs = Array.length ary in
@@ -86,7 +86,7 @@ let parse_instance_method fun_name args =
     with
     | true, true, true, Ok args ->
         let return_type = Oarg.type_ return_type_arg in
-        Some (Instance_method { fun_name; return_type; args })
+        Some (Instance_method { ml_fun_name; return_type; args })
     | _ -> None
 
 (* One slightly weird thing...you could envision a class method that acutally
@@ -96,12 +96,12 @@ let parse_instance_method fun_name args =
    [t] as the first arg, e.g., [apple:t] then it may be a class method. Also
    note that python class methods you can still call on instances...but hey
    :) *)
-let parse_class_or_module_method associated_with fun_name args =
+let parse_class_or_module_method associated_with ml_fun_name args =
   (* Even a class method that takes no args in python will take at least unit ->
      unit in your val_spec. 'a -> unit *)
-  let constructor fun_name return_type args = function
-    | `Class -> Class_method { fun_name; return_type; args }
-    | `Module -> Module_function { fun_name; return_type; args }
+  let constructor ml_fun_name return_type args = function
+    | `Class -> Class_method { ml_fun_name; return_type; args }
+    | `Module -> Module_function { ml_fun_name; return_type; args }
   in
   let ary = Array.of_list args in
   match Array.length ary with
@@ -114,7 +114,7 @@ let parse_class_or_module_method associated_with fun_name args =
       match (first_good, last_good) with
       | true, true ->
           let return_type = Oarg.type_ return_type_arg in
-          Some (constructor fun_name return_type [] associated_with)
+          Some (constructor ml_fun_name return_type [] associated_with)
       | _, _ -> None)
   | nargs -> (
       let penultimate_unit_arg = Array.get ary (nargs - 2) in
@@ -128,34 +128,35 @@ let parse_class_or_module_method associated_with fun_name args =
       match (penultimate_unit_arg_good, return_type_arg_good, other_args) with
       | true, true, Ok args ->
           let return_type = Oarg.type_ return_type_arg in
-          Some (constructor fun_name return_type args associated_with)
+          Some (constructor ml_fun_name return_type args associated_with)
       | _ -> None)
 
-let parse_todo_placeholder fun_name args =
+let parse_todo_placeholder ml_fun_name args =
   match List.length args with
   | 1 ->
       let arg = List.hd_exn args in
-      if Oarg.is_positional_todo arg then Some (Todo_function fun_name)
+      if Oarg.is_positional_todo arg then Some (Todo_function ml_fun_name)
       else None
   | _ -> None
 
-let parse_not_implemented_placeholder fun_name args =
+let parse_not_implemented_placeholder ml_fun_name args =
   match List.length args with
   | 1 ->
       let arg = List.hd_exn args in
       if Oarg.is_positional_not_implemented arg then
-        Some (Not_implemented_function fun_name)
+        Some (Not_implemented_function ml_fun_name)
       else None
   | _ -> None
 
 (* [associated_with] is ignored unless the parsing matches a class method. *)
-let create ?(associated_with = `Class) ({ Oarg.fun_name; args } as val_spec) =
+let create ?(associated_with = `Class) ({ Oarg.ml_fun_name; args } as val_spec)
+    =
   match
-    ( parse_attribute fun_name args,
-      parse_instance_method fun_name args,
-      parse_class_or_module_method associated_with fun_name args,
-      parse_todo_placeholder fun_name args,
-      parse_not_implemented_placeholder fun_name args )
+    ( parse_attribute ml_fun_name args,
+      parse_instance_method ml_fun_name args,
+      parse_class_or_module_method associated_with ml_fun_name args,
+      parse_todo_placeholder ml_fun_name args,
+      parse_not_implemented_placeholder ml_fun_name args )
   with
   | Some py_fun, None, None, None, None
   | None, Some py_fun, None, None, None
@@ -228,7 +229,7 @@ let get_kwargs args =
 (* IMPORTANT this assumes you have an import_module function in scope... it
    should look something like this: [let import_module () =
    Py.Import.import_module "module_name_here"] *)
-let init_impl ~class_name ~fun_name return_type args =
+let init_impl ~class_name ~ml_fun_name return_type args =
   let py_to_ocaml = Otype.py_to_ocaml return_type in
   let get_callable =
     (* This time the class is the callable. *)
@@ -236,14 +237,14 @@ let init_impl ~class_name ~fun_name return_type args =
       {| let callable = Py.Module.get (import_module ()) "%{class_name}" in |}]
   in
   [%string
-    "let %{fun_name} %{get_var_names args} () = %{get_callable} %{get_kwargs \
-     args} %{py_to_ocaml} @@ Py.Callable.to_function_with_keywords callable \
-     [||] kwargs"]
+    "let %{ml_fun_name} %{get_var_names args} () = %{get_callable} \
+     %{get_kwargs args} %{py_to_ocaml} @@ \
+     Py.Callable.to_function_with_keywords callable [||] kwargs"]
 
 (* IMPORTANT this assumes you have an import_module function in scope... it
    should look something like this: [let import () = Py.Import.import_module
    "module_name_here"] *)
-let class_method_impl ~class_name ~fun_name return_type args =
+let class_method_impl ~class_name ~ml_fun_name return_type args =
   let py_to_ocaml = Otype.py_to_ocaml return_type in
   let get_class_ =
     [%string
@@ -251,51 +252,52 @@ let class_method_impl ~class_name ~fun_name return_type args =
   in
   let get_callable =
     [%string
-      {| let callable = Py.Object.find_attr_string class_ "%{fun_name}" in |}]
+      {| let callable = Py.Object.find_attr_string class_ "%{ml_fun_name}" in |}]
   in
   [%string
-    "let %{fun_name} %{get_var_names args} () = %{get_class_} %{get_callable} \
-     %{get_kwargs args} %{py_to_ocaml} @@ \
+    "let %{ml_fun_name} %{get_var_names args} () = %{get_class_} \
+     %{get_callable} %{get_kwargs args} %{py_to_ocaml} @@ \
      Py.Callable.to_function_with_keywords callable [||] kwargs"]
 
 (* This is the impl for a python function associated with a module but not a
    class. *)
-let module_function_impl fun_name return_type args =
+let module_function_impl ml_fun_name return_type args =
   let py_to_ocaml = Otype.py_to_ocaml return_type in
   let get_callable =
     [%string
-      {| let callable = Py.Module.get (import_module ()) "%{fun_name}" in |}]
+      {| let callable = Py.Module.get (import_module ()) "%{ml_fun_name}" in |}]
   in
   [%string
-    "let %{fun_name} %{get_var_names args} () = %{get_callable} %{get_kwargs \
-     args} %{py_to_ocaml} @@ Py.Callable.to_function_with_keywords callable \
-     [||] kwargs"]
+    "let %{ml_fun_name} %{get_var_names args} () = %{get_callable} \
+     %{get_kwargs args} %{py_to_ocaml} @@ \
+     Py.Callable.to_function_with_keywords callable [||] kwargs"]
 
 (* TODO only the Class_method variant actually uses the class name, but right
    now, you have to pass it in even if you're not generating a class method. *)
 let pyml_impl class_name = function
-  | Attribute { fun_name; return_type } ->
+  | Attribute { ml_fun_name; return_type } ->
       let py_to_ocaml = Otype.py_to_ocaml return_type in
       [%string
-        "let %{fun_name} t = %{py_to_ocaml} @@ Py.Object.find_attr_string t \
-         \"%{fun_name}\""]
-  | Instance_method { fun_name; return_type; args } ->
+        "let %{ml_fun_name} t = %{py_to_ocaml} @@ Py.Object.find_attr_string t \
+         \"%{ml_fun_name}\""]
+  | Instance_method { ml_fun_name; return_type; args } ->
       let py_to_ocaml = Otype.py_to_ocaml return_type in
       let get_callable =
         [%string
-          "let callable = Py.Object.find_attr_string t \"%{fun_name}\" in"]
+          "let callable = Py.Object.find_attr_string t \"%{ml_fun_name}\" in"]
       in
       [%string
-        "let %{fun_name} t %{get_var_names args} () = %{get_callable} \
+        "let %{ml_fun_name} t %{get_var_names args} () = %{get_callable} \
          %{get_kwargs args} %{py_to_ocaml} @@ \
          Py.Callable.to_function_with_keywords callable [||] kwargs"]
-  | Class_method { fun_name; return_type; args } -> (
-      match fun_name with
-      | "__init__" -> init_impl ~class_name ~fun_name return_type args
-      | _ -> class_method_impl ~class_name ~fun_name return_type args)
-  | Module_function { fun_name; return_type; args } ->
-      module_function_impl fun_name return_type args
-  | Todo_function fun_name ->
-      [%string "let %{fun_name} () = failwith \"todo: %{fun_name}\""]
-  | Not_implemented_function fun_name ->
-      [%string "let %{fun_name} () = failwith \"not implemented: %{fun_name}\""]
+  | Class_method { ml_fun_name; return_type; args } -> (
+      match ml_fun_name with
+      | "__init__" -> init_impl ~class_name ~ml_fun_name return_type args
+      | _ -> class_method_impl ~class_name ~ml_fun_name return_type args)
+  | Module_function { ml_fun_name; return_type; args } ->
+      module_function_impl ml_fun_name return_type args
+  | Todo_function ml_fun_name ->
+      [%string "let %{ml_fun_name} () = failwith \"todo: %{ml_fun_name}\""]
+  | Not_implemented_function ml_fun_name ->
+      [%string
+        "let %{ml_fun_name} () = failwith \"not implemented: %{ml_fun_name}\""]

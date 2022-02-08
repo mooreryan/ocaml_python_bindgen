@@ -5,12 +5,12 @@ let print x = print_s ([%sexp_of: Oarg.val_spec Or_error.t] x)
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo";
-  [%expect {| (Ok ((fun_name f) (args ((Positional ((type_ Todo))))))) |}]
+  [%expect {| (Ok ((ml_fun_name f) (args ((Positional ((type_ Todo))))))) |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a not_implemented";
   [%expect
-    {| (Ok ((fun_name f) (args ((Positional ((type_ Not_implemented))))))) |}]
+    {| (Ok ((ml_fun_name f) (args ((Positional ((type_ Not_implemented))))))) |}]
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo option";
@@ -29,7 +29,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args ((Positional ((type_ Todo))) (Positional ((type_ Unit))))))) |}]
 
 let%expect_test _ =
@@ -37,7 +37,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args ((Positional ((type_ Not_implemented))) (Positional ((type_ Unit))))))) |}]
 
 let%expect_test _ =
@@ -45,7 +45,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args
        ((Positional ((type_ Todo))) (Positional ((type_ Unit)))
         (Positional ((type_ Unit))))))) |}]
@@ -55,7 +55,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args
        ((Positional ((type_ Not_implemented))) (Positional ((type_ Unit)))
         (Positional ((type_ Unit))))))) |}]
@@ -65,7 +65,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args
        ((Positional ((type_ Unit))) (Positional ((type_ Todo)))
         (Positional ((type_ Unit))))))) |}]
@@ -75,7 +75,7 @@ let%expect_test _ =
   [%expect
     {|
     (Ok
-     ((fun_name f)
+     ((ml_fun_name f)
       (args
        ((Positional ((type_ Unit))) (Positional ((type_ Not_implemented)))
         (Positional ((type_ Unit))))))) |}]
