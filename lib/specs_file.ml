@@ -15,8 +15,6 @@ let is_all_whitespace s = Re2.matches all_whitespace s
 
 let comment_marker = Re2.create_exn "^#\\s*"
 
-let strip_comment_marker s = Re2.rewrite_exn comment_marker s ~template:""
-
 let cat s1 s2 = s1 ^ " " ^ s2
 
 (* TODO We are being more restrictive than normal in that each attr must be on
@@ -30,6 +28,8 @@ let has_attributes_not_at_start line = Re2.matches attributes_not_at_start line
 
 let is_attribute_line line = Re2.matches attribute_line line
 
+(* assert false cases should be impossible unless I made a mistake. failwith
+   cases can happen with bad user input in the file. *)
 let read fname =
   let open Stdio in
   let lines =
@@ -50,8 +50,9 @@ let read fname =
         | true, true, Some _, Some _ ->
             assert false
         (* In an attribute line *)
-        | true, false, None, None | true, false, Some _, None ->
+        | true, false, None, None ->
             failwith "We have attributes but no val spec for them to go with."
+        | true, false, Some _, None -> assert false
         | true, false, None, Some current_val_spec ->
             let new_attrs = line in
             (Some new_attrs, Some current_val_spec, all)
@@ -68,10 +69,7 @@ let read fname =
             (* Set up the new one. *)
             let new_val_spec = line in
             (None, Some new_val_spec, all)
-        | false, true, Some _, None ->
-            failwith
-              "Starting a new val_spec, but we have unused attributes that \
-               were not part of another val spec."
+        | false, true, Some _, None -> assert false
         | false, true, Some current_attrs, Some current_val_spec ->
             (* Track the old val spec. *)
             let all =
@@ -86,10 +84,7 @@ let read fname =
         | false, false, None, Some current_val_spec ->
             let new_val_spec = line in
             (None, Some (cat current_val_spec new_val_spec), all)
-        | false, false, Some _, None ->
-            failwith
-              "In the middle of a val spec, but have none to work on. (Also \
-               found unused attrs.)"
+        | false, false, Some _, None -> assert false
         | false, false, Some _, Some _ ->
             failwith "Found unused attrs but in the middle of a val spec.")
   in
