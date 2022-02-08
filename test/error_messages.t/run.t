@@ -7,7 +7,7 @@ message.
     "Val specs must specify attributes, instance, class, or module methods, or placeholders."
     "Unless you're defining an attribute, don't forget the penultimate unit argument!"
     ("The bad val_spec was:"
-     ((ml_fun_name bad)
+     ((py_fun_name bad) (ml_fun_name bad)
       (args
        ((Positional ((type_ T))) (Labeled ((name apple) (type_ Int)))
         (Positional ((type_ Int)))))))))
