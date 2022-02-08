@@ -19,7 +19,9 @@ let not_implemented_type = "type 'a not_implemented = unit -> 'a"
 
 let gen_pyml_impl ~associated_with ~py_class ~signature =
   let%bind val_spec = Oarg.parse_val_spec signature in
-  let%bind py_fun = Py_fun.create val_spec ~associated_with in
+  let%bind py_fun =
+    Py_fun.create val_spec ~py_fun_name:val_spec.ml_fun_name ~associated_with
+  in
   return @@ clean @@ Py_fun.pyml_impl py_class py_fun
 
 let clean_signatures data =

@@ -12,7 +12,7 @@ let clean s = String.strip @@ squash_spaces s
 let gen_pyml_impl spec =
   let open Or_error.Let_syntax in
   let%bind val_spec = Oarg.parse_val_spec spec in
-  let%bind py_fun = Py_fun.create val_spec in
+  let%bind py_fun = Py_fun.create val_spec ~py_fun_name:val_spec.ml_fun_name in
   let class_name = "Apple" in
   return @@ clean @@ Py_fun.pyml_impl class_name py_fun
 
@@ -39,7 +39,9 @@ let assert_pyml_impls_are f specs = List.iter specs ~f:(assert_pyml_impl_is f)
 
 let%test_unit "attribute" =
   let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec "val pie : t -> int" in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create val_spec ~py_fun_name:val_spec.ml_fun_name
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -58,7 +60,9 @@ let%test_unit "instance method" =
          "val pie : t -> a:string -> ?b:Food.t -> cat:Animal.t -> ?what:float \
           -> unit -> int"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create val_spec ~py_fun_name:val_spec.ml_fun_name
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -91,7 +95,9 @@ let%test_unit "instance method, nested modules" =
          "val foo : t -> a:Animal.Four_legs.Cat.t -> unit -> \
           Silly.Times.Are_fun.t"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -115,7 +121,9 @@ let%test_unit "instance method that returns unit" =
   let val_spec =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> unit -> unit"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -134,7 +142,9 @@ let%test_unit "special __init__ method" =
     Or_error.ok_exn
     @@ Oarg.parse_val_spec "val __init__ : x:int -> y:int -> unit -> t"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -161,7 +171,9 @@ let%test_unit "class method" =
          "val pie : a:string -> ?b:Food.t -> cat:Animal.t -> ?what:float -> \
           unit -> Cat.t"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -192,7 +204,9 @@ let%test_unit "class method returning unit" =
   let val_spec =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> unit"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -212,7 +226,9 @@ let%test_unit "module function returning unit" =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> unit"
   in
   let py_fun =
-    Or_error.ok_exn @@ Py_fun.create val_spec ~associated_with:`Module
+    Or_error.ok_exn
+    @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+         ~associated_with:`Module
   in
   (* Annoying, but you still have to pass in the class name :/ *)
   let class_name = "Apple" in
@@ -236,7 +252,9 @@ let%test_unit "lists are okay" =
   in
   let x =
     let%bind val_spec = Oarg.parse_val_spec spec in
-    let%bind py_fun = Py_fun.create val_spec in
+    let%bind py_fun =
+      Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+    in
     let class_name = "Apple" in
     return @@ clean @@ Py_fun.pyml_impl class_name py_fun
   in
@@ -273,7 +291,9 @@ let%test_unit "lists are okay" =
   in
   let x =
     let%bind val_spec = Oarg.parse_val_spec spec in
-    let%bind py_fun = Py_fun.create val_spec in
+    let%bind py_fun =
+      Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+    in
     let class_name = "Apple" in
     return @@ clean @@ Py_fun.pyml_impl class_name py_fun
   in
@@ -304,7 +324,9 @@ let foo t ?apple ?pie ~good () =
 
 let%test_unit "no arg python functions work" =
   let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec "val f : unit -> int" in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean
@@ -323,7 +345,9 @@ let%test_unit "todo placeholder" =
   let val_spec =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val apple_pie : 'a todo"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect = clean {| let apple_pie () = failwith "todo: apple_pie" |} in
   let actual = clean @@ Py_fun.pyml_impl class_name py_fun in
@@ -333,7 +357,9 @@ let%test_unit "not_implemented placeholder" =
   let val_spec =
     Or_error.ok_exn @@ Oarg.parse_val_spec "val apple_pie : 'a not_implemented"
   in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean {| let apple_pie () = failwith "not implemented: apple_pie" |}
@@ -347,7 +373,7 @@ let%test_unit "not_implemented placeholder" =
  *     Or_error.ok_exn @@ Oarg.parse_val_spec "val f : t -> "
  *   in
  *   let py_fun =
- *     Or_error.ok_exn @@ Py_fun.create val_spec ~associated_with:`Module
+ *     Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec ~associated_with:`Module
  *   in
  *   (\* Annoying, but you still have to pass in the class name :/ *\)
  *   let class_name = "Apple" in
@@ -493,7 +519,9 @@ let%test_unit "names and args cannot be only underscores" =
 let%test_unit "attribute returning Seq.t" =
   let spec = "val f : t -> int Seq.t" in
   let val_spec = Or_error.ok_exn @@ Oarg.parse_val_spec spec in
-  let py_fun = Or_error.ok_exn @@ Py_fun.create val_spec in
+  let py_fun =
+    Or_error.ok_exn @@ Py_fun.create ~py_fun_name:val_spec.ml_fun_name val_spec
+  in
   let class_name = "Apple" in
   let expect =
     clean

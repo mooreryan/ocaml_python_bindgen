@@ -31,8 +31,7 @@ let labeled_type (x : labeled) : Otype.t = x.type_
 type t = Positional of positional | Labeled of labeled | Optional of optional
 [@@deriving sexp]
 
-type val_spec = { py_fun_name : string; ml_fun_name : string; args : t list }
-[@@deriving sexp]
+type val_spec = { ml_fun_name : string; args : t list } [@@deriving sexp]
 
 let type_ = function
   | Positional { type_ } -> type_
@@ -147,10 +146,9 @@ module P = struct
       (* function names and arg names parse the same *)
       let%bind ml_fun_name = arg_name in
       (* TODO *)
-      let py_fun_name = ml_fun_name in
       let%bind _colon = colon in
       let%bind args = args in
-      return { py_fun_name; ml_fun_name; args }
+      return { ml_fun_name; args }
     in
     p <* eoi <?> "val_spec parser"
 end

@@ -157,8 +157,8 @@ let parse_not_implemented_placeholder ml_fun_name args =
   | _ -> None
 
 (* [associated_with] is ignored unless the parsing matches a class method. *)
-let create ?(associated_with = `Class)
-    ({ Oarg.py_fun_name; ml_fun_name; args } as val_spec) =
+let create ?(associated_with = `Class) ~py_fun_name
+    ({ Oarg.ml_fun_name; args } as val_spec) =
   match
     ( parse_attribute ~py_fun_name ~ml_fun_name args,
       parse_instance_method ~py_fun_name ~ml_fun_name args,
