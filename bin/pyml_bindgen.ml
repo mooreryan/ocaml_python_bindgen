@@ -17,23 +17,22 @@ let todo_type = "type 'a todo = unit -> 'a"
 
 let not_implemented_type = "type 'a not_implemented = unit -> 'a"
 
-let gen_pyml_impl ~associated_with ~py_class ~signature =
-  let%bind val_spec = Oarg.parse_val_spec signature in
-  let%bind py_fun =
-    Py_fun.create val_spec ~py_fun_name:val_spec.ml_fun_name ~associated_with
+let gen_pyml_impl ~associated_with ~py_class ~spec =
+  let py_fun_name_attribute =
+    Re2.create_exn "\\[@@py_fun_name\\s+([a-zA-Z_]+)\\]"
   in
+  let get_py_fun_name s =
+    Re2.find_first ~sub:(`Index 1) py_fun_name_attribute s
+  in
+  let%bind val_spec = Oarg.parse_val_spec spec.Specs_file.val_spec in
+  (* Will use the same name as ml_fun if the py_fun_name attr is not present. *)
+  let%bind py_fun_name =
+    match spec.Specs_file.attrs with
+    | None -> Or_error.return val_spec.ml_fun_name
+    | Some attrs -> get_py_fun_name attrs
+  in
+  let%bind py_fun = Py_fun.create val_spec ~py_fun_name ~associated_with in
   return @@ clean @@ Py_fun.pyml_impl py_class py_fun
-
-let clean_signatures data =
-  (* Match like this because we don't want to split any strings containg
-     val...e.g., pr_value, silly_val, etc. *)
-  let re = Re2.create_exn "^val\\s+|\\s+val\\s+" in
-  data
-  |> Re2.split ~include_matches:true re
-  |> List.filter_map ~f:(fun s ->
-         if Re2.matches all_whitespace s then None else Some (clean s))
-  |> List.chunks_of ~length:2
-  |> List.map ~f:(String.concat ~sep:" ")
 
 let or_error_re = Re2.create_exn "Or_error\\.t"
 
@@ -50,30 +49,19 @@ let check_needs_todo s = Re2.matches todo_re s
 
 let check_needs_not_implemented s = Re2.matches not_implemented_re s
 
-let read_signatures_file fname =
-  let sig_dat =
-    fname |> In_channel.read_lines
-    |> List.filter ~f:(fun s -> not @@ Re2.matches is_comment s)
-    |> String.concat ~sep:" "
-  in
+let check_signatures_file fname =
+  let sig_dat = In_channel.read_all fname in
   let needs_base = check_needs_base sig_dat in
   let needs_todo = check_needs_todo sig_dat in
   let needs_not_implemented = check_needs_not_implemented sig_dat in
-  let signatures = clean_signatures sig_dat in
-  (needs_base, needs_todo, needs_not_implemented, signatures)
+  (needs_base, needs_todo, needs_not_implemented)
 
-let gen_pyml_impls ~associated_with ~py_class ~signatures =
-  List.map signatures ~f:(fun signature ->
-      let impl = gen_pyml_impl ~associated_with ~py_class ~signature in
+let gen_pyml_impls ~associated_with ~py_class ~specs =
+  List.map specs ~f:(fun spec ->
+      let impl = gen_pyml_impl ~associated_with ~py_class ~spec in
+      (* TODO sexp here *)
       Or_error.tag impl
-        ~tag:[%string "Error generating spec for '%{signature}'"])
-
-let parse_cli_args () =
-  match Sys.get_argv () with
-  | [| _prog_name; py_module; py_class; fname |] -> (py_module, py_class, fname)
-  | _ ->
-      failwith
-        "usage: pyml_bindgen.exe py_module py_class val_specs.txt > out.ml"
+        ~tag:[%string "Error generating spec for '%{spec.val_spec}'"])
 
 let print_dbl_endline s = print_endline (s ^ "\n")
 
@@ -84,14 +72,14 @@ let gen_filter_opt_impl needs_base =
 (* I'm going to put the todo and not_implemented types inside the generated
    module. While I could put them outside, it makes it more annoying when
    catting together generated files, so we will go with a bit of duplication. *)
-let print_full ~caml_module ~shared_signatures ~shared_impls ~signatures ~impls
+let print_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
     ~import_module_impl ~needs_base ~needs_todo ~needs_not_implemented =
   if needs_base then print_dbl_endline "open! Base";
   print_endline [%string "module %{caml_module} : sig"];
   if needs_todo then print_dbl_endline todo_type;
   if needs_not_implemented then print_dbl_endline not_implemented_type;
   List.iter shared_signatures ~f:print_dbl_endline;
-  List.iter signatures ~f:print_dbl_endline;
+  List.iter specs ~f:(fun spec -> print_dbl_endline spec.Specs_file.val_spec);
   print_endline "end = struct";
   if needs_todo then print_dbl_endline todo_type;
   if needs_not_implemented then print_dbl_endline not_implemented_type;
@@ -151,20 +139,20 @@ let run
   let shared_impls =
     Shared.gen_all_functions of_pyo_ret_type (`Custom py_class)
   in
-  let needs_base, needs_todo, needs_not_implemented, signatures =
-    read_signatures_file signatures
+  let specs = Specs_file.read signatures in
+  let needs_base, needs_todo, needs_not_implemented =
+    check_signatures_file signatures
   in
   assert_base_and_ret_type_good needs_base of_pyo_ret_type;
   (* impls -> implementations *)
   let%bind impls =
-    Or_error.all @@ gen_pyml_impls ~associated_with ~py_class ~signatures
+    Or_error.all @@ gen_pyml_impls ~associated_with ~py_class ~specs
   in
   match caml_module with
   | Some caml_module ->
       Or_error.return
-      @@ print_full ~caml_module ~shared_signatures ~shared_impls ~signatures
-           ~impls ~import_module_impl ~needs_base ~needs_todo
-           ~needs_not_implemented
+      @@ print_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
+           ~import_module_impl ~needs_base ~needs_todo ~needs_not_implemented
   | None ->
       Or_error.return
       @@ print_impls ~shared_impls ~impls ~import_module_impl ~needs_base
