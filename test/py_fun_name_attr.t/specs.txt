@@ -1,0 +1,11 @@
+val create : name:string -> unit -> t
+[@@py_fun_name __init__]
+val to_string : t -> unit -> string
+[@@py_fun_name __str__]
+
+val eat : t -> num_mice:int -> unit -> unit
+val eat_part : t -> num_mice:float -> unit -> unit
+[@@py_fun_name eat]
+
+val climb : t -> how_high:int -> unit -> unit
+[@@py_fun_name jump]
