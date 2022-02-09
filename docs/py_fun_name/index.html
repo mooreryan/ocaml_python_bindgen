@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Ryan M. Moore">
-  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/embedding-python/">
+  <link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Embedding Python source - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+  <title>Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Embedding Python source";
-    var mkdocs_page_input_path = "embedding-python.md";
-    var mkdocs_page_url = "/ocaml_python_bindgen/embedding-python/";
+    var mkdocs_page_name = "Attributes -- py_fun_name";
+    var mkdocs_page_input_path = "py_fun_name.md";
+    var mkdocs_page_url = "/ocaml_python_bindgen/py_fun_name/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -44,22 +44,22 @@
   
 
 
-<meta property="og:site_name" content="Embedding Python source - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Embedding Python source - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/embedding-python/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Embedding Python source - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -123,15 +123,21 @@
                 <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../py_fun_name/">Attributes -- py_fun_name</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Attributes -- py_fun_name</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#full-example">Full example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#warning">Warning</a>
+    </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Embedding Python source</a>
-    <ul class="current">
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../embedding-python/">Embedding Python source</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../tuples/">Handling Tuples</a>
                     </li>
@@ -163,10 +169,10 @@
         
       
     
-    <li>Embedding Python source</li>
+    <li>Attributes -- py_fun_name</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/embedding-python.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/py_fun_name.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -178,12 +184,27 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="embedding-python-source-code">Embedding Python Source Code</h1>
-<p>If you import modules in Python code, Python needs to be able to actually find these modules.</p>
-<p>One way is to "install" the Python module you want with say, pip.  E.g., <code>pip install whatever</code>.</p>
-<p>If you're working on a Python module along with your OCaml code, you probably don't want to do this.  Rather, you probably want to set the <code>PYTHONPATH</code> environment variable to the location of your Python modules.  (You can find an example an detailed explanation of that in the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/importing_modules">importing modules</a> example on GitHub.)</p>
-<p>The third option is to embed the Python code directly into the generated OCaml module.  The <code>--embed-python-source</code> CLI option lets you do this.  Basically, you just provide the path to the Python module you want to embed to that option, and it will all work out for you.  This way you don't have to have your user's worry about setting the <code>PYTHONPATH</code> properly.</p>
-<p>To see it in action, check out the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/embedding_python_source">example</a> on GitHub.</p>
+                <h1 id="attributes">Attributes</h1>
+<p>You can attach certain attributes to your value specifications to change their behavior.</p>
+<p>Currently, the only recognized attribute is <code>py_fun_name</code>.</p>
+<p>You can use it to bind a Python method to a differently named OCaml function.</p>
+<h2 id="example">Example</h2>
+<p>For example, rather than having a <code>Cat.__init__</code> method to call from the OCaml side (i.e., to make a new Python <code>Cat</code> object), you can bind the Python <code>__init__</code> function to something more idiomatic like <code>create</code> or whatever you want.</p>
+<pre><code class="language-ocaml">val create : t -&gt; ...
+[@@py_fun_name __init__]
+</code></pre>
+<p>Another common use for this is to bind the Python <code>__str__</code> method for a class to <code>to_string</code> on the OCaml side.</p>
+<p>You can do this with any function.  One reason is that you may want to have some type safety with a polymorphic Python function.  While you could pass in <a href="https://mooreryan.github.io/ocaml_python_bindgen/types/#pytypes">Py.Object.t</a> directly, you could also use attributes to bind multiple OCaml functions to the same Python method.  E.g.,</p>
+<pre><code class="language-ocaml">val eat : t -&gt; num_mice:int -&gt; unit -&gt; unit
+
+val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
+[@@py_fun_name eat]
+</code></pre>
+<p>In this case, we have one <code>eat</code> function for <code>int</code> and one for <code>float</code>.</p>
+<h2 id="full-example">Full example</h2>
+<p>For a full working example see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/attributes">attributes</a> example on GitHub.</p>
+<h2 id="warning">Warning</h2>
+<p>If you specify the <code>py_fun_name</code> more than once, it will do something wonky.  Eventually, the program will treat this as an error, but for now, it is on you to avoid doing it.</p>
               
             </div>
           </div>
@@ -191,10 +212,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../tuples/" class="btn btn-neutral float-right" title="Handling Tuples">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../cli-options/" class="btn btn-neutral float-right" title="CLI Options">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../of-pyobject/" class="btn btn-neutral" title="Converting `pyobjects` to OCaml types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../auto-gen-bindings/" class="btn btn-neutral" title="Auto-generating bindings"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -224,10 +245,10 @@
         </span>
     
     
-      <span><a href="../of-pyobject/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../auto-gen-bindings/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../tuples/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../cli-options/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

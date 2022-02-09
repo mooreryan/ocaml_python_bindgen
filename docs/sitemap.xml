@@ -71,6 +71,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/</loc>
+         <lastmod>2022-02-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/recursive/</loc>
          <lastmod>2022-02-09</lastmod>
          <changefreq>daily</changefreq>
