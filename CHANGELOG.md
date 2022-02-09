@@ -5,6 +5,10 @@
 * Allow nested module types in val specs (e.g., `Food.Dessert.Apple_pie.t`)
 * Allow using `Pytypes.pyobject` and `Py.Object.t` in val specs
 * Better error messages when parser or `py_fun` creation fails
+* You can now use attributes on value specifications.
+  * Currently the only one available is `py_fun_name`.  
+  * It allows you to decouple the Python method name and the generated OCaml function name.  
+  * See the examples directory on GitHub for more info.
 
 ### Changed
 
