@@ -146,7 +146,8 @@ val f : int -> float
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
   print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
-  [%expect {| (Ok (((attrs ("[@@hello world]")) (val_spec "val f : int -> float")))) |}]
+  [%expect
+    {| (Ok (((attrs ("[@@hello world]")) (val_spec "val f : int -> float")))) |}]
 
 let%expect_test _ =
   let data = {| val f : int -> float |} in
