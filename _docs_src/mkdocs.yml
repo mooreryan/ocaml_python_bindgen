@@ -22,6 +22,7 @@ nav:
     - Class & Static Methods; Functions: static-methods.md
   - Miscellaneous:
     - Auto-generating bindings: auto-gen-bindings.md
+    - Attributes -- py_fun_name: py_fun_name.md
     - CLI Options: cli-options.md
     - Converting `pyobjects` to OCaml types: of-pyobject.md
     - Embedding Python source: embedding-python.md
