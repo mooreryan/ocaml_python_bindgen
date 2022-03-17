@@ -9,16 +9,17 @@ homepage: "https://github.com/mooreryan/ocaml_python_bindgen"
 doc: "https://mooreryan.github.io/ocaml_python_bindgen/"
 bug-reports: "https://github.com/mooreryan/ocaml_python_bindgen/issues"
 depends: [
-  "dune" {>= "2.8"}
+  "dune" {>= "3.0"}
   "angstrom" {>= "0.15.0"}
   "base" {>= "v0.12"}
-  "cmdliner" {>= "1.0"}
+  "cmdliner" {>= "1.1.0"}
   "ppx_let" {>= "v0.12"}
   "ppx_sexp_conv" {>= "v0.12"}
   "ppx_string" {>= "v0.12"}
   "re2" {>= "v0.12"}
   "stdio" {>= "v0.12"}
   "ocaml" {>= "4.08.0"}
+  "cmdliner" {= "1.1.0" & with-test}
   "conf-python-3-dev" {>= "1" & with-test}
   "core_kernel" {>= "v0.12" & with-test}
   "ocamlformat" {>= "0.20.0" & < "0.21.0" & with-test}
