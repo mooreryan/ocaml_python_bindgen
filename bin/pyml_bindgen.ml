@@ -9,10 +9,6 @@ let squash_spaces s = Re2.rewrite_exn ~template:" " spaces s
 
 let clean s = String.strip @@ squash_spaces s
 
-let all_whitespace = Re2.create_exn "^\\s*$"
-
-let is_comment = Re2.create_exn "^\\s*#"
-
 let todo_type = "type 'a todo = unit -> 'a"
 
 let not_implemented_type = "type 'a not_implemented = unit -> 'a"
