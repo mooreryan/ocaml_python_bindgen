@@ -9,6 +9,9 @@
  ;; `dune clean`, it will be removed.
  (mode
   (promote (until-clean)))
+ ;; Need this expclicitly with dune 3
+ (deps
+  (:val_specs val_specs.txt))
  (action
   ;; `pyml_bindgen` outputs directly to stdout, so we need to redirect
   ;; the stdout to `lib.ml`.  We do this using `with-stdout-to`.
@@ -24,6 +27,6 @@
    (pipe-stdout
     ;; Here is the acutal `pyml_bindgen` command to generate the
     ;; bindings.
-    (run %{bin:pyml_bindgen} val_specs.txt adder Adder --caml-module Adder)
+    (run %{bin:pyml_bindgen} %{val_specs} adder Adder --caml-module Adder)
     ;; And finally, process the bindings code with ocamlformat.
     (run ocamlformat --name lib.ml -)))))

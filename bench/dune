@@ -2,6 +2,13 @@
  (names bench_import_module)
  (libraries core core_bench pyml))
 
+; TODO: clean up the unused stuff rather than silence warning here
+
+(env
+ (dev
+  (flags
+   (:standard -w -32))))
+
 ;;; Uncomment this if you need to regenerate the lib.
 ; (rule
 ;  (target lib.ml)
