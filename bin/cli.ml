@@ -113,12 +113,13 @@ let info =
       `P "Ryan M. Moore <https://orcid.org/0000-0003-3337-8184>";
     ]
   in
-  Term.info "pyml_bindgen" ~version ~doc ~man
+  Cmd.info "pyml_bindgen" ~version ~doc ~man ~exits:[]
 
-let program = (term, info)
+(* let parse_cli () = match Term.eval program with | `Ok opts -> Ok opts | `Help
+   | `Version -> Error 0 | `Error _ -> Error 1 *)
 
 let parse_cli () =
-  match Term.eval program with
-  | `Ok opts -> Ok opts
-  | `Help | `Version -> Error 0
-  | `Error _ -> Error 1
+  match Cmd.eval_value @@ Cmd.v info term with
+  | Ok (`Ok opts) -> Ok opts
+  | Ok `Help | Ok `Version -> Error 0
+  | Error _ -> Error 1

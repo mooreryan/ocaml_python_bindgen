@@ -250,12 +250,13 @@ And run it.
   Person -- name: Hagrid, age: 111
   Thing -- color: orange
 
-Watch out...if your Python code uses the reserved string literal
-syntax that pyml_bindgen uses, it will break.  However, we use
-{pyml_bindgen_string_literal| blah |pyml_bindgen_string_literal} so it
-is pretty unlikely that you will find that in your Python code :)
+Watch out...if your Python code uses the reserved string literal syntax that
+pyml_bindgen uses, it will break when it goes through the OCaml tooling, but NOT
+when pyml_bindgen genrates the file.  However, we use
+{pyml_bindgen_string_literal| blah |pyml_bindgen_string_literal} so it is pretty
+unlikely that you will find that in your Python code :)
 
-  $ pyml_bindgen thing_specs.txt thing Thing --caml-module Thing -r no_check --embed-python-source=bad_thing.py > bad_lib.ml
+  $ pyml_bindgen thing_specs.txt thing Thing --caml-module Thing -r no_check --embed-python-source=bad_thing.py > lib.ml
   $ dune build 2> err
   [1]
   $ grep 'This will break' err
@@ -264,7 +265,7 @@ is pretty unlikely that you will find that in your Python code :)
 Gives good error when the specified python file doesn't exist.
 
   $ pyml_bindgen thing_specs.txt thing Thing --caml-module Thing -r no_check --embed-python-source=where_am_i.py
-  pyml_bindgen: option `--embed-python-source': no `where_am_i.py' file
-  Usage: pyml_bindgen [OPTION]... SIGNATURES PY_MODULE PY_CLASS
-  Try `pyml_bindgen --help' for more information.
+  pyml_bindgen: option '--embed-python-source': no 'where_am_i.py' file
+  Usage: pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
+  Try 'pyml_bindgen --help' for more information.
   [1]

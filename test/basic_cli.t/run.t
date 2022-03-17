@@ -2,8 +2,8 @@ No arguments.
 
   $ pyml_bindgen
   pyml_bindgen: required arguments SIGNATURES, PY_MODULE, PY_CLASS are missing
-  Usage: pyml_bindgen [OPTION]... SIGNATURES PY_MODULE PY_CLASS
-  Try `pyml_bindgen --help' for more information.
+  Usage: pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
+  Try 'pyml_bindgen --help' for more information.
   [1]
 
 Version screen
@@ -18,7 +18,7 @@ Help screen
          pyml_bindgen - generate pyml bindings for a set of signatures
   
   SYNOPSIS
-         pyml_bindgen [OPTION]... SIGNATURES PY_MODULE PY_CLASS
+         pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
   
   DESCRIPTION
          Generate pyml bindings from OCaml signatures.
@@ -36,7 +36,7 @@ Help screen
   OPTIONS
          -a ASSOCIATED_WITH, --associated-with=ASSOCIATED_WITH (absent=class)
              Are the Python functions associated with a class or just a module?
-             ASSOCIATED_WITH must be either `class' or `module'.
+             ASSOCIATED_WITH must be either class or module.
   
          -c CAML_MODULE, --caml-module=CAML_MODULE
              Write full module and signature
@@ -46,14 +46,15 @@ Help screen
              binary. In this way, you won't have to ensure the Python
              interpreter can find the module at runtime.
   
-         --help[=FMT] (default=auto)
-             Show this help in format FMT. The value FMT must be one of `auto',
-             `pager', `groff' or `plain'. With `auto', the format is `pager` or
-             `plain' whenever the TERM env var is `dumb' or undefined.
-  
          -r OF_PYO_RET_TYPE, --of-pyo-ret-type=OF_PYO_RET_TYPE (absent=option)
              Return type of the of_pyobject function. OF_PYO_RET_TYPE must be
-             one of `no_check', `option' or `or_error'.
+             one of no_check, option or or_error.
+  
+  COMMON OPTIONS
+         --help[=FMT] (default=auto)
+             Show this help in format FMT. The value FMT must be one of auto,
+             pager, groff or plain. With auto, the format is pager or plain
+             whenever the TERM env var is dumb or undefined.
   
          --version
              Show version information.
@@ -72,7 +73,7 @@ Help screen
 File doesn't exist.
 
   $ pyml_bindgen apple pie good
-  pyml_bindgen: SIGNATURES argument: no `apple' file
-  Usage: pyml_bindgen [OPTION]... SIGNATURES PY_MODULE PY_CLASS
-  Try `pyml_bindgen --help' for more information.
+  pyml_bindgen: SIGNATURES argument: no 'apple' file
+  Usage: pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
+  Try 'pyml_bindgen --help' for more information.
   [1]
