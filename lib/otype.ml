@@ -32,6 +32,7 @@ type t =
      A.t option] would be allowed. *)
   | Option of t
   | Or_error of t
+  | Tuple2 of t * t
   | Py_obj
 [@@deriving sexp]
 
@@ -51,6 +52,8 @@ module P = struct
   let spaces = take_while Utils.is_space
 
   let dot = string "."
+
+  let star = string "*"
 
   (* Parsers for each of the Otype variants. *)
   let int = string "int" <?> "int parser"
@@ -150,6 +153,19 @@ module P = struct
       ]
     <?> "basic_otype parser"
 
+  (* E.g., things that are allowed in tuples. *)
+  let non_unit_basic_otype =
+    choice ~failure_msg:"Token wasn't an otype"
+      [
+        lift (fun _ -> Int) int;
+        lift (fun _ -> Float) float;
+        lift (fun _ -> String) string_;
+        lift (fun _ -> Bool) bool;
+        lift (fun _ -> T) t;
+        lift (fun s -> Custom s) custom;
+      ]
+    <?> "non_unit_basic_otype parser"
+
   (* 'a Seq.t, 'a option, 'a Or_error.t, 'a list. *)
   let compound_otype =
     let%bind t = basic_otype in
@@ -172,6 +188,31 @@ module P = struct
     in
     p <?> "compound_otype parser"
 
+  (* TODO combine this and the next *)
+  let tuple2_otype =
+    let%bind a = non_unit_basic_otype in
+    let%bind _star = spaces *> star <* spaces in
+    let%bind b = non_unit_basic_otype in
+    let p = return (a, b) in
+    let f (x, y) = Tuple2 (x, y) in
+    lift f p <?> "tuple2_otype parser"
+
+  (* The most basic tuple collection parser *)
+  let tuple2_coll_otype =
+    let%bind a = spaces *> char '(' *> non_unit_basic_otype in
+    let%bind _star = spaces *> star <* spaces in
+    let%bind b = non_unit_basic_otype <* char ')' <* spaces in
+    let tup = Tuple2 (a, b) in
+    let p =
+      choice ~failure_msg:"Tuple2 collection failed"
+        [
+          lift (fun _ -> List tup) list;
+          lift (fun _ -> Array tup) array;
+          lift (fun _ -> Seq tup) seq;
+        ]
+    in
+    p <?> "tuple2_list_otype parser"
+
   let placeholder_otype =
     choice ~failure_msg:"Token wasn't an placeholder otype"
       [
@@ -183,12 +224,29 @@ module P = struct
   let parser_ =
     let p =
       choice ~failure_msg:"not a compound, basic, or placeholder otype"
-        [ py_obj_otype; compound_otype; basic_otype; placeholder_otype ]
+        [
+          py_obj_otype;
+          compound_otype;
+          (* TODO need a test to make sure this ordering is okay. *)
+          tuple2_coll_otype;
+          tuple2_otype;
+          basic_otype;
+          placeholder_otype;
+        ]
     in
     spaces *> p <* spaces <?> "otype parser"
 end
 
 let custom_module_name s = String.chop_suffix_exn s ~suffix:".t"
+
+(* TODO what about py_obj types? *)
+let handle_tuple_element f x =
+  match x with
+  | Int | Float | String | Bool | T | Custom _ -> f x
+  | _ ->
+      failwith
+        "Tuples must contain basic types (Int, Float, String, Bool, T, or \
+         Custom)"
 
 (* Convert py types to ocaml types. Some of these failwith things are prevented
    because we only construct otypes with the parsing functions.... *)
@@ -226,7 +284,9 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
+      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented
+      | Tuple2 _ ->
+          (* TODO test*)
           failwith "only basic types can be options"
       | Int | Float | String | Bool | Py_obj ->
           [%string
@@ -236,6 +296,15 @@ let rec py_to_ocaml = function
       match t with
       | T | Custom _ -> py_to_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
+  | Tuple2 (a, b) ->
+      let convert_a = handle_tuple_element py_to_ocaml a in
+      let convert_b = handle_tuple_element py_to_ocaml b in
+      (* You don't need this as an anonymous function for just a single tuple,
+         but if you define it this way, it will work when the tuple is inside a
+         collection. *)
+      [%string
+        "(fun x -> t2_map ~fa:%{convert_a} ~fb:%{convert_b} @@ \
+         Py.Tuple.to_tuple2 x)"]
   | Py_obj -> ident_fun
 
 (* Convert ocaml types to py types. Some of these failwith things are prevented
@@ -272,7 +341,9 @@ let rec py_of_ocaml = function
       | T | Custom _ -> py_of_ocaml t
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
-      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented ->
+      | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented
+      | Tuple2 _ ->
+          (* TODO test this *)
           failwith "only basic types can be options"
       | Int | Float | String | Bool | Py_obj ->
           [%string "(function Some x -> %{py_of_ocaml t} x | None -> Py.none)"])
@@ -280,6 +351,13 @@ let rec py_of_ocaml = function
       match t with
       | T | Custom _ -> py_of_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
+  | Tuple2 (a, b) ->
+      let convert_a = handle_tuple_element py_of_ocaml a in
+      let convert_b = handle_tuple_element py_of_ocaml b in
+      (* See above comment for explanation of this. *)
+      [%string
+        "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:%{convert_a} \
+         ~fb:%{convert_b} x)"]
   | Py_obj -> ident_fun
 
 (* Parse a otype from a string *)
