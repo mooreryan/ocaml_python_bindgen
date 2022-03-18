@@ -3,13 +3,13 @@ name: Build and test
 on:
   push:
     branches:
-      - 'main'
-      - 'staging'
-      - 'dev'
+      - "main"
+      - "staging"
+      - "dev"
 
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
         os:
           - ubuntu-latest
         ocaml-compiler:
-          - 4.12.0
+          - 4.13.1
 
     runs-on: ${{ matrix.os }}
 
