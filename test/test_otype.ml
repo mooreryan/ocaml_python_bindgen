@@ -317,6 +317,22 @@ let%expect_test _ =
     (Error
      "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype") |}]
 
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "int *string";
+  [%expect {| (Ok (Tuple2 Int String)) |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "int *string*   float";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "int   * string * float*     bool";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
+let%expect_test _ =
+  print_string_or_error @@ Otype.parse "int *    string*float*bool *     t";
+  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+
 (* Converting pytypes to ocaml types *)
 
 let%expect_test "Converting list types" =
@@ -697,6 +713,97 @@ let%expect_test "Nested custom modules" =
     {|
     ((Ok Apple.Pie.of_pyobject) (Ok Good.Apple.Pie.of_pyobject)
      (Ok Good_to.Eat_apple.Pie_always.of_pyobject)) |}]
+
+let%expect_test "Converting Tuple2 (good)" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int*int";
+      "int * string";
+      "string   * float";
+      "bool*int";
+      "Doc.t * t";
+      "t*t";
+      "T.t*Span_thing.t";
+      "(int * int) list";
+      "(int * int) array";
+      "(int * int) Seq.t";
+      "(string * bool) list";
+      "(float * t) array";
+      "(bool * int) Seq.t";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+    ((Ok
+      "(fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.String.to_string @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:Py.String.to_string ~fb:Py.Float.to_float @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:Py.Bool.to_bool ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:Doc.of_pyobject ~fb:of_pyobject @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:of_pyobject ~fb:of_pyobject @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "(fun x -> t2_map ~fa:T.of_pyobject ~fb:Span_thing.of_pyobject @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.List.to_list_map (fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.List.to_array_map (fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.Iter.to_seq_map (fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.List.to_list_map (fun x -> t2_map ~fa:Py.String.to_string ~fb:Py.Bool.to_bool @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.List.to_array_map (fun x -> t2_map ~fa:Py.Float.to_float ~fb:of_pyobject @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.Iter.to_seq_map (fun x -> t2_map ~fa:Py.Bool.to_bool ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)"))
+     |}]
+
+let%expect_test "Converting Tuple2 (these won't work)" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int array * string";
+      "int list * string";
+      "int Seq.t * string";
+      "int option * string";
+      "int Or_error.t * string";
+      "unit * string";
+      "int * 'a todo";
+      "int * 'a failwith";
+      "apple * pie";
+      "int * int list";
+      "int * int array";
+      "int * int Seq.t";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_to_ocaml;
+  [%expect
+    {|
+    ((Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error
+      "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input"))
+    
+     |}]
 
 (******************************************************)
 
@@ -1139,3 +1246,92 @@ let%expect_test "Nested custom modules" =
     {|
     ((Ok Apple.Pie.to_pyobject) (Ok Good.Apple.Pie.to_pyobject)
      (Ok Good_to.Eat_apple.Pie_always.to_pyobject)) |}]
+
+let%expect_test "Converting Tuple2 (good)" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int*int";
+      "int * string";
+      "string   * float";
+      "bool*int";
+      "Doc.t * t";
+      "t*t";
+      "T.t*Span_thing.t";
+      "(int * int) list";
+      "(int * int) array";
+      "(int * int) Seq.t";
+      "(string * bool) list";
+      "(float * t) array";
+      "(bool * int) Seq.t";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect
+    {|
+    ((Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Int.of_int ~fb:Py.String.of_string x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.String.of_string ~fb:Py.Float.of_float x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Bool.of_bool ~fb:Py.Int.of_int x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Doc.to_pyobject ~fb:to_pyobject x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:to_pyobject ~fb:to_pyobject x)")
+     (Ok
+      "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:T.to_pyobject ~fb:Span_thing.to_pyobject x)")
+     (Ok
+      "Py.List.of_list_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)")
+     (Ok
+      "Py.List.of_array_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)")
+     (Ok
+      "Py.Iter.of_seq_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)")
+     (Ok
+      "Py.List.of_list_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.String.of_string ~fb:Py.Bool.of_bool x)")
+     (Ok
+      "Py.List.of_array_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Float.of_float ~fb:to_pyobject x)")
+     (Ok
+      "Py.Iter.of_seq_map (fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:Py.Bool.of_bool ~fb:Py.Int.of_int x)")) |}]
+
+let%expect_test "Converting Tuple2 (these won't work)" =
+  let print x =
+    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+  in
+  let specs =
+    [
+      "int array * string";
+      "int list * string";
+      "int Seq.t * string";
+      "int option * string";
+      "int Or_error.t * string";
+      "unit * string";
+      "int * 'a todo";
+      "int * 'a failwith";
+      "apple * pie";
+      "int * int list";
+      "int * int array";
+      "int * int Seq.t";
+    ]
+  in
+  print @@ List.map specs ~f:parse_then_py_of_ocaml;
+  [%expect
+    {|
+    ((Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error
+      "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input"))
+     |}]

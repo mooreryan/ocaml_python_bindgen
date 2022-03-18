@@ -82,3 +82,30 @@ let%expect_test _ =
       (args
        ((Positional ((type_ Unit))) (Positional ((type_ Not_implemented)))
         (Positional ((type_ Unit))))))) |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec "val f : t -> int * string -> unit -> float * bool";
+  [%expect
+    {|
+    (Ok
+     ((ml_fun_name f)
+      (args
+       ((Positional ((type_ T))) (Positional ((type_ (Tuple2 Int String))))
+        (Positional ((type_ Unit))) (Positional ((type_ (Tuple2 Float Bool))))))))
+     |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec
+       "val f : t -> arg1:int * string -> unit -> float * bool";
+  [%expect
+    {|
+    (Ok
+     ((ml_fun_name f)
+      (args
+       ((Positional ((type_ T)))
+        (Labeled ((name arg1) (type_ (Tuple2 Int String))))
+        (Positional ((type_ Unit))) (Positional ((type_ (Tuple2 Float Bool))))))))
+
+     |}]

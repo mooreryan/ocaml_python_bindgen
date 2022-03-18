@@ -69,6 +69,10 @@
     (>= "v0.12")
     :with-test))
   (pyml :with-test)
+  (shexp
+   (and
+    (>= "v0.14")
+    :with-test))
   ; Dev deps
   (bisect_ppx :dev)
   (core

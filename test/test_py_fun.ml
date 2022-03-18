@@ -770,3 +770,59 @@ let%test_unit "todo and not_implemented can't be with other stuff" =
       "val f : unit ->'a todo -> unit -> unit";
       "val f : unit ->'a not_implemented -> unit -> unit";
     ]
+
+(* Tuple2 *)
+
+module S = Shexp_process
+
+let ocamlformat =
+  S.run "ocamlformat"
+    [
+      "--impl";
+      "--profile";
+      "default";
+      "--module-item-spacing";
+      "sparse";
+      "--parse-docstrings";
+      "--wrap-comments";
+      "-";
+    ]
+
+let print_caml_source s = S.eval @@ S.Infix.(S.echo s |- ocamlformat)
+
+let%expect_test _ =
+  let val_spec =
+    Or_error.ok_exn
+    @@ Oarg.parse_val_spec
+         "val pie : t -> arg1:int * string -> ?arg2:float * bool -> unit -> t \
+          * Doc.t"
+  in
+  let py_fun = Or_error.ok_exn @@ Py_fun.create ~py_fun_name:"pie" val_spec in
+  let class_name = "Apple" in
+  print_caml_source @@ Py_fun.pyml_impl class_name py_fun;
+  [%expect
+    {|
+    let pie t ~arg1 ?arg2 () =
+      let callable = Py.Object.find_attr_string t "pie" in
+      let kwargs =
+        filter_opt
+          [
+            Some
+              ( "arg1",
+                (fun x ->
+                  Py.Tuple.of_tuple2
+                  @@ t2_map ~fa:Py.Int.of_int ~fb:Py.String.of_string x)
+                  arg1 );
+            (match arg2 with
+            | Some arg2 ->
+                Some
+                  ( "arg2",
+                    (fun x ->
+                      Py.Tuple.of_tuple2
+                      @@ t2_map ~fa:Py.Float.of_float ~fb:Py.Bool.of_bool x)
+                      arg2 )
+            | None -> None);
+          ]
+      in
+      (fun x -> t2_map ~fa:of_pyobject ~fb:Doc.of_pyobject @@ Py.Tuple.to_tuple2 x)
+      @@ Py.Callable.to_function_with_keywords callable [||] kwargs |}]
