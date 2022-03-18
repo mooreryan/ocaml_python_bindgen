@@ -189,6 +189,7 @@ module P = struct
     p <?> "compound_otype parser"
 
   (* TODO combine this and the next *)
+  (* TODO allow int * int OR (int * int) i.e., with or without parenthesis. *)
   let tuple2_otype =
     let%bind a = non_unit_basic_otype in
     let%bind _star = spaces *> star <* spaces in

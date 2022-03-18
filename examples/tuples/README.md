@@ -1,9 +1,10 @@
 # Tuples
 
+- They can be passed in as arguments, or returned from functions.
 - Only basic types can occur in tuples
   - No nesting
   - No options
-- You _can_ stick tuples inside a `List`, `Seq`, or `Array`
+- You _can_ stick tuples inside a `List`, `Seq`, or `Array`, e.g., `(int * string) list`.
 - If you break these rules, you will get runtime errors :)
 
 ## Generate bindings

@@ -9,6 +9,10 @@
   - Currently the only one available is `py_fun_name`.
   - It allows you to decouple the Python method name and the generated OCaml function name.
   - See the examples directory on GitHub for more info.
+- You can now bind 2-tuples
+  - They can be passed in as arguments, or returned from functions.
+  - Only basic types are allowed in tuples.
+  - You can also put tuples inside of collections, e.g., `(int * string) list`.
 
 ### Changed
 
