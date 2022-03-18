@@ -109,3 +109,83 @@ let%expect_test _ =
         (Positional ((type_ Unit))) (Positional ((type_ (Tuple2 Float Bool))))))))
 
      |}]
+
+(* None of these tuple things should work. *)
+let%expect_test _ =
+  print @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int)";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int) list";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> ((int * int)) list";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int * list) list";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int * (list)) list";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec
+       "val f : t -> arg1:int -> unit -> (int * (int * int)) list";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int * (int * int))";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print
+  @@ Oarg.parse_val_spec
+       "val f : t -> arg1:int -> unit -> ((((int * (int * int))";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+(* TODO this needs documentation. *)
+let%expect_test _ =
+  print @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int * int)";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
+
+let%expect_test _ =
+  print @@ Oarg.parse_val_spec "val f : t -> arg1:int -> unit -> (int() * int)";
+  [%expect
+    {|
+    (Error
+     "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->") |}]
