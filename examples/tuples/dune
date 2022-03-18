@@ -1,0 +1,40 @@
+(executable
+ (name run)
+ (libraries pyml))
+
+(rule
+ ;; The file produced by this rule will be called `lib.ml`.
+ (target lib.ml)
+ ;; Put the resulting lib.ml file in this directory.  When you run
+ ;; `dune clean`, it will be removed.
+ (mode
+  (promote (until-clean)))
+ ;; Need this expclicitly with dune 3
+ (deps
+  (:val_specs val_specs.txt))
+ (action
+  ;; `pyml_bindgen` outputs directly to stdout, so we need to redirect
+  ;; the stdout to `lib.ml`.  We do this using `with-stdout-to`.
+  (with-stdout-to
+   ;; This is the name of the file to which the output of the
+   ;; following command will be directed.
+   lib.ml
+   ;; This step isn't necessary, but I use `ocamlformat` for
+   ;; everything, so I would like to have the output of
+   ;; `pyml_bindgen` also processed by `ocamlformat`.  `pipe-stdout`
+   ;; takes the stdout of the first `run` command and pipes it to the
+   ;; stdin of the second `run` command.
+   (pipe-stdout
+    ;; Here is the acutal `pyml_bindgen` command to generate the
+    ;; bindings.
+    (run
+     %{bin:pyml_bindgen}
+     %{val_specs}
+     tuples
+     NA
+     --associated-with
+     module
+     --caml-module
+     Tuples)
+    ;; And finally, process the bindings code with ocamlformat.
+    (run ocamlformat --name lib.ml -)))))

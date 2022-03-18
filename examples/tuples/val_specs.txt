@@ -1,0 +1,11 @@
+val pair : x:int -> y:string -> unit -> int * string
+val identity : x:int * int -> unit -> int * int
+val first : x:int * int -> unit -> int 
+val make : ?x:int * int -> unit -> int * int
+val apple : x:int list -> unit -> int list
+val pie_list : x:(int * int) list -> unit -> (int * int) list
+val pie_array : x:(int * int) array -> unit -> (int * int) array
+val pie_seq : x:(int * int) Seq.t -> unit -> (int * int) Seq.t
+
+# NOT ALLOWED because only basic types can be in tuples.
+# val weird : x:int -> unit -> int * int list

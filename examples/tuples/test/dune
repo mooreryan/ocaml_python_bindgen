@@ -1,0 +1,4 @@
+(cram
+ (deps
+  ../run.exe
+  (source_tree ..)))
