@@ -1,5 +1,9 @@
 ## Unreleased
 
+NA
+
+## 0.3.0 (2022-03-18)
+
 ### Added
 
 - Allow nested module types in val specs (e.g., `Food.Dessert.Apple_pie.t`)

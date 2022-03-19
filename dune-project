@@ -8,7 +8,7 @@
 
 (package
  (name pyml_bindgen)
- (version 0.3.0-preview)
+ (version 0.3.0)
  (license "MIT")
  (maintainers "Ryan M. Moore")
  (authors "Ryan M. Moore")
