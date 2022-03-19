@@ -8,18 +8,19 @@ There are a lot of [tests](https://github.com/mooreryan/pyml_bindgen/tree/main/t
 
 For function arguments, you can use
 
-* `float`
-* `string`
-* `bool`
-* `t` (i.e., the main type of the current module)
-* Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
-* Arrays of any of the above types
-* Lists of any of the above types
-* Seq.t of any of the above types
-* `'a option`, `'a option array`, `'a option list`, `'a option Seq.t`
-* `Pytypes.pyobject` or `Py.Object.t` if you need to deal with `pytypes` directly
+- `float`
+- `string`
+- `bool`
+- `t` (i.e., the main type of the current module)
+- Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
+- Arrays of any of the above types
+- Lists of any of the above types
+- Seq.t of any of the above types
+- `'a option`, `'a option array`, `'a option list`, `'a option Seq.t`
+- `Pytypes.pyobject` or `Py.Object.t` if you need to deal with `pytypes` directly
+- Certain kinds of tuples
 
-Note that your types must be newly minted modules.  E.g.,
+Note that your custom types must be newly minted modules. E.g.,
 
 ```ocaml
 (* This is okay *)
@@ -38,11 +39,13 @@ let doc_to_pyobject ...
 
 ## Return types
 
-For return types, you can use all of the above types plus `unit`, and `'a Or_error.t` for types `'a` other than `unit`.  However, you cannot use `unit array`, `unit list`, or `unit Seq.t`.  This is because I haven't decided the best way to handle `unit` and `None` (that's Python's `None`) quite yet!
+For return types, you can use all of the above types plus `unit`, and `'a Or_error.t` for types `'a` other than `unit`. However, you cannot use `unit array`, `unit list`, or `unit Seq.t`. This is because I haven't decided the best way to handle `unit` and `None` (that's Python's `None`) quite yet!
+
+You can also return many kinds of tuples directly. See [here](tuples.md).
 
 ## Nesting
 
-Note: currently, you're not allowed to have **nested** `array`, `list`, `Seq.t`, or `Or_error.t`.  If you need them, you will have to bind those functions by hand :)
+Note: currently, you're not allowed to have **nested** `array`, `list`, `Seq.t`, or `Or_error.t`. If you need them, you will have to bind those functions by hand :)
 
 E.g., `'a array list` will fail.
 
@@ -50,15 +53,17 @@ You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a op
 
 ## Pytypes
 
-Sometimes you may want to deal directly with `Pytypes.pyobject` (a.k.a. `Py.Object.t`).  Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason.  Regardless, you can use `Pytypes.pyobject` or `Py.Object.t` for this.  Of course, you will be leaking a bit of the `pyml` implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.
+Sometimes you may want to deal directly with `Pytypes.pyobject` (a.k.a. `Py.Object.t`). Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason. Regardless, you can use `Pytypes.pyobject` or `Py.Object.t` for this. Of course, you will be leaking a bit of the `pyml` implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.
 
 Note that you currently are not allowed to nest `pytypes` in any of the containers or monads.
 
-## Dictionaries & Tuples
+## Tuples
+
+You can handle many kinds of tuples directly. See [here](tuples.md).
+
+## Dictionaries
 
 See [here](dictionaries.md) and [here](dictionaries-2.md) for examples of binding dictionaries.
-
-If you need to pass or return tuples to Python functions, see [here](tuples.md); however, the same ideas apply to tuples as are covered in the above links for dictionaries.
 
 Alternatively, you could mark them as `Pytypes.pyobject` or `Py.Object.t` and let the caller deal with them in some way.
 
@@ -66,7 +71,7 @@ Alternatively, you could mark them as `Pytypes.pyobject` or `Py.Object.t` and le
 
 There are two placeholders you can use: `todo` and `not_implemented`.
 
-If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use `not_implemented`.  If you are planning to come back and implement a function later, you can use `todo`.
+If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use `not_implemented`. If you are planning to come back and implement a function later, you can use `todo`.
 
 ```ocaml
 val f : 'a todo
