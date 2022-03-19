@@ -323,15 +323,15 @@ let%expect_test _ =
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int *string*   float";
-  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+  [%expect {| (Ok (Tuple3 Int String Float)) |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int   * string * float*     bool";
-  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+  [%expect {| (Ok (Tuple4 Int String Float Bool)) |}]
 
 let%expect_test _ =
   print_string_or_error @@ Otype.parse "int *    string*float*bool *     t";
-  [%expect {| (Error "Parsing Otype failed... : end_of_input") |}]
+  [%expect {| (Ok (Tuple5 Int String Float Bool T)) |}]
 
 (* Converting pytypes to ocaml types *)
 
@@ -728,6 +728,9 @@ let%expect_test "Converting Tuple2 (good)" =
       "t*t";
       "T.t*Span_thing.t";
       "(int * int) list";
+      "(int * int * int) list";
+      "(int * int * int * int) list";
+      "(int * int * int * int * int) list";
       "(int * int) array";
       "(int * int) Seq.t";
       "(string * bool) list";
@@ -754,6 +757,12 @@ let%expect_test "Converting Tuple2 (good)" =
       "(fun x -> t2_map ~fa:T.of_pyobject ~fb:Span_thing.of_pyobject @@ Py.Tuple.to_tuple2 x)")
      (Ok
       "Py.List.to_list_map (fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
+     (Ok
+      "Py.List.to_list_map (fun x -> t3_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int ~fc:Py.Int.to_int @@ Py.Tuple.to_tuple3 x)")
+     (Ok
+      "Py.List.to_list_map (fun x -> t4_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int ~fc:Py.Int.to_int ~fd:Py.Int.to_int @@ Py.Tuple.to_tuple4 x)")
+     (Ok
+      "Py.List.to_list_map (fun x -> t5_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int ~fc:Py.Int.to_int ~fd:Py.Int.to_int ~fe:Py.Int.to_int @@ Py.Tuple.to_tuple5 x)")
      (Ok
       "Py.List.to_array_map (fun x -> t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)")
      (Ok
@@ -784,6 +793,9 @@ let%expect_test "Converting Tuple2 (these won't work)" =
       "int * int list";
       "int * int array";
       "int * int Seq.t";
+      "int*int*int*int*int*int";
+      "int*";
+      "*int";
     ]
   in
   print @@ List.map specs ~f:parse_then_py_to_ocaml;
@@ -801,7 +813,11 @@ let%expect_test "Converting Tuple2 (these won't work)" =
       "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype")
      (Error "Parsing Otype failed... : end_of_input")
      (Error "Parsing Otype failed... : end_of_input")
-     (Error "Parsing Otype failed... : end_of_input"))
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error "Parsing Otype failed... : end_of_input")
+     (Error
+      "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype"))
     
      |}]
 
