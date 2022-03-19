@@ -3,9 +3,43 @@ val identity : x:int * int -> unit -> int * int
 val first : x:int * int -> unit -> int 
 val make : ?x:int * int -> unit -> int * int
 val apple : x:int list -> unit -> int list
+[@@py_fun_name identity]
+
 val pie_list : x:(int * int) list -> unit -> (int * int) list
+[@@py_fun_name identity]
+
 val pie_array : x:(int * int) array -> unit -> (int * int) array
+[@@py_fun_name identity]
+
 val pie_seq : x:(int * int) Seq.t -> unit -> (int * int) Seq.t
+[@@py_fun_name identity]
+
+val t2 : x:int * string -> unit -> int * string 
+[@@py_fun_name identity]
+
+val t3 : x:int * string * float -> unit -> int * string * float
+[@@py_fun_name identity]
+
+val t4 : x:int * string * float * bool -> unit -> int * string * float * bool 
+[@@py_fun_name identity]
+
+val t5 : x:int * string * float * bool * int -> unit -> int * string * float * bool * int 
+[@@py_fun_name identity]
+
+val t5_list : x:(int * string * float * bool * int) list -> unit -> (int * string * float * bool * int) list 
+[@@py_fun_name identity]
+
+val t2_pyobject : x:Py.Object.t * Pytypes.pyobject -> unit -> Py.Object.t * Pytypes.pyobject
+[@@py_fun_name identity]
+
+val t2_pyobject2 : x:Pytypes.pyobject * Py.Object.t -> unit -> Pytypes.pyobject * Py.Object.t 
+[@@py_fun_name identity]
+
+val t2_pyobject_list : x:(Py.Object.t * Pytypes.pyobject) list -> unit -> (Py.Object.t * Pytypes.pyobject) list
+[@@py_fun_name identity]
+
+val t2_pyobject2_list : x:(Pytypes.pyobject * Py.Object.t) list -> unit -> (Pytypes.pyobject * Py.Object.t) list 
+[@@py_fun_name identity]
 
 # NOT ALLOWED because only basic types can be in tuples.
 # val weird : x:int -> unit -> int * int list

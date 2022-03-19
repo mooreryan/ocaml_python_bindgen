@@ -12,19 +12,3 @@ def identity(x):
 
 def make(x=(0, 0)):
     return x
-
-
-def apple(x):
-    return x
-
-
-def pie_list(x):
-    return x
-
-
-def pie_array(x):
-    return x
-
-
-def pie_seq(x):
-    return x

@@ -22,3 +22,57 @@ let () =
   let x = List.to_seq l in
   let result = Tuples.pie_seq ~x () in
   assert (List.of_seq result = l)
+
+let () =
+  let x = (1, "1") in
+  assert (Tuples.t2 ~x () = x)
+
+let () =
+  let x = (1, "1", 1.0) in
+  assert (Tuples.t3 ~x () = x)
+
+let () =
+  let x = (1, "1", 1.0, true) in
+  assert (Tuples.t4 ~x () = x)
+
+let () =
+  let x = (1, "1", 1.0, true, 1) in
+  assert (Tuples.t5 ~x () = x)
+
+let () =
+  let x = [ (1, "1", 1.0, true, 1) ] in
+  assert (Tuples.t5_list ~x () = x)
+
+let x = 1
+
+let y = 2
+
+let py_tup = (Py.Int.of_int x, Py.Int.of_int y)
+
+let () =
+  let x', y' = Tuples.t2_pyobject ~x:py_tup () in
+  let x', y' = (Py.Int.to_int x', Py.Int.to_int y') in
+  assert ((x, y) = (x', y'))
+
+let () =
+  let x', y' = Tuples.t2_pyobject2 ~x:py_tup () in
+  let x', y' = (Py.Int.to_int x', Py.Int.to_int y') in
+  assert ((x, y) = (x', y'))
+
+let () =
+  let x', y' =
+    match Tuples.t2_pyobject_list ~x:[ py_tup ] () with
+    | [ a ] -> a
+    | _ -> assert false
+  in
+  let x', y' = (Py.Int.to_int x', Py.Int.to_int y') in
+  assert ((x, y) = (x', y'))
+
+let () =
+  let x', y' =
+    match Tuples.t2_pyobject2_list ~x:[ py_tup ] () with
+    | [ a ] -> a
+    | _ -> assert false
+  in
+  let x', y' = (Py.Int.to_int x', Py.Int.to_int y') in
+  assert ((x, y) = (x', y'))
