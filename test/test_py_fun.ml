@@ -788,7 +788,7 @@ let ocamlformat =
       "-";
     ]
 
-let print_caml_source s = S.eval @@ S.Infix.(S.echo s |- ocamlformat)
+let print_caml_source s = S.eval S.Infix.(S.echo s |- ocamlformat)
 
 let%expect_test _ =
   let val_spec =
