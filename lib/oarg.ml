@@ -159,3 +159,27 @@ let parse_val_spec s =
   match Angstrom.parse_string ~consume:Angstrom.Consume.Prefix P.val_spec s with
   | Ok val_spec -> Or_error.return val_spec
   | Error err -> Or_error.errorf "Parsing val_spec failed... %s" err
+
+let val_spec_needs_tuple2 val_spec =
+  List.exists val_spec.args ~f:(fun oarg ->
+      match type_ oarg with
+      | Tuple2 _ | Array (Tuple2 _) | List (Tuple2 _) | Seq (Tuple2 _) -> true
+      | _ -> false)
+
+let val_spec_needs_tuple3 val_spec =
+  List.exists val_spec.args ~f:(fun oarg ->
+      match type_ oarg with
+      | Tuple3 _ | Array (Tuple3 _) | List (Tuple3 _) | Seq (Tuple3 _) -> true
+      | _ -> false)
+
+let val_spec_needs_tuple4 val_spec =
+  List.exists val_spec.args ~f:(fun oarg ->
+      match type_ oarg with
+      | Tuple4 _ | Array (Tuple4 _) | List (Tuple4 _) | Seq (Tuple4 _) -> true
+      | _ -> false)
+
+let val_spec_needs_tuple5 val_spec =
+  List.exists val_spec.args ~f:(fun oarg ->
+      match type_ oarg with
+      | Tuple5 _ | Array (Tuple5 _) | List (Tuple5 _) | Seq (Tuple5 _) -> true
+      | _ -> false)

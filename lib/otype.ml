@@ -33,6 +33,9 @@ type t =
   | Option of t
   | Or_error of t
   | Tuple2 of t * t
+  | Tuple3 of t * t * t
+  | Tuple4 of t * t * t * t
+  | Tuple5 of t * t * t * t * t
   | Py_obj
 [@@deriving sexp]
 
@@ -157,11 +160,14 @@ module P = struct
   let non_unit_basic_otype =
     choice ~failure_msg:"Token wasn't an otype"
       [
+        lift (fun _ -> Py_obj) py_obj_otype;
         lift (fun _ -> Int) int;
         lift (fun _ -> Float) float;
         lift (fun _ -> String) string_;
         lift (fun _ -> Bool) bool;
         lift (fun _ -> T) t;
+        (* lift (fun _ -> Py_obj) pytypes_pyobject; lift (fun _ -> Py_obj)
+           py_object_t; *)
         lift (fun s -> Custom s) custom;
       ]
     <?> "non_unit_basic_otype parser"
@@ -188,31 +194,31 @@ module P = struct
     in
     p <?> "compound_otype parser"
 
-  (* TODO combine this and the next *)
-  (* TODO allow int * int OR (int * int) i.e., with or without parenthesis. *)
-  let tuple2_otype =
-    let%bind a = non_unit_basic_otype in
-    let%bind _star = spaces *> star <* spaces in
-    let%bind b = non_unit_basic_otype in
-    let p = return (a, b) in
-    let f (x, y) = Tuple2 (x, y) in
-    lift f p <?> "tuple2_otype parser"
-
-  (* The most basic tuple collection parser *)
-  let tuple2_coll_otype =
-    let%bind a = spaces *> char '(' *> non_unit_basic_otype in
-    let%bind _star = spaces *> star <* spaces in
-    let%bind b = non_unit_basic_otype <* char ')' <* spaces in
-    let tup = Tuple2 (a, b) in
-    let p =
-      choice ~failure_msg:"Tuple2 collection failed"
-        [
-          lift (fun _ -> List tup) list;
-          lift (fun _ -> Array tup) array;
-          lift (fun _ -> Seq tup) seq;
-        ]
+  let tuple_otype =
+    let t2_of_pair (a, b) = Tuple2 (a, b) in
+    let t3_of_pair (a, b, c) = Tuple3 (a, b, c) in
+    let t4_of_pair (a, b, c, d) = Tuple4 (a, b, c, d) in
+    let t5_of_pair (a, b, c, d, e) = Tuple5 (a, b, c, d, e) in
+    let%bind elements =
+      sep_by1 (spaces *> star <* spaces) non_unit_basic_otype
     in
-    p <?> "tuple2_list_otype parser"
+    match elements with
+    | [] -> fail "tuples cannot be empty"
+    | [ _ ] -> fail "single otypes are not tuples"
+    | [ a; b ] -> lift t2_of_pair @@ return (a, b)
+    | [ a; b; c ] -> lift t3_of_pair @@ return (a, b, c)
+    | [ a; b; c; d ] -> lift t4_of_pair @@ return (a, b, c, d)
+    | [ a; b; c; d; e ] -> lift t5_of_pair @@ return (a, b, c, d, e)
+    | _ -> fail "can only do tuples 2-5"
+
+  let tuple_coll_otype =
+    let%bind tuple = spaces *> char '(' *> tuple_otype <* char ')' <* spaces in
+    choice ~failure_msg:"tuple_coll_otype choice failed"
+      [
+        lift (fun _ -> List tuple) list;
+        lift (fun _ -> Array tuple) array;
+        lift (fun _ -> Seq tuple) seq;
+      ]
 
   let placeholder_otype =
     choice ~failure_msg:"Token wasn't an placeholder otype"
@@ -226,11 +232,11 @@ module P = struct
     let p =
       choice ~failure_msg:"not a compound, basic, or placeholder otype"
         [
+          (* This order is important. *)
+          tuple_coll_otype;
+          tuple_otype;
           py_obj_otype;
           compound_otype;
-          (* TODO need a test to make sure this ordering is okay. *)
-          tuple2_coll_otype;
-          tuple2_otype;
           basic_otype;
           placeholder_otype;
         ]
@@ -240,10 +246,9 @@ end
 
 let custom_module_name s = String.chop_suffix_exn s ~suffix:".t"
 
-(* TODO what about py_obj types? *)
 let handle_tuple_element f x =
   match x with
-  | Int | Float | String | Bool | T | Custom _ -> f x
+  | Int | Float | String | Bool | T | Custom _ | Py_obj -> f x
   | _ ->
       failwith
         "Tuples must contain basic types (Int, Float, String, Bool, T, or \
@@ -286,7 +291,7 @@ let rec py_to_ocaml = function
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented
-      | Tuple2 _ ->
+      | Tuple2 _ | Tuple3 _ | Tuple4 _ | Tuple5 _ ->
           (* TODO test*)
           failwith "only basic types can be options"
       | Int | Float | String | Bool | Py_obj ->
@@ -298,14 +303,27 @@ let rec py_to_ocaml = function
       | T | Custom _ -> py_to_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
   | Tuple2 (a, b) ->
-      let convert_a = handle_tuple_element py_to_ocaml a in
-      let convert_b = handle_tuple_element py_to_ocaml b in
+      let conv = handle_tuple_element py_to_ocaml in
       (* You don't need this as an anonymous function for just a single tuple,
          but if you define it this way, it will work when the tuple is inside a
          collection. *)
       [%string
-        "(fun x -> t2_map ~fa:%{convert_a} ~fb:%{convert_b} @@ \
-         Py.Tuple.to_tuple2 x)"]
+        "(fun x -> t2_map ~fa:%{conv a} ~fb:%{conv b} @@ Py.Tuple.to_tuple2 x)"]
+  | Tuple3 (a, b, c) ->
+      let conv = handle_tuple_element py_to_ocaml in
+      [%string
+        "(fun x -> t3_map ~fa:%{conv a} ~fb:%{conv b} ~fc:%{conv c} @@ \
+         Py.Tuple.to_tuple3 x)"]
+  | Tuple4 (a, b, c, d) ->
+      let conv = handle_tuple_element py_to_ocaml in
+      [%string
+        "(fun x -> t4_map ~fa:%{conv a} ~fb:%{conv b} ~fc:%{conv c} ~fd:%{conv \
+         d} @@ Py.Tuple.to_tuple4 x)"]
+  | Tuple5 (a, b, c, d, e) ->
+      let conv = handle_tuple_element py_to_ocaml in
+      [%string
+        "(fun x -> t5_map ~fa:%{conv a} ~fb:%{conv b} ~fc:%{conv c} ~fd:%{conv \
+         d} ~fe:%{conv e} @@ Py.Tuple.to_tuple5 x)"]
   | Py_obj -> ident_fun
 
 (* Convert ocaml types to py types. Some of these failwith things are prevented
@@ -343,7 +361,7 @@ let rec py_of_ocaml = function
       | Option _ -> failwith "Can't have nested options"
       | Unit -> failwith "Can't have unit option"
       | Array _ | List _ | Seq _ | Or_error _ | Todo | Not_implemented
-      | Tuple2 _ ->
+      | Tuple2 _ | Tuple3 _ | Tuple4 _ | Tuple5 _ ->
           (* TODO test this *)
           failwith "only basic types can be options"
       | Int | Float | String | Bool | Py_obj ->
@@ -353,12 +371,24 @@ let rec py_of_ocaml = function
       | T | Custom _ -> py_of_ocaml t
       | _ -> failwith "you can only have <t> Or_error.t or <custom> Or_error.t")
   | Tuple2 (a, b) ->
-      let convert_a = handle_tuple_element py_of_ocaml a in
-      let convert_b = handle_tuple_element py_of_ocaml b in
-      (* See above comment for explanation of this. *)
+      let conv = handle_tuple_element py_of_ocaml in
       [%string
-        "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:%{convert_a} \
-         ~fb:%{convert_b} x)"]
+        "(fun x -> Py.Tuple.of_tuple2 @@ t2_map ~fa:%{conv a} ~fb:%{conv b} x)"]
+  | Tuple3 (a, b, c) ->
+      let conv = handle_tuple_element py_of_ocaml in
+      [%string
+        "(fun x -> Py.Tuple.of_tuple3 @@ t3_map ~fa:%{conv a} ~fb:%{conv b} \
+         ~fc:%{conv c} x)"]
+  | Tuple4 (a, b, c, d) ->
+      let conv = handle_tuple_element py_of_ocaml in
+      [%string
+        "(fun x -> Py.Tuple.of_tuple4 @@ t4_map ~fa:%{conv a} ~fb:%{conv b} \
+         ~fc:%{conv c} ~fd:%{conv d} x)"]
+  | Tuple5 (a, b, c, d, e) ->
+      let conv = handle_tuple_element py_of_ocaml in
+      [%string
+        "(fun x -> Py.Tuple.of_tuple5 @@ t5_map ~fa:%{conv a} ~fb:%{conv b} \
+         ~fc:%{conv c} ~fd:%{conv d} ~fe:%{conv e} x)"]
   | Py_obj -> ident_fun
 
 (* Parse a otype from a string *)
