@@ -118,7 +118,9 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#pytypes">Pytypes</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dictionaries-tuples">Dictionaries &amp; Tuples</a>
+    <li class="toctree-l2"><a class="reference internal" href="#tuples">Tuples</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dictionaries">Dictionaries</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#placeholders">Placeholders</a>
     </li>
@@ -206,8 +208,9 @@
 <li>Seq.t of any of the above types</li>
 <li><code>'a option</code>, <code>'a option array</code>, <code>'a option list</code>, <code>'a option Seq.t</code></li>
 <li><code>Pytypes.pyobject</code> or <code>Py.Object.t</code> if you need to deal with <code>pytypes</code> directly</li>
+<li>Certain kinds of tuples</li>
 </ul>
-<p>Note that your types must be newly minted modules.  E.g.,</p>
+<p>Note that your custom types must be newly minted modules. E.g.,</p>
 <pre><code class="language-ocaml">(* This is okay *)
 module Doc = struct
   type t
@@ -222,21 +225,23 @@ let doc_of_pyobject ...
 let doc_to_pyobject ...
 </code></pre>
 <h2 id="return-types">Return types</h2>
-<p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>.  However, you cannot use <code>unit array</code>, <code>unit list</code>, or <code>unit Seq.t</code>.  This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
+<p>For return types, you can use all of the above types plus <code>unit</code>, and <code>'a Or_error.t</code> for types <code>'a</code> other than <code>unit</code>. However, you cannot use <code>unit array</code>, <code>unit list</code>, or <code>unit Seq.t</code>. This is because I haven't decided the best way to handle <code>unit</code> and <code>None</code> (that's Python's <code>None</code>) quite yet!</p>
+<p>You can also return many kinds of tuples directly. See <a href="../tuples/">here</a>.</p>
 <h2 id="nesting">Nesting</h2>
-<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>.  If you need them, you will have to bind those functions by hand :)</p>
+<p>Note: currently, you're not allowed to have <strong>nested</strong> <code>array</code>, <code>list</code>, <code>Seq.t</code>, or <code>Or_error.t</code>. If you need them, you will have to bind those functions by hand :)</p>
 <p>E.g., <code>'a array list</code> will fail.</p>
 <p>You are allowed to nest <code>'a option</code> in arrays, lists, and <code>Seq.t</code>s (e.g., <code>'a option list</code>); however, this will not work with <code>Or_error.t</code>.</p>
 <h2 id="pytypes">Pytypes</h2>
-<p>Sometimes you may want to deal directly with <code>Pytypes.pyobject</code> (a.k.a. <code>Py.Object.t</code>).  Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason.  Regardless, you can use <code>Pytypes.pyobject</code> or <code>Py.Object.t</code> for this.  Of course, you will be leaking a bit of the <code>pyml</code> implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.</p>
+<p>Sometimes you may want to deal directly with <code>Pytypes.pyobject</code> (a.k.a. <code>Py.Object.t</code>). Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason. Regardless, you can use <code>Pytypes.pyobject</code> or <code>Py.Object.t</code> for this. Of course, you will be leaking a bit of the <code>pyml</code> implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.</p>
 <p>Note that you currently are not allowed to nest <code>pytypes</code> in any of the containers or monads.</p>
-<h2 id="dictionaries-tuples">Dictionaries &amp; Tuples</h2>
+<h2 id="tuples">Tuples</h2>
+<p>You can handle many kinds of tuples directly. See <a href="../tuples/">here</a>.</p>
+<h2 id="dictionaries">Dictionaries</h2>
 <p>See <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a> for examples of binding dictionaries.</p>
-<p>If you need to pass or return tuples to Python functions, see <a href="../tuples/">here</a>; however, the same ideas apply to tuples as are covered in the above links for dictionaries.</p>
 <p>Alternatively, you could mark them as <code>Pytypes.pyobject</code> or <code>Py.Object.t</code> and let the caller deal with them in some way.</p>
 <h2 id="placeholders">Placeholders</h2>
 <p>There are two placeholders you can use: <code>todo</code> and <code>not_implemented</code>.</p>
-<p>If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use <code>not_implemented</code>.  If you are planning to come back and implement a function later, you can use <code>todo</code>.</p>
+<p>If you're binding a large library and you aren't planning on implementing a function, but you want it in the signature for whatever reason, you can use <code>not_implemented</code>. If you are planning to come back and implement a function later, you can use <code>todo</code>.</p>
 <pre><code class="language-ocaml">val f : 'a todo
 val g : 'a not_implemented
 </code></pre>

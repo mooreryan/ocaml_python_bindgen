@@ -133,6 +133,8 @@
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Handling Tuples</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../gotchas-bugs/">Gotchas & Known Bugs</a>
@@ -179,58 +181,16 @@
             <div class="section">
               
                 <h1 id="handling-tuples">Handling Tuples</h1>
-<p><em>Note:  You can find in-depth examples of binding dictionaries <a href="../dictionaries/">here</a> and <a href="../dictionaries-2/">here</a>.  A lot of the same ideas apply to tuples, and they are currently better explained in those links!</em></p>
-<p>Tuples are sort of weird....As of now, <code>pyml_bindgen</code> can't handle tuples directly :(</p>
-<p>For now what you need to do is to create a little helper module that "wraps" the tuple you need to pass in to Python or return from Python.  <em>(Or just write the binding by hand...)</em></p>
-<p>Say you need to get an <code>int * string</code> tuple in and out of Python.  You should make a module something like this:</p>
-<pre><code class="language-ocaml">module rec Tuple_int_string : sig
-  type t
-
-  val make : int -&gt; string -&gt; t
-
-  val to_pyobject : t -&gt; Pytypes.pyobject
-  val of_pyobject : Pytypes.pyobject -&gt; t
-
-  val print_endline : t -&gt; unit
-end = struct
-  type t = int * string
-
-  let make i s = (i, s)
-
-  let to_pyobject (i, s) =
-    Py.Tuple.of_tuple2 (Py.Int.of_int i, Py.String.of_string s)
-
-  let of_pyobject pyo =
-    let i, s = Py.Tuple.to_tuple2 pyo in
-    (Py.Int.to_int i, Py.String.to_string s)
-
-  let print_endline (i, s) = print_endline @@ string_of_int i ^ &quot; &quot; ^ s
-end
-</code></pre>
-<p>Then you can put that with the code that <code>pyml_bindgen</code> generates for whatever class you're actually trying to bind.  Perhaps something like this...</p>
-<pre><code class="language-ocaml">module rec Tuple_int_string : sig
-...
-end = struct
-...
-end
-
-and My_cool_thing : sig
-
-...
-
-val foo : x:Tuple_int_string.t -&gt; unit -&gt; Tuple_int_string.t
-
-...
-
-end
-</code></pre>
-<p>(You get the idea.)</p>
-<p>In the val specs that you write, just refer to the <code>Tuple_int_string</code> module like any other:</p>
-<pre><code class="language-ocaml">val foo : x:Tuple_int_string.t -&gt; unit -&gt; Tuple_int_string.t
-</code></pre>
-<p>The key here is to have a module that has working <code>to_pyobject</code> and <code>of_pyobject</code> functions.  If these two functions know how to properly get your type/module into and out of Python-land, then it should work :)</p>
-<p>There is a Cram test <a href="https://github.com/mooreryan/pyml_bindgen/tree/main/test/binding_tuples.t">here</a> that illustrates this idea.  Just note that some of the bash stuff in the <code>run.t</code> file is to automate it, but you'd probably do that part by hand.</p>
-<p>*Note: At some point, I will work up a full example with tuples and other types that you can't yet deal with directly in <code>pyml_bindgen</code>.</p>
+<p>As of version 0.3.0, you can handle certain types of tuples directly.</p>
+<ul>
+<li>You can now bind tuples with 2, 3, 4, or 5 elements.</li>
+<li>They can be passed in as arguments, or returned from functions.</li>
+<li>Only basic types and Python objects are allowed in tuples.</li>
+<li>You can also put tuples inside of collections, e.g., <code>(int * string) list</code>, but not Options or Or_errors.</li>
+</ul>
+<p>If you need something more complicated then that, you will have to use some of the same tricks I talk about in the <a href="../dictionaries/">dictionaries</a> or <a href="../dictionaries-2/">dictionaries-2</a> help pages.</p>
+<h2 id="examples">Examples</h2>
+<p>You can find examples of binding tuples <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/tuples">here</a>.</p>
               
             </div>
           </div>
