@@ -4,7 +4,6 @@ version: "0.3.0-preview"
 synopsis: "Generate pyml bindings from OCaml value specifications"
 maintainer: ["Ryan M. Moore"]
 authors: ["Ryan M. Moore"]
-license: "MIT"
 homepage: "https://github.com/mooreryan/ocaml_python_bindgen"
 doc: "https://mooreryan.github.io/ocaml_python_bindgen/"
 bug-reports: "https://github.com/mooreryan/ocaml_python_bindgen/issues"
@@ -34,6 +33,7 @@ depends: [
   "odoc" {with-doc}
 ]
 dev-repo: "git+https://github.com/mooreryan/ocaml_python_bindgen.git"
+license: ["MIT" "Apache-2.0"]
 build: [
   ["dune" "subst"] {dev}
   [
