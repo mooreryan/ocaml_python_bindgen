@@ -76,3 +76,10 @@ let () =
   in
   let x', y' = (Py.Int.to_int x', Py.Int.to_int y') in
   assert ((x, y) = (x', y'))
+
+let () =
+  let points1 = [ (1, 2); (3, 4) ] in
+  let points2 = [ (10, 20); (30, 40) ] in
+  let actual = Tuples.add ~points1 ~points2 () in
+  let expected = [ (11, 22); (33, 44) ] in
+  assert (actual = expected)

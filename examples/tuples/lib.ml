@@ -52,6 +52,12 @@ module Tuples : sig
     x:(Pytypes.pyobject * Py.Object.t) list ->
     unit ->
     (Pytypes.pyobject * Py.Object.t) list
+
+  val add :
+    points1:(int * int) list ->
+    points2:(int * int) list ->
+    unit ->
+    (int * int) list
 end = struct
   let filter_opt l = List.filter_map Fun.id l
 
@@ -364,5 +370,30 @@ end = struct
     in
     Py.List.to_list_map (fun x ->
         t2_map ~fa:(fun x -> x) ~fb:(fun x -> x) @@ Py.Tuple.to_tuple2 x)
+    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+
+  let add ~points1 ~points2 () =
+    let callable = Py.Module.get (import_module ()) "add" in
+    let kwargs =
+      filter_opt
+        [
+          Some
+            ( "points1",
+              Py.List.of_list_map
+                (fun x ->
+                  Py.Tuple.of_tuple2
+                  @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)
+                points1 );
+          Some
+            ( "points2",
+              Py.List.of_list_map
+                (fun x ->
+                  Py.Tuple.of_tuple2
+                  @@ t2_map ~fa:Py.Int.of_int ~fb:Py.Int.of_int x)
+                points2 );
+        ]
+    in
+    Py.List.to_list_map (fun x ->
+        t2_map ~fa:Py.Int.to_int ~fb:Py.Int.to_int @@ Py.Tuple.to_tuple2 x)
     @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end

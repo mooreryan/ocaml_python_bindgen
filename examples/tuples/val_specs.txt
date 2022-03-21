@@ -41,5 +41,7 @@ val t2_pyobject_list : x:(Py.Object.t * Pytypes.pyobject) list -> unit -> (Py.Ob
 val t2_pyobject2_list : x:(Pytypes.pyobject * Py.Object.t) list -> unit -> (Pytypes.pyobject * Py.Object.t) list 
 [@@py_fun_name identity]
 
+val add : points1:(int * int) list -> points2:(int * int) list -> unit -> (int * int) list
+
 # NOT ALLOWED because only basic types can be in tuples.
 # val weird : x:int -> unit -> int * int list
