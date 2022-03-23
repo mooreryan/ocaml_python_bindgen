@@ -2,6 +2,14 @@
 
 NA
 
+## 0.3.1 (2022-03-23)
+
+### Changed
+
+- Reduce number of dependencies (including when installing from the GitHub repository).
+  - Use `re` instead of `re2` for regular expressions.
+  - Drop some of the dev dependencies from the `opam` file.
+
 ## 0.3.0 (2022-03-18)
 
 ### Added
