@@ -65,6 +65,19 @@ For information on installing and using `pyml_bindgen`, check out the [docs](htt
 
 Additionally, you can find examples in the [examples](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples) directory. One neat thing about these examples is that you can see how to write Dune [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule) to automatically generate your `pyml` bindings.
 
+## Development
+
+If you want to work on `pyml_bindgen` development, you may want to install a couple of additional packages that are not specified in the `opam` file.
+
+- To run the benchmarks, you will need `core` and `core_bench`.
+- To run test instrumentation, you will need `bisect_ppx`.
+
+E.g.,
+
+```
+$ opam install core core_bench bisect_ppx
+```
+
 ## License
 
 [![license MIT or Apache

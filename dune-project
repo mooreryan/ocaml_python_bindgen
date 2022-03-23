@@ -71,14 +71,4 @@
   (shexp
    (and
     (>= "v0.14")
-    :with-test))
-  ; Dev deps
-  (bisect_ppx :dev)
-  (core
-   (and
-    (>= "v0.12")
-    :dev))
-  (core_bench
-   (and
-    (>= "v0.12")
-    :dev))))
+    :with-test))))
