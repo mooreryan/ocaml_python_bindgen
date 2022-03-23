@@ -29,8 +29,6 @@ depends: [
   "shexp" {>= "v0.14" & with-test}
   "odoc" {with-doc}
 ]
-dev-repo: "git+https://github.com/mooreryan/ocaml_python_bindgen.git"
-license: ["MIT" "Apache-2.0"]
 build: [
   ["dune" "subst"] {dev}
   [
@@ -40,8 +38,10 @@ build: [
     name
     "-j"
     jobs
-    "@install" {arch != "x86_32"}
-    "@runtest" {with-test & arch != "x86_32"}
+    "@install"
+    "@runtest" {with-test}
     "@doc" {with-doc}
   ]
 ]
+dev-repo: "git+https://github.com/mooreryan/ocaml_python_bindgen.git"
+license: ["MIT" "Apache-2.0"]
