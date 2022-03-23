@@ -32,7 +32,7 @@
    (>= "v0.12"))
   (ppx_string
    (>= "v0.12"))
-  ocaml-re ; todo version
+  re ; todo version
   (stdio
    (>= "v0.12"))
   (ocaml
