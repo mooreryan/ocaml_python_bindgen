@@ -1,6 +1,6 @@
 (library
  (name test_lib)
- (libraries core_kernel lib re2 shexp.process)
+ (libraries core_kernel lib shexp.process)
  (inline_tests)
  (preprocess
   (pps

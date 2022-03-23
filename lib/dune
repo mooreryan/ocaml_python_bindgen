@@ -1,6 +1,6 @@
 (library
  (name lib)
- (libraries angstrom base re2 stdio)
+ (libraries angstrom base re stdio)
  (instrumentation
   (backend bisect_ppx))
  (preprocess

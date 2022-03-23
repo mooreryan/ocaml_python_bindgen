@@ -29,9 +29,9 @@ module Angstrom_helpers = struct
         <?> "parser failed before all input was consumed at token"
 end
 
-let spaces = Re2.create_exn "[ \n]+"
+let spaces = Re.compile @@ Re.Perl.re "[ \n]+"
 
-let squash_spaces s = Re2.rewrite_exn ~template:" " spaces s
+let squash_spaces s = Re.replace_string spaces s ~by:" "
 
 let clean s = String.strip @@ squash_spaces s
 
@@ -39,11 +39,11 @@ let todo_type = "type 'a todo = unit -> 'a"
 
 let not_implemented_type = "type 'a not_implemented = unit -> 'a"
 
-let or_error_re = Re2.create_exn "Or_error\\.t"
+let or_error_re = Re.compile @@ Re.Perl.re "Or_error\\.t"
 
-let todo_re = Re2.create_exn "'a todo"
+let todo_re = Re.compile @@ Re.Perl.re "'a todo"
 
-let not_implemented_re = Re2.create_exn "'a not_implemented"
+let not_implemented_re = Re.compile @@ Re.Perl.re "'a not_implemented"
 
 (* TODO move all these check needs functions up into the one in pyml_bindgen
    main. *)
@@ -51,11 +51,11 @@ let not_implemented_re = Re2.create_exn "'a not_implemented"
 (* This would give false positives if the Or_error is in something other than
    the return type. Although, other functions should prevent valid val_specs
    from having or error anywhere else. *)
-let check_needs_base s = Re2.matches or_error_re s
+let check_needs_base s = Re.execp or_error_re s
 
-let check_needs_todo s = Re2.matches todo_re s
+let check_needs_todo s = Re.execp todo_re s
 
-let check_needs_not_implemented s = Re2.matches not_implemented_re s
+let check_needs_not_implemented s = Re.execp not_implemented_re s
 
 let check_signatures_file fname =
   let sig_dat = Stdio.In_channel.read_all fname in
@@ -69,3 +69,11 @@ let print_dbl_endline s = Stdio.print_endline (s ^ "\n")
 let abort ?(exit_code = 1) msg =
   Stdio.prerr_endline ("ERROR: " ^ msg);
   Caml.exit exit_code
+
+let find_first re s ~sub =
+  match Re.exec_opt re s with
+  | None -> Or_error.error_string "regex did not match"
+  | Some group -> (
+      match Re.Group.get_opt group sub with
+      | None -> Or_error.error_string "group did not match"
+      | Some thing -> Or_error.return thing)

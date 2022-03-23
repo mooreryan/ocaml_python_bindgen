@@ -9,24 +9,25 @@ let is_comment_line s = String.is_prefix ~prefix:"#" s
 
 let is_val_start s = String.is_prefix ~prefix:"val" s
 
-let all_whitespace = Re2.create_exn "^\\s*$"
+let all_whitespace = Re.compile @@ Re.Perl.re "^\\s*$"
 
-let is_all_whitespace s = Re2.matches all_whitespace s
+let is_all_whitespace s = Re.execp all_whitespace s
 
-let comment_marker = Re2.create_exn "^#\\s*"
+let comment_marker = Re.compile @@ Re.Perl.re "^#\\s*"
 
 let cat s1 s2 = s1 ^ " " ^ s2
 
 (* TODO We are being more restrictive than normal in that each attr must be on
    its own line, and only one per line. *)
-let attribute_line = Re2.create_exn "^\\s*\\[@@[a-zA-Z_]+\\s+[a-zA-Z_]+\\]\\s*$"
+let attribute_line =
+  Re.compile @@ Re.Perl.re "^\\s*\\[@@[a-zA-Z_]+\\s+[a-zA-Z_]+\\]\\s*$"
 
 let attributes_not_at_start =
-  Re2.create_exn "^\\S+.*\\[@@[a-zA-Z_]+\\s+[a-zA-Z_]+\\]"
+  Re.compile @@ Re.Perl.re "^\\S+.*\\[@@[a-zA-Z_]+\\s+[a-zA-Z_]+\\]"
 
-let has_attributes_not_at_start line = Re2.matches attributes_not_at_start line
+let has_attributes_not_at_start line = Re.execp attributes_not_at_start line
 
-let is_attribute_line line = Re2.matches attribute_line line
+let is_attribute_line line = Re.execp attribute_line line
 
 (* assert false cases should be impossible unless I made a mistake. failwith
    cases can happen with bad user input in the file. *)

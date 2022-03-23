@@ -26,11 +26,9 @@ let update_impl_needs val_spec =
 (* TODO would be nice to check for needs outside of this function.... *)
 let gen_pyml_impl ~associated_with ~py_class ~spec =
   let py_fun_name_attribute =
-    Re2.create_exn "\\[@@py_fun_name\\s+([a-zA-Z_]+)\\]"
+    Re.compile @@ Re.Perl.re "\\[@@py_fun_name\\s+([a-zA-Z_]+)\\]"
   in
-  let get_py_fun_name s =
-    Re2.find_first ~sub:(`Index 1) py_fun_name_attribute s
-  in
+  let get_py_fun_name s = Utils.find_first py_fun_name_attribute s ~sub:1 in
   let%bind val_spec = Oarg.parse_val_spec spec.Specs_file.val_spec in
   update_impl_needs val_spec;
   (* Will use the same name as ml_fun if the py_fun_name attr is not present. *)

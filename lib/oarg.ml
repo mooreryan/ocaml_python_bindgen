@@ -89,7 +89,7 @@ module P = struct
 
   let question_mark = spaces *> string "?" <* spaces
 
-  let all_underscores = Re2.create_exn "^_+$"
+  let all_underscores = Re.compile @@ Re.Perl.re "^_+$"
 
   (* apple:int <- arg name is the first part of that. *)
   let arg_name =
@@ -100,7 +100,7 @@ module P = struct
       | Ok _ -> fail "arg name cannot be the same as an otype"
       | Error _ ->
           (* One last check...names can't be all underscores. *)
-          if Re2.matches all_underscores name then
+          if Re.execp all_underscores name then
             fail "name can't be all underscores"
           else return name
     else fail "first letter of arg name must be lowercase letter or underscore"

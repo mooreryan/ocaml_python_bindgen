@@ -3,11 +3,7 @@ open! Lib
 module Q = Quickcheck
 module QG = Quickcheck.Generator
 
-let spaces = Re2.create_exn "[ \n]+"
-
-let squash_spaces s = Re2.rewrite_exn ~template:" " spaces s
-
-let clean s = String.strip @@ squash_spaces s
+let clean = Utils.clean
 
 let gen_pyml_impl spec =
   let open Or_error.Let_syntax in
