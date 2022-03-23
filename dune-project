@@ -8,7 +8,7 @@
 
 (package
  (name pyml_bindgen)
- (version 0.3.0)
+ (version 0.3.1)
  (license "MIT")
  (maintainers "Ryan M. Moore")
  (authors "Ryan M. Moore")
@@ -32,7 +32,8 @@
    (>= "v0.12"))
   (ppx_string
    (>= "v0.12"))
-  re ; todo version
+  (re
+   (>= "1.5"))
   (stdio
    (>= "v0.12"))
   (ocaml
