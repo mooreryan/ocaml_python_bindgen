@@ -5,11 +5,56 @@ type opts = {
   signatures : string;
   py_module : string;
   py_class : string;
-  caml_module : string option;
-  of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
   associated_with : [ `Class | `Module ];
+  caml_module : string option;
   embed_python_source : string option;
+  of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
 }
+
+(* Allow NA or na because some times leaving off a column at the end won't catch
+   the tabs depending on your text editor settings. *)
+let associated_with_of_string = function
+  | "module" -> `Module
+  | "class" | "NA" | "na" | "" -> `Class
+  | _ -> failwith "associated_with must be class or module"
+
+let caml_module_of_string = function "NA" | "na" | "" -> None | s -> Some s
+
+let embed_python_source_of_string = function
+  | "NA" | "na" | "" -> None
+  | file -> Some file
+
+let of_pyo_ret_type_of_string = function
+  | "NA" | "na" | "" | "option" -> `Option
+  | "or_error" -> `Or_error
+  | "no_check" -> `No_check
+  | _ -> failwith "of_pyo_ret_type must be no_check, option, or or_error"
+
+let opts_of_string s =
+  let f () =
+    match String.split s ~on:'\t' with
+    | [
+     signatures;
+     py_module;
+     py_class;
+     associated_with;
+     caml_module;
+     embed_python_source;
+     of_pyo_ret_type;
+    ] ->
+        {
+          signatures;
+          py_module;
+          py_class;
+          associated_with = associated_with_of_string associated_with;
+          caml_module = caml_module_of_string caml_module;
+          embed_python_source =
+            embed_python_source_of_string embed_python_source;
+          of_pyo_ret_type = of_pyo_ret_type_of_string of_pyo_ret_type;
+        }
+    | _ -> failwith [%string "bad config line: %{s}"]
+  in
+  Or_error.try_with f
 
 let make_opts signatures py_module py_class caml_module of_pyo_ret_type
     associated_with embed_python_source =
