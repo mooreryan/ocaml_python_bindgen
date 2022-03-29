@@ -1,6 +1,6 @@
-(executable
- (public_name pyml_bindgen)
- (name pyml_bindgen)
+(executables
+ (public_names pyml_bindgen combine_rec_modules)
+ (names pyml_bindgen combine_rec_modules)
  (libraries base cmdliner lib re stdio)
  (instrumentation
   (backend bisect_ppx))
