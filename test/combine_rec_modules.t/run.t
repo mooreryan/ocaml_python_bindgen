@@ -110,3 +110,17 @@ It does NOT check if you have a signature.
   and B = struct
     type t
   end
+
+Stdin works by passing /dev/stdin
+
+  $ cat d.ml e.ml | combine_rec_modules /dev/stdin
+  module rec Donut : sig
+    type t
+  end = struct
+    type t
+  end
+  and Extra : sig
+    type t
+  end = struct
+    type t
+  end
