@@ -90,10 +90,6 @@ let process_file modules_seen fname =
   Stdio.In_channel.with_file fname ~f:(fun ic ->
       Stdio.In_channel.fold_lines ic ~init:modules_seen ~f:process_line)
 
-let exit ?(code = 0) msg =
-  Stdio.prerr_endline msg;
-  Caml.exit code
-
 let check_fnames fnames =
   let errors =
     List.filter_map fnames ~f:(fun fname ->
@@ -103,20 +99,21 @@ let check_fnames fnames =
   | [] -> ()
   | [ fname ] ->
       let msg = [%string "ERROR -- File %{fname} does not exist"] in
-      exit ~code:1 msg
+      Bin_utils.exit ~code:1 msg
   | fnames ->
       let fnames = String.concat fnames ~sep:", " in
       let msg = [%string "ERROR -- These files do not exist: %{fnames}"] in
-      exit ~code:1 msg
+      Bin_utils.exit ~code:1 msg
 
 (* TODO this will exit with an error code, but stuff will still be printed to
    the outfile. Could be confusing. *)
 let check_modules_seen = function
   | 0 ->
-      exit ~code:1
+      Bin_utils.exit ~code:1
         [%string "ERROR -- I didn't see any modules in the input files"]
   | 1 ->
-      exit ~code:1 [%string "ERROR -- I only saw one module in the input files"]
+      Bin_utils.exit ~code:1
+        [%string "ERROR -- I only saw one module in the input files"]
   | _n -> ()
 
 let run fnames =
