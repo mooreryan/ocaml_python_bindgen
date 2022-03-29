@@ -1,7 +1,10 @@
 Errors
 
   $ combine_rec_modules
-  usage: combine_rec_modules <a.ml> [b.ml ...] > lib.ml
+  combine_rec_modules: required argument FILE is missing
+  Usage: combine_rec_modules [OPTION]… FILE…
+  Try 'combine_rec_modules --help' for more information.
+  [1]
   $ combine_rec_modules missing.ml
   ERROR -- File missing.ml does not exist
   [1]
@@ -96,3 +99,14 @@ It works okay when there is more than just the module on the line.
   and B : sig type t end = struct type t end
   
   and C : sig type t end = struct type t end
+
+It does NOT check if you have a signature.
+
+  $ combine_rec_modules no_sig.ml
+  module rec A = struct
+    type t
+  end
+  
+  and B = struct
+    type t
+  end

@@ -1,5 +1,66 @@
 open! Base
 
+module Cli = struct
+  open Cmdliner
+
+  (* Use string rather than file so we can do the nicer file checking. *)
+  let files_term = Arg.(non_empty & pos_all string [] & info [] ~docv:"FILE")
+
+  let info =
+    let doc = "combine recursive modules into a single file" in
+    let man =
+      [
+        `S Manpage.s_description;
+        `P
+          "You often need to generate recursive modules when binding cyclic \
+           Python classes.  Since pyml_bindgen doesn't allow you to generate \
+           recursive modules automatically, you can use this tool to convert \
+           them.  It combines multiple pyml_bindgen generated OCaml modules \
+           into a single file.";
+        `P
+          "While you could combine generated modules by hand, this tool helps \
+           speed up the process when combining a lot of modules, or when you \
+           need to automate the process (e.g., in a Dune rule or shell \
+           script).";
+        `S Manpage.s_examples;
+        `P
+          "Imagine you generated the files a.ml and b.ml with pyml_bindgen.  \
+           Module A refers to module B and module B refers to module A, so \
+           they are recursive modules.  However, pyml_bindgen doesn't \
+           automatically generate them as recursive modules.  Instead, you can \
+           use combine_rec_modules.";
+        `P "a.ml contents:";
+        `Pre "  module A : sig ... end = struct ... end";
+        `P "b.ml contents:";
+        `Pre "  module B : sig ... end = struct ... end";
+        `P "Run combine_rec_modules:";
+        `Pre "  \\$ combine_rec_modules a.ml b.ml > lib.ml";
+        `P "Then lib.ml contents will be:";
+        `Pre
+          "module rec A : sig ... end = struct ... end\n\
+           and B : sig ... end = struct ... end";
+        `S Manpage.s_bugs;
+        `P
+          "Please report any bugs or issues on GitHub. \
+           (https://github.com/mooreryan/pyml_bindgen/issues)";
+        `S Manpage.s_see_also;
+        `P
+          "For full documentation, please see the GitHub page. \
+           (https://github.com/mooreryan/pyml_bindgen)";
+        `S Manpage.s_authors;
+        `P "Ryan M. Moore <https://orcid.org/0000-0003-3337-8184>";
+      ]
+    in
+    Cmd.info "combine_rec_modules" ~version:Lib.Version.version ~doc ~man
+      ~exits:[]
+
+  let parse_cli () =
+    match Cmd.eval_value @@ Cmd.v info files_term with
+    | Ok (`Ok files) -> Ok files
+    | Ok `Help | Ok `Version -> Error 0
+    | Error _ -> Error 1
+end
+
 let module_re = Re.Perl.compile_pat "module ([a-zA-Z0-9_])+"
 
 let first_module name = "module rec " ^ name
@@ -29,21 +90,9 @@ let process_file modules_seen fname =
   Stdio.In_channel.with_file fname ~f:(fun ic ->
       Stdio.In_channel.fold_lines ic ~init:modules_seen ~f:process_line)
 
-let usage =
-  [%string
-    "pyml_bindgen version: %{Lib.Version.version}\n\
-     usage: combine_rec_modules <a.ml> [b.ml ...] > lib.ml"]
-
 let exit ?(code = 0) msg =
   Stdio.prerr_endline msg;
   Caml.exit code
-
-(* Ensures there is at least one file given. *)
-let parse_args args =
-  match Array.to_list args with
-  | [ _exe ] -> exit usage
-  | _exe :: fnames -> fnames
-  | [] -> assert false
 
 let check_fnames fnames =
   let errors =
@@ -70,8 +119,14 @@ let check_modules_seen = function
       exit ~code:1 [%string "ERROR -- I only saw one module in the input files"]
   | _n -> ()
 
-let () =
-  let fnames = parse_args (Sys.get_argv ()) in
+let run fnames =
   check_fnames fnames;
   let modules_seen = List.fold fnames ~init:0 ~f:process_file in
   check_modules_seen modules_seen
+
+let main () =
+  match Cli.parse_cli () with
+  | Ok fnames -> run fnames
+  | Error exit_code -> Caml.exit exit_code
+
+let () = main ()

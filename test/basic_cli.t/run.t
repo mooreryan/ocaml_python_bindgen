@@ -9,7 +9,7 @@ No arguments.
 Version screen
 
   $ pyml_bindgen --version
-  0.3.0-SNAPSHOT
+  0.4.0-SNAPSHOT
 
 Help screen
 
