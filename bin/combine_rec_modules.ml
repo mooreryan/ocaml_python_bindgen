@@ -29,7 +29,10 @@ let process_file modules_seen fname =
   Stdio.In_channel.with_file fname ~f:(fun ic ->
       Stdio.In_channel.fold_lines ic ~init:modules_seen ~f:process_line)
 
-let usage = "usage: combine_rec_modules <a.ml> [b.ml ...] > lib.ml"
+let usage =
+  [%string
+    "pyml_bindgen version: %{Lib.Version.version}\n\
+     usage: combine_rec_modules <a.ml> [b.ml ...] > lib.ml"]
 
 let exit ?(code = 0) msg =
   Stdio.prerr_endline msg;

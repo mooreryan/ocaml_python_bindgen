@@ -1,8 +1,6 @@
 open! Base
 open Cmdliner
 
-let version = "0.3.0-SNAPSHOT"
-
 type opts = {
   signatures : string;
   py_module : string;
@@ -113,7 +111,7 @@ let info =
       `P "Ryan M. Moore <https://orcid.org/0000-0003-3337-8184>";
     ]
   in
-  Cmd.info "pyml_bindgen" ~version ~doc ~man ~exits:[]
+  Cmd.info "pyml_bindgen" ~version:Lib.Version.version ~doc ~man ~exits:[]
 
 (* let parse_cli () = match Term.eval program with | `Ok opts -> Ok opts | `Help
    | `Version -> Error 0 | `Error _ -> Error 1 *)
