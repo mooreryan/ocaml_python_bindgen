@@ -1,16 +1,16 @@
-module A : sig
+module Apple_pie2 : sig
   type t
 end = struct
   type t
 end
 
-module B : sig
+module Bike__thing__242__ : sig
   type t
 end = struct
   type t
 end
 
-module C : sig
+module Cake : sig
   type t
 end = struct
   type t

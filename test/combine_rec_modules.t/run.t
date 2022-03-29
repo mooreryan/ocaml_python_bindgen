@@ -16,7 +16,7 @@ If you only see one module, exit with an error.  It doesn't make sense to run it
 if there is only one module.
 
   $ combine_rec_modules d.ml
-  module rec D : sig
+  module rec Donut : sig
     type t
   end = struct
     type t
@@ -34,58 +34,58 @@ If you don't see any modules, exit with an error.
 Basic usage 
 
   $ combine_rec_modules abc.ml
-  module rec A : sig
+  module rec Apple_pie2 : sig
     type t
   end = struct
     type t
   end
   
-  and B : sig
+  and Bike__thing__242__ : sig
     type t
   end = struct
     type t
   end
   
-  and C : sig
+  and Cake : sig
     type t
   end = struct
     type t
   end
   $ combine_rec_modules d.ml e.ml
-  module rec D : sig
+  module rec Donut : sig
     type t
   end = struct
     type t
   end
-  and E : sig
+  and Extra : sig
     type t
   end = struct
     type t
   end
   $ combine_rec_modules abc.ml d.ml e.ml
-  module rec A : sig
+  module rec Apple_pie2 : sig
     type t
   end = struct
     type t
   end
   
-  and B : sig
+  and Bike__thing__242__ : sig
     type t
   end = struct
     type t
   end
   
-  and C : sig
+  and Cake : sig
     type t
   end = struct
     type t
   end
-  and D : sig
+  and Donut : sig
     type t
   end = struct
     type t
   end
-  and E : sig
+  and Extra : sig
     type t
   end = struct
     type t
@@ -94,11 +94,11 @@ Basic usage
 It works okay when there is more than just the module on the line.
 
   $ combine_rec_modules one_line.ml
-  module rec A : sig type t end = struct type t end
+  module rec A_a__3 : sig type t end = struct type t end
   
-  and B : sig type t end = struct type t end
+  and Bike : sig type t end = struct type t end
   
-  and C : sig type t end = struct type t end
+  and Cake_icing : sig type t end = struct type t end
 
 It does NOT check if you have a signature.
 

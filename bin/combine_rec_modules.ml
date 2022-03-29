@@ -61,7 +61,7 @@ module Cli = struct
     | Error _ -> Error 1
 end
 
-let module_re = Re.Perl.compile_pat "module ([a-zA-Z0-9_])+"
+let module_re = Re.Perl.compile_pat "module ([a-zA-Z0-9_]+)"
 
 let first_module name = "module rec " ^ name
 

@@ -1,4 +1,4 @@
-module E : sig
+module Extra : sig
   type t
 end = struct
   type t
