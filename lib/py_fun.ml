@@ -190,28 +190,31 @@ let create ?(associated_with = `Class) ~py_fun_name
            ]
 
 let labeled_arg_to_kwarg_spec arg =
-  let name = Oarg.labeled_name arg in
+  let ml_name = Oarg.labeled_ml_name arg in
+  let py_name = Oarg.labeled_py_name arg in
   let type_ = Oarg.labeled_type arg in
   let py_of_ocaml = Otype.py_of_ocaml type_ in
   (* Adds the semicolon so that you can join all the args with concat "" later
      on. *)
-  [%string {| Some ("%{name}", %{py_of_ocaml} %{name});  |}]
+  [%string {| Some ("%{py_name}", %{py_of_ocaml} %{ml_name});  |}]
 
 (* The ocaml code will have to determine if the caller actually passed in an
    optional arg or just left in out. And then pass it or not to the python
    runtime. *)
 let optional_arg_to_kwarg_spec arg =
-  let name = Oarg.optional_name arg in
+  let ml_name = Oarg.optional_ml_name arg in
+  let py_name = Oarg.optional_py_name arg in
   let type_ = Oarg.optional_type arg in
   let py_of_ocaml = Otype.py_of_ocaml type_ in
   let some_spec =
     (* Adds the semicolon so that you can join all the args with concat "" later
        on. *)
-    [%string {| Some ("%{name}", %{py_of_ocaml} %{name})  |}]
+    [%string {| Some ("%{py_name}", %{py_of_ocaml} %{ml_name})  |}]
   in
   let none_spec = "None" in
+  (* TODO ml_name for match and some? *)
   [%string
-    {| (match %{name} with | Some %{name} -> %{some_spec} | None -> %{none_spec}); |}]
+    {| (match %{ml_name} with | Some %{ml_name} -> %{some_spec} | None -> %{none_spec}); |}]
 
 let arg_to_kwarg_spec = function
   | `Labeled arg -> labeled_arg_to_kwarg_spec arg
@@ -221,8 +224,8 @@ let arg_to_kwarg_spec = function
 let get_var_names args =
   String.concat ~sep:" "
   @@ List.map args ~f:(function
-       | `Labeled arg -> "~" ^ Oarg.labeled_name arg
-       | `Optional arg -> "?" ^ Oarg.optional_name arg)
+       | `Labeled arg -> "~" ^ Oarg.labeled_ml_name arg
+       | `Optional arg -> "?" ^ Oarg.optional_ml_name arg)
 
 (* TODO mixing optionals and non-optionals is fine on the OCaml side, but it's
    weird from a python standpoint. *)

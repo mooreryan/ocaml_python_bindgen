@@ -8,23 +8,30 @@ open! Base
    like that. *)
 type positional = { type_ : Otype.t } [@@deriving sexp]
 
-type labeled = { name : string; type_ : Otype.t } [@@deriving sexp]
+type labeled = { ml_name : string; py_name : string; type_ : Otype.t }
+[@@deriving sexp]
 
 (* Kind of confusing, but these are not things like a:string option, but
    ?a:string. It's optional in the sense of you don't need to pass it in. *)
-type optional = { name : string; type_ : Otype.t } [@@deriving sexp]
+type optional = { ml_name : string; py_name : string; type_ : Otype.t }
+[@@deriving sexp]
 
 let make_positional type_ : positional = { type_ }
 
-let make_labeled name type_ : labeled = { name; type_ }
+let make_labeled ~ml_name ~py_name type_ : labeled = { ml_name; py_name; type_ }
 
-let make_optional name type_ : optional = { name; type_ }
+let make_optional ~ml_name ~py_name type_ : optional =
+  { ml_name; py_name; type_ }
 
-let optional_name (x : optional) : string = x.name
+let optional_ml_name (x : optional) : string = x.ml_name
+
+let optional_py_name (x : optional) : string = x.py_name
 
 let optional_type (x : optional) : Otype.t = x.type_
 
-let labeled_name (x : labeled) : string = x.name
+let labeled_ml_name (x : labeled) : string = x.ml_name
+
+let labeled_py_name (x : labeled) : string = x.py_name
 
 let labeled_type (x : labeled) : Otype.t = x.type_
 
@@ -67,12 +74,12 @@ let parse_labeled_or_optional_non_unit args =
   all @@ Array.to_list
   @@ Array.map args ~f:(function
        | Positional _ -> error_string "can't be positional"
-       | Labeled { type_; name } ->
+       | Labeled { type_; ml_name; py_name } ->
            if Otype.is_unit type_ then error_string "cannot be labeled unit"
-           else return @@ `Labeled ({ type_; name } : labeled)
-       | Optional { type_; name } ->
+           else return @@ `Labeled ({ type_; ml_name; py_name } : labeled)
+       | Optional { type_; ml_name; py_name } ->
            if Otype.is_unit type_ then error_string "cannot be optional unit"
-           else return @@ `Optional ({ type_; name } : optional))
+           else return @@ `Optional ({ type_; ml_name; py_name } : optional))
 
 module P = struct
   open! Angstrom
@@ -117,18 +124,22 @@ module P = struct
 
   (* apple:int list; pie:Fruit.t *)
   let labeled =
-    let%bind name = arg_name in
+    let%bind ml_name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Labeled (make_labeled name type_) <?> "labeled parser"
+    (* TODO for now the name is the same. *)
+    return @@ Labeled (make_labeled ~ml_name ~py_name:ml_name type_)
+    <?> "labeled parser"
 
   (* ?apple:int list; ?pie:Fruit.t *)
   let optional =
     let%bind _qm = question_mark in
-    let%bind name = arg_name in
+    let%bind ml_name = arg_name in
     let%bind _sep = colon in
     let%bind type_ = arg_type in
-    return @@ Optional (make_optional name type_) <?> "optional parser"
+    (* TODO for now the name is the same. *)
+    return @@ Optional (make_optional ~ml_name ~py_name:ml_name type_)
+    <?> "optional parser"
 
   (* Any of the three arg types. *)
   let arg =

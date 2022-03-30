@@ -105,7 +105,7 @@ let%expect_test _ =
      ((ml_fun_name f)
       (args
        ((Positional ((type_ T)))
-        (Labeled ((name arg1) (type_ (Tuple2 Int String))))
+        (Labeled ((ml_name arg1) (py_name arg1) (type_ (Tuple2 Int String))))
         (Positional ((type_ Unit))) (Positional ((type_ (Tuple2 Float Bool))))))))
 
      |}]
@@ -120,7 +120,8 @@ let%expect_test _ =
      ((ml_fun_name f)
       (args
        ((Positional ((type_ T)))
-        (Labeled ((name arg1) (type_ (Tuple3 Int String Bool))))
+        (Labeled
+         ((ml_name arg1) (py_name arg1) (type_ (Tuple3 Int String Bool))))
         (Positional ((type_ Unit)))
         (Positional ((type_ (Tuple3 Float Bool Int)))))))) |}]
 
@@ -135,7 +136,8 @@ let%expect_test _ =
      ((ml_fun_name f)
       (args
        ((Positional ((type_ T)))
-        (Labeled ((name arg1) (type_ (Tuple4 Int String Bool Float))))
+        (Labeled
+         ((ml_name arg1) (py_name arg1) (type_ (Tuple4 Int String Bool Float))))
         (Positional ((type_ Unit)))
         (Positional ((type_ (Tuple4 Float Bool Int String)))))))) |}]
 
@@ -152,10 +154,15 @@ let%expect_test _ =
      ((ml_fun_name f)
       (args
        ((Positional ((type_ T)))
-        (Labeled ((name arg1) (type_ (List (Tuple5 Int String Bool Float Int)))))
-        (Labeled ((name arg2) (type_ (Seq (Tuple2 Int Int)))))
-        (Labeled ((name arg3) (type_ (List (Tuple3 Py_obj Int Py_obj)))))
-        (Labeled ((name arg4) (type_ (Tuple3 Py_obj Int Py_obj))))
+        (Labeled
+         ((ml_name arg1) (py_name arg1)
+          (type_ (List (Tuple5 Int String Bool Float Int)))))
+        (Labeled ((ml_name arg2) (py_name arg2) (type_ (Seq (Tuple2 Int Int)))))
+        (Labeled
+         ((ml_name arg3) (py_name arg3)
+          (type_ (List (Tuple3 Py_obj Int Py_obj)))))
+        (Labeled
+         ((ml_name arg4) (py_name arg4) (type_ (Tuple3 Py_obj Int Py_obj))))
         (Positional ((type_ Unit)))
         (Positional ((type_ (Array (Tuple5 Int Float Bool Int String))))))))) |}]
 
@@ -170,7 +177,9 @@ let%expect_test _ =
      ((ml_fun_name f)
       (args
        ((Positional ((type_ T)))
-        (Labeled ((name arg1) (type_ (Tuple5 Int String Bool Float Int))))
+        (Labeled
+         ((ml_name arg1) (py_name arg1)
+          (type_ (Tuple5 Int String Bool Float Int))))
         (Positional ((type_ Unit)))
         (Positional ((type_ (Tuple5 Int Float Bool Int String)))))))) |}]
 

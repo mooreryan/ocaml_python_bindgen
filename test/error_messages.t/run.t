@@ -9,5 +9,6 @@ message.
     ("The bad val_spec was:"
      ((ml_fun_name bad)
       (args
-       ((Positional ((type_ T))) (Labeled ((name apple) (type_ Int)))
+       ((Positional ((type_ T)))
+        (Labeled ((ml_name apple) (py_name apple) (type_ Int)))
         (Positional ((type_ Int)))))))))
