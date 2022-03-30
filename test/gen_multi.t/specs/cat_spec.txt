@@ -1,0 +1,10 @@
+val create : name:string -> unit -> t 
+[@@py_fun_name __init__]
+
+val to_string : t -> unit -> string
+[@@py_fun_name __str__]
+
+val adopt_human : t -> human:Human.t -> unit -> unit
+
+val name : t -> string 
+val human : t -> Human.t

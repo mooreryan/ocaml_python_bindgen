@@ -1,0 +1,3 @@
+signatures	py_module	py_class	associated_with	caml_module	embed_python_source	of_pyo_ret_type
+specs/human_spec.txt	human	Human	class	Human	NA	no_check
+specs/cat_spec.txt	cat	Cat	class	Cat	NA	no_check
