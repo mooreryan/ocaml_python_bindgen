@@ -2,10 +2,11 @@
 
 ### Added
 
-- Added helper scripts for binding cyclic Python classes
+- Add helper scripts for binding cyclic Python classes
   - `gen_multi` is a wrapper for `pyml_bindgen` that takes a TSV file of command line specs, and runs `pyml_bindgen` on each of them.
   - `combine_rec_modules` is a small program that takes generated OCaml modules and "converts" them into recursive modules
   - You can combine these two to make it easier to generate recursive modules, which can be useful for binding Python classes that reference each other.
+- Add support for `py_arg_name` attribute. It lets you use different argument names in the OCaml bindings than used in the Python functions.
 
 ## 0.3.1 (2022-03-23)
 
