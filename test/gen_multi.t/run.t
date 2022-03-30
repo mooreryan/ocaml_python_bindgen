@@ -30,3 +30,10 @@ Errors
   $ gen_multi bad.tsv
   (Failure "bad config line: is good")
   [1]
+
+It tells you about all the files that are bad.
+
+  $ gen_multi specs/bad_file_names.tsv
+  ((Sys_error "specs/human_spec.txttt: No such file or directory")
+   (Sys_error "specs/cat_spec.txttt: No such file or directory"))
+  [1]
