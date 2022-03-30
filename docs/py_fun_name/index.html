@@ -166,15 +166,15 @@
               
                 <h1 id="attributes">Attributes</h1>
 <p>You can attach certain attributes to your value specifications to change their behavior.</p>
-<p>Currently, the only recognized attribute is <code>py_fun_name</code>.</p>
-<p>You can use it to bind a Python method to a differently named OCaml function.</p>
+<p>Currently, the only recognized attributes are <code>py_fun_name</code> and <code>py_arg_name</code>.</p>
+<p>You can use them to bind a Python method names and argument names to something else on the OCaml side.</p>
 <h2 id="example">Example</h2>
 <p>For example, rather than having a <code>Cat.__init__</code> method to call from the OCaml side (i.e., to make a new Python <code>Cat</code> object), you can bind the Python <code>__init__</code> function to something more idiomatic like <code>create</code> or whatever you want.</p>
 <pre><code class="language-ocaml">val create : t -&gt; ...
 [@@py_fun_name __init__]
 </code></pre>
 <p>Another common use for this is to bind the Python <code>__str__</code> method for a class to <code>to_string</code> on the OCaml side.</p>
-<p>You can do this with any function.  One reason is that you may want to have some type safety with a polymorphic Python function.  While you could pass in <a href="https://mooreryan.github.io/ocaml_python_bindgen/types/#pytypes">Py.Object.t</a> directly, you could also use attributes to bind multiple OCaml functions to the same Python method.  E.g.,</p>
+<p>You can do this with any function. One reason is that you may want to have some type safety with a polymorphic Python function. While you could pass in <a href="https://mooreryan.github.io/ocaml_python_bindgen/types/#pytypes">Py.Object.t</a> directly, you could also use attributes to bind multiple OCaml functions to the same Python method. E.g.,</p>
 <pre><code class="language-ocaml">val eat : t -&gt; num_mice:int -&gt; unit -&gt; unit
 
 val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
@@ -183,8 +183,12 @@ val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
 <p>In this case, we have one <code>eat</code> function for <code>int</code> and one for <code>float</code>.</p>
 <h2 id="full-example">Full example</h2>
 <p>For a full working example see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/attributes">attributes</a> example on GitHub.</p>
+<p>The linked example also shows how to use <code>py_arg_name</code>.</p>
 <h2 id="warning">Warning</h2>
-<p>If you specify the <code>py_fun_name</code> more than once, it will do something wonky.  Eventually, the program will treat this as an error, but for now, it is on you to avoid doing it.</p>
+<ul>
+<li>If you specify the <code>py_fun_name</code> more than once, it will do something wonky. Eventually, the program will treat this as an error, but for now, it is on you to avoid doing it.</li>
+<li>Attributes have to start a line. I.e., if you have more than one attribute, you can't put them on the same line. They must go on separate lines.</li>
+</ul>
               
             </div>
           </div><footer>
