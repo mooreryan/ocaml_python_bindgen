@@ -1,0 +1,18 @@
+(library
+ (name examples_recursive_modules_lib)
+ (libraries pyml))
+
+(rule
+ (target lib.ml)
+ (mode
+  (promote (until-clean)))
+ (deps
+  (source_tree specs)
+  (source_tree ../py))
+ (action
+  (with-stdout-to
+   lib.ml
+   (pipe-stdout
+    (run %{bin:gen_multi} ./specs/cli_specs.tsv)
+    (run %{bin:combine_rec_modules} /dev/stdin)
+    (run ocamlformat --name a.ml -)))))

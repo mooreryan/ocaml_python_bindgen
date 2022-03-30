@@ -1,0 +1,3 @@
+(executable
+ (name run)
+ (libraries base pyml stdio examples_recursive_modules_lib))
