@@ -12,5 +12,5 @@ type opts = {
 
 val opts_of_string : string -> opts Or_error.t
 
-val parse_cli : unit -> (opts, int) Result.t
+val parse_argv : unit -> (opts, int) Result.t
 (** If successful, return the [opts]. If failure, return exit code. *)

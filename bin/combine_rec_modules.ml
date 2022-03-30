@@ -4,7 +4,12 @@ module Cli = struct
   open Cmdliner
 
   (* Use string rather than file so we can do the nicer file checking. *)
-  let files_term = Arg.(non_empty & pos_all string [] & info [] ~docv:"FILE")
+  let files_term =
+    let doc =
+      "OCaml source files.  You can also pass in /dev/stdin to read from \
+       standard input."
+    in
+    Arg.(non_empty & pos_all string [] & info [] ~docv:"FILE" ~doc)
 
   let info =
     let doc = "combine recursive modules into a single file" in
@@ -39,6 +44,15 @@ module Cli = struct
         `Pre
           "module rec A : sig ... end = struct ... end\n\
            and B : sig ... end = struct ... end";
+        `P "===";
+        `P
+          "You will often use this program with combine_rec_modules and \
+           ocamlformat.";
+        `Pre
+          "  \\$ gen_multi cli_specs.tsv \\\\ \n\
+          \    | combine_rec_modules /dev/stdin \\\\ \n\
+          \    | ocamlformat --name a.ml - \\\\ \n\
+          \    > lib.ml";
         `S Manpage.s_bugs;
         `P
           "Please report any bugs or issues on GitHub. \
@@ -54,7 +68,7 @@ module Cli = struct
     Cmd.info "combine_rec_modules" ~version:Lib.Version.version ~doc ~man
       ~exits:[]
 
-  let parse_cli () =
+  let parse_argv () =
     match Cmd.eval_value @@ Cmd.v info files_term with
     | Ok (`Ok files) -> Ok files
     | Ok `Help | Ok `Version -> Error 0
@@ -122,7 +136,7 @@ let run fnames =
   check_modules_seen modules_seen
 
 let main () =
-  match Cli.parse_cli () with
+  match Cli.parse_argv () with
   | Ok fnames -> run fnames
   | Error exit_code -> Caml.exit exit_code
 

@@ -158,10 +158,10 @@ let info =
   in
   Cmd.info "pyml_bindgen" ~version:Lib.Version.version ~doc ~man ~exits:[]
 
-(* let parse_cli () = match Term.eval program with | `Ok opts -> Ok opts | `Help
+(* let parse_argv () = match Term.eval program with | `Ok opts -> Ok opts | `Help
    | `Version -> Error 0 | `Error _ -> Error 1 *)
 
-let parse_cli () =
+let parse_argv () =
   match Cmd.eval_value @@ Cmd.v info term with
   | Ok (`Ok opts) -> Ok opts
   | Ok `Help | Ok `Version -> Error 0

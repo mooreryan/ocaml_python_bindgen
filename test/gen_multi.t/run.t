@@ -18,10 +18,14 @@ file is.
 Errors
 
   $ gen_multi
-  usage: gen_multi <specs.txt> > lib.ml
+  gen_multi: required argument CLI_OPTS is missing
+  Usage: gen_multi [OPTION]… CLI_OPTS
+  Try 'gen_multi --help' for more information.
   [1]
   $ gen_multi fake_file
-  ERROR -- File fake_file does not exist
+  gen_multi: CLI_OPTS argument: no 'fake_file' file
+  Usage: gen_multi [OPTION]… CLI_OPTS
+  Try 'gen_multi --help' for more information.
   [1]
   $ gen_multi bad.tsv
   (Failure "bad config line: is good")

@@ -127,7 +127,7 @@ let assert_base_and_ret_type_good needs_base of_pyo_ret_type =
 
 let run
     {
-      Cli.signatures;
+      Main_cli.signatures;
       py_module;
       py_class;
       caml_module;

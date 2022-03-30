@@ -1,7 +1,7 @@
 open! Base
 
 let main () =
-  match Cli.parse_cli () with
+  match Main_cli.parse_argv () with
   | Ok opts -> (
       match Bin_utils.run opts with
       | Ok _ -> Caml.exit 0
