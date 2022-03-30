@@ -8,7 +8,14 @@ let ok_or_abort x =
 let run_wrapper opts =
   Or_error.join @@ Or_error.try_with (fun () -> Bin_utils.run opts)
 
-let fname = (Sys.get_argv ()).(1)
+let check_file fname =
+  if Caml.Sys.file_exists fname then fname
+  else Bin_utils.exit ~code:1 [%string "ERROR -- File %{fname} does not exist"]
+
+let fname =
+  match Sys.get_argv () with
+  | [| _exe; fname |] -> check_file fname
+  | _ -> Bin_utils.exit ~code:1 "usage: gen_multi <specs.txt> > lib.ml"
 
 let opts =
   let open Stdio in

@@ -17,6 +17,12 @@ file is.
 
 Errors
 
+  $ gen_multi
+  usage: gen_multi <specs.txt> > lib.ml
+  [1]
+  $ gen_multi fake_file
+  ERROR -- File fake_file does not exist
+  [1]
   $ gen_multi bad.tsv
   (Failure "bad config line: is good")
   [1]
