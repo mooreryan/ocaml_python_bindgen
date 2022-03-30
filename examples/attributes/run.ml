@@ -12,4 +12,8 @@ let () = Cat.eat cat ~num_mice:2 ()
 
 let () = print_endline @@ Cat.to_string cat ()
 
+let () =
+  print_endline
+  @@ Cat.say_this cat ~w:"first" ~x:"second" ~y:"third" ~z:"fourth" ()
+
 let () = print_endline "done"

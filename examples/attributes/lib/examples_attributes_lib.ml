@@ -16,6 +16,9 @@ module Cat : sig
   val jump : t -> how_high:int -> unit -> unit
 
   val climb : t -> how_high:int -> unit -> unit
+
+  val say_this :
+    t -> w:string -> x:string -> y:string -> z:string -> unit -> string
 end = struct
   let filter_opt l = List.filter_map Fun.id l
 
@@ -38,6 +41,9 @@ end = struct
     def jump(self, how_high=1):
         if how_high > 0:
             self.hunger += how_high
+
+    def say(self, a, b, c, d):
+        return(f'{self.name} says {a}, {b}, {c} and {d}.')
 |pyml_bindgen_string_literal}
        in
        let filename =
@@ -85,4 +91,18 @@ end = struct
     let callable = Py.Object.find_attr_string t "jump" in
     let kwargs = filter_opt [ Some ("how_high", Py.Int.of_int how_high) ] in
     ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
+
+  let say_this t ~w ~x ~y ~z () =
+    let callable = Py.Object.find_attr_string t "say" in
+    let kwargs =
+      filter_opt
+        [
+          Some ("a", Py.String.of_string w);
+          Some ("b", Py.String.of_string x);
+          Some ("c", Py.String.of_string y);
+          Some ("d", Py.String.of_string z);
+        ]
+    in
+    Py.String.to_string
+    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end

@@ -14,3 +14,6 @@ class Cat:
     def jump(self, how_high=1):
         if how_high > 0:
             self.hunger += how_high
+
+    def say(self, a, b, c, d):
+        return(f'{self.name} says {a}, {b}, {c} and {d}.')
