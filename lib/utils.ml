@@ -77,3 +77,31 @@ let find_first re s ~sub =
       match Re.Group.get_opt group sub with
       | None -> Or_error.error_string "group did not match"
       | Some thing -> Or_error.return thing)
+
+let py_fun_name_attribute =
+  (* TODO do we need 0-9 in there? *)
+  Re.compile @@ Re.Perl.re "\\[@@py_fun_name\\s+([a-zA-Z_]+)\\]"
+
+let get_py_fun_name s = find_first py_fun_name_attribute s ~sub:1
+
+let py_arg_name_attribute =
+  Re.Perl.compile_pat
+    "\\[@@py_arg_name\\s+([a-zA-Z0-9_]+)\\s+([a-zA-Z0-9_]+)\\]"
+
+(* Given the attributes on a val_spec, pull out any mappings from ml_name to
+   py_name. *)
+let get_arg_name_map attrs =
+  match attrs with
+  | None -> Map.empty (module String)
+  | Some attrs ->
+      let py_arg_names =
+        Re.all py_arg_name_attribute attrs
+        |> List.fold
+             ~init:(Map.empty (module String))
+             ~f:(fun m g ->
+               (* For now, blow up if a key is duplicated. TODO *)
+               Map.add_exn m ~key:(Re.Group.get g 1) ~data:(Re.Group.get g 2))
+      in
+      py_arg_names
+
+let find_with_default m ~key ~default = Option.value ~default @@ Map.find m key

@@ -38,6 +38,20 @@ let labeled_type (x : labeled) : Otype.t = x.type_
 type t = Positional of positional | Labeled of labeled | Optional of optional
 [@@deriving sexp]
 
+let update_arg_py_name name_map arg =
+  match arg with
+  | Positional arg -> Positional arg
+  | Labeled arg ->
+      let py_name =
+        Utils.find_with_default name_map ~key:arg.ml_name ~default:arg.py_name
+      in
+      Labeled { arg with py_name }
+  | Optional arg ->
+      let py_name =
+        Utils.find_with_default name_map ~key:arg.ml_name ~default:arg.py_name
+      in
+      Optional { arg with py_name }
+
 type val_spec = { ml_fun_name : string; args : t list } [@@deriving sexp]
 
 let type_ = function

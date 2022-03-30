@@ -27,19 +27,27 @@ let update_impl_needs val_spec =
   shared_impl_needs.t5 <-
     shared_impl_needs.t5 || Oarg.val_spec_needs_tuple5 val_spec
 
-(* TODO would be nice to check for needs outside of this function.... *)
+let update_val_spec_args attrs (val_spec : Oarg.val_spec Or_error.t) =
+  Or_error.map val_spec ~f:(fun val_spec ->
+      let arg_name_map = U.get_arg_name_map attrs in
+      let new_args =
+        List.map val_spec.args ~f:(fun arg ->
+            Oarg.update_arg_py_name arg_name_map arg)
+      in
+      { val_spec with args = new_args })
+
 let gen_pyml_impl ~associated_with ~py_class ~spec =
-  let py_fun_name_attribute =
-    Re.compile @@ Re.Perl.re "\\[@@py_fun_name\\s+([a-zA-Z_]+)\\]"
+  let%bind val_spec =
+    update_val_spec_args spec.Specs_file.attrs
+    @@ Oarg.parse_val_spec spec.Specs_file.val_spec
   in
-  let get_py_fun_name s = Utils.find_first py_fun_name_attribute s ~sub:1 in
-  let%bind val_spec = Oarg.parse_val_spec spec.Specs_file.val_spec in
+  (* TODO would be nice to check for needs outside of this function.... *)
   update_impl_needs val_spec;
   (* Will use the same name as ml_fun if the py_fun_name attr is not present. *)
   let%bind py_fun_name =
     match spec.Specs_file.attrs with
     | None -> Or_error.return val_spec.ml_fun_name
-    | Some attrs -> get_py_fun_name attrs
+    | Some attrs -> U.get_py_fun_name attrs
   in
   let%bind py_fun = Py_fun.create val_spec ~py_fun_name ~associated_with in
   return @@ U.clean @@ Py_fun.pyml_impl py_class py_fun
