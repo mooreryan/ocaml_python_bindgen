@@ -23,19 +23,29 @@
   (angstrom
    (>= "0.15.0"))
   (base
-   (>= "v0.12"))
+   (and
+    (>= "v0.12")
+    (< "v0.15")))
   (cmdliner
    (>= "1.1.0"))
   (ppx_let
-   (>= "v0.12"))
+   (and
+    (>= "v0.12")
+    (< "v0.15")))
   (ppx_sexp_conv
-   (>= "v0.12"))
+   (and
+    (>= "v0.12")
+    (< "v0.15")))
   (ppx_string
-   (>= "v0.12"))
+   (and
+    (>= "v0.12")
+    (< "v0.15")))
   (re
    (>= "1.10.0"))
   (stdio
-   (>= "v0.12"))
+   (and
+    (>= "v0.12")
+    (< "v0.15")))
   (ocaml
    (>= "4.08.0"))
   ; Test-only deps
@@ -50,6 +60,7 @@
   (core_kernel
    (and
     (>= "v0.12")
+    (< "v0.15")
     :with-test))
   (ocamlformat
    (and
@@ -59,17 +70,21 @@
   (ppx_assert
    (and
     (>= "v0.12")
+    (< "v0.15")
     :with-test))
   (ppx_inline_test
    (and
     (>= "v0.12")
+    (< "v0.15")
     :with-test))
   (ppx_expect
    (and
     (>= "v0.12")
+    (< "v0.15")
     :with-test))
   (pyml :with-test)
   (shexp
    (and
     (>= "v0.14")
+    (< "v0.15")
     :with-test))))
