@@ -10,23 +10,22 @@ bug-reports: "https://github.com/mooreryan/ocaml_python_bindgen/issues"
 depends: [
   "dune" {>= "3.0"}
   "angstrom" {>= "0.15.0"}
-  "base" {>= "v0.12" & < "v0.15"}
+  "base" {>= "v0.12"}
   "cmdliner" {>= "1.1.0"}
-  "ppx_let" {>= "v0.12" & < "v0.15"}
-  "ppx_sexp_conv" {>= "v0.12" & < "v0.15"}
-  "ppx_string" {>= "v0.12" & < "v0.15"}
+  "ppx_let" {>= "v0.12"}
+  "ppx_sexp_conv" {>= "v0.12"}
+  "ppx_string" {>= "v0.12"}
   "re" {>= "1.10.0"}
-  "stdio" {>= "v0.12" & < "v0.15"}
+  "stdio" {>= "v0.12"}
   "ocaml" {>= "4.08.0"}
-  "cmdliner" {= "1.1.0" & with-test}
   "conf-python-3-dev" {>= "1" & with-test}
-  "core_kernel" {>= "v0.12" & < "v0.15" & with-test}
-  "ocamlformat" {>= "0.20.0" & < "0.21.0" & with-test}
-  "ppx_assert" {>= "v0.12" & < "v0.15" & with-test}
-  "ppx_inline_test" {>= "v0.12" & < "v0.15" & with-test}
-  "ppx_expect" {>= "v0.12" & < "v0.15" & with-test}
+  "base_quickcheck" {>= "v0.12" & with-test}
+  "ocamlformat" {>= "0.21.0" & < "0.22.0" & with-test}
+  "ppx_assert" {>= "v0.12" & with-test}
+  "ppx_inline_test" {>= "v0.12" & with-test}
+  "ppx_expect" {>= "v0.12" & with-test}
   "pyml" {with-test}
-  "shexp" {>= "v0.14" & < "v0.15" & with-test}
+  "shexp" {>= "v0.14" & with-test}
   "odoc" {with-doc}
 ]
 build: [

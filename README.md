@@ -86,7 +86,7 @@ E.g.,
 ```
 $ git clone https://github.com/mooreryan/ocaml_python_bindgen.git
 $ opam install . --deps-only --with-doc --with-test
-$ opam install core core_bench bisect_ppx
+$ opam install core core_bench core_unix bisect_ppx
 $ dune build
 ```
 

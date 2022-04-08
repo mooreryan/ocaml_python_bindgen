@@ -1,10 +1,10 @@
-open! Core_kernel
+open! Base
 open Lib
-module Q = Quickcheck
-module QG = Quickcheck.Generator
+module Q = Base_quickcheck
+module QG = Base_quickcheck.Generator
 
 let print_string_or_error x =
-  print_endline
+  Stdio.print_endline
   @@ Sexp.to_string_hum ~indent:1 ([%sexp_of: Otype.t Or_error.t] x)
 
 let parse_then_py_to_ocaml spec =
@@ -33,19 +33,37 @@ let gen_custom_otype_string =
   in
   let gen_first_letter = QG.char_uppercase in
   let gen_name_char = QG.filter QG.char ~f:is_ok_for_name in
-  let gen_name_rest = String.gen_nonempty' gen_name_char in
+  let gen_name_rest = QG.string_non_empty_of gen_name_char in
   QG.map2 gen_first_letter gen_name_rest ~f:(fun first rest ->
       Char.to_string first ^ rest ^ ".t")
 
+let make_string_test quickcheck_generator :
+    (module Q.Test.S with type t = string) =
+  (module struct
+    type t = string [@@deriving sexp]
+
+    let quickcheck_generator = quickcheck_generator
+
+    let quickcheck_shrinker = Q.Shrinker.string
+  end)
+
 let%test_unit "parse function works with custom types" =
-  Q.test gen_custom_otype_string ~sexp_of:String.sexp_of_t ~f:(fun name ->
+  Q.Test.run_exn (make_string_test gen_custom_otype_string) ~f:(fun name ->
       match Or_error.ok_exn @@ Otype.parse name with
       | Custom parsed_name -> [%test_eq: string] parsed_name name
       | _ -> failwith "expected variant Custom")
 
 let%test_unit "parse doesn't raise (may be ok or error though)" =
-  Q.test String.gen_nonempty ~sexp_of:String.sexp_of_t
-    ~shrinker:String.quickcheck_shrinker ~examples:[ "" ] ~f:(fun s ->
+  Q.Test.run_exn
+    (module struct
+      type t = string [@@deriving sexp]
+
+      let quickcheck_generator = QG.string_non_empty
+
+      let quickcheck_shrinker = Q.Shrinker.string
+    end)
+    ~examples:[ "" ]
+    ~f:(fun s ->
       let _x = Otype.parse s in
       ())
 
@@ -53,11 +71,19 @@ let%test_unit "container nesting raises or returns error" =
   let gen_otype = QG.of_list [ "array"; "list"; "Seq.t" ] in
   let gen =
     let open QG.Let_syntax in
-    let%bind n = QG.small_positive_int in
+    let%bind n = QG.int_inclusive 1 100 in
     (* Use n + 1 because we need 2 or more *)
-    List.gen_with_length (n + 1) gen_otype
+    QG.list_with_length ~length:(n + 1) gen_otype
   in
-  Q.test gen ~sexp_of:[%sexp_of: string list] ~f:(fun otypes ->
+  Q.Test.run_exn
+    (module struct
+      type t = string list [@@deriving sexp]
+
+      let quickcheck_generator = gen
+
+      let quickcheck_shrinker = Q.Shrinker.list Q.Shrinker.string
+    end)
+    ~f:(fun otypes ->
       let s = String.concat otypes ~sep:" " in
       match Otype.parse ("int " ^ s) with
       | (exception _) | Error _ -> ()
@@ -337,7 +363,8 @@ let%expect_test _ =
 
 let%expect_test "Converting list types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -365,7 +392,8 @@ let%expect_test "Converting list types" =
 
 let%expect_test "Converting array types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -393,7 +421,8 @@ let%expect_test "Converting array types" =
 
 let%expect_test "Converting Seq.t types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -421,7 +450,8 @@ let%expect_test "Converting Seq.t types" =
 
 let%expect_test "Converting option types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -450,7 +480,8 @@ let%expect_test "Converting option types" =
 
 let%expect_test "Converting Or_error types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -500,7 +531,8 @@ let%expect_test "Most nesting fails" =
       "int Seq.t list";
     ]
   in
-  print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list]
+  Stdio.print_endline @@ Sexp.to_string_hum
+  @@ [%sexp_of: string Or_error.t list]
   @@ List.map specs ~f:parse_then_py_to_ocaml;
   [%expect
     {|
@@ -525,7 +557,8 @@ let%expect_test "Most nesting fails" =
 
 let%expect_test "Converting option list" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -575,7 +608,8 @@ let%expect_test "Converting option list" =
 
 let%expect_test "Converting option array" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -625,7 +659,8 @@ let%expect_test "Converting option array" =
 
 let%expect_test "Converting option seq" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -676,7 +711,8 @@ let%expect_test "Converting option seq" =
 
 let%expect_test "Converting todo and not_implemented" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -703,7 +739,8 @@ let%expect_test "Converting todo and not_implemented" =
 
 let%expect_test "Nested custom modules" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [ "Apple.Pie.t"; "Good.Apple.Pie.t"; "Good_to.Eat_apple.Pie_always.t" ]
@@ -716,7 +753,8 @@ let%expect_test "Nested custom modules" =
 
 let%expect_test "Converting Tuple2 (good)" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -777,7 +815,8 @@ let%expect_test "Converting Tuple2 (good)" =
 
 let%expect_test "Converting Tuple2 (these won't work)" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -818,7 +857,7 @@ let%expect_test "Converting Tuple2 (these won't work)" =
      (Error "Parsing Otype failed... : end_of_input")
      (Error
       "Parsing Otype failed... otype parser: not a compound, basic, or placeholder otype"))
-    
+
      |}]
 
 (******************************************************)
@@ -827,7 +866,8 @@ let%expect_test "Converting Tuple2 (these won't work)" =
 
 let%expect_test "Converting list types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -856,7 +896,8 @@ let%expect_test "Converting list types" =
 
 let%expect_test "Converting array types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -885,7 +926,8 @@ let%expect_test "Converting array types" =
 
 let%expect_test "Converting Seq.t types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -914,7 +956,8 @@ let%expect_test "Converting Seq.t types" =
 
 let%expect_test "Converting option types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -942,7 +985,8 @@ let%expect_test "Converting option types" =
 
 let%expect_test "Converting Or_error types" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -993,7 +1037,8 @@ let%expect_test "Most nesting fails" =
       "int Seq.t list";
     ]
   in
-  print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list]
+  Stdio.print_endline @@ Sexp.to_string_hum
+  @@ [%sexp_of: string Or_error.t list]
   @@ List.map specs ~f:parse_then_py_of_ocaml;
   [%expect
     {|
@@ -1018,7 +1063,8 @@ let%expect_test "Most nesting fails" =
 
 let%expect_test "Converting option list" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -1068,7 +1114,8 @@ let%expect_test "Converting option list" =
 
 let%expect_test "Converting option array" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -1118,7 +1165,8 @@ let%expect_test "Converting option array" =
 
 let%expect_test "Converting option seq" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -1169,7 +1217,8 @@ let%expect_test "Converting option seq" =
 
 let%expect_test "Converting todo and not_implemented" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -1214,7 +1263,7 @@ let%expect_test "only basic types can be options (py_to_ocaml)" =
       ~f:(fun otype -> Or_error.try_with (fun () -> Otype.py_to_ocaml otype))
       otypes
   in
-  print_s @@ [%sexp_of: string Or_error.t list] results;
+  Stdio.print_s @@ [%sexp_of: string Or_error.t list] results;
   [%expect
     {|
     ((Error (Failure "only basic types can be options"))
@@ -1240,7 +1289,7 @@ let%expect_test "only basic types can be options (py_of_ocaml)" =
       ~f:(fun otype -> Or_error.try_with (fun () -> Otype.py_of_ocaml otype))
       otypes
   in
-  print_s @@ [%sexp_of: string Or_error.t list] results;
+  Stdio.print_s @@ [%sexp_of: string Or_error.t list] results;
   [%expect
     {|
     ((Error (Failure "only basic types can be options"))
@@ -1252,7 +1301,8 @@ let%expect_test "only basic types can be options (py_of_ocaml)" =
 
 let%expect_test "Nested custom modules" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [ "Apple.Pie.t"; "Good.Apple.Pie.t"; "Good_to.Eat_apple.Pie_always.t" ]
@@ -1265,7 +1315,8 @@ let%expect_test "Nested custom modules" =
 
 let%expect_test "Converting Tuple2 (good)" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [
@@ -1316,7 +1367,8 @@ let%expect_test "Converting Tuple2 (good)" =
 
 let%expect_test "Converting Tuple2 (these won't work)" =
   let print x =
-    print_endline @@ Sexp.to_string_hum @@ [%sexp_of: string Or_error.t list] x
+    Stdio.print_endline @@ Sexp.to_string_hum
+    @@ [%sexp_of: string Or_error.t list] x
   in
   let specs =
     [

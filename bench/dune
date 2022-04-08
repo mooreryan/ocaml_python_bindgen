@@ -1,6 +1,6 @@
 (executables
  (names bench_import_module)
- (libraries core core_bench pyml))
+ (libraries core core_bench core_unix.command_unix pyml))
 
 ; TODO: clean up the unused stuff rather than silence warning here
 

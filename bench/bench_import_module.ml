@@ -285,15 +285,14 @@ module Lib = struct
 end
 
 open! Core
-open! Core_bench
 
 let () = if not (Py.is_initialized ()) then Py.initialize ()
 
 let () =
   let open Lib in
-  let bench name f = Bench.Test.create ~name (fun () -> f ()) in
-  Command.run
-    (Bench.make_command
+  let bench name f = Core_bench.Bench.Test.create ~name (fun () -> f ()) in
+  Command_unix.run
+    (Core_bench.Bench.make_command
        [
          bench "Adder.add" (fun () -> Adder.add ~x:10 ~y:20 ());
          bench "Adder_cached.add" (fun () -> Adder_cached.add ~x:10 ~y:20 ());

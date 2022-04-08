@@ -1,7 +1,7 @@
-open! Core_kernel
+open! Base
 open! Lib
 
-let print x = print_s ([%sexp_of: Oarg.val_spec Or_error.t] x)
+let print x = Stdio.print_s ([%sexp_of: Oarg.val_spec Or_error.t] x)
 
 let%expect_test _ =
   print @@ Oarg.parse_val_spec "val f : 'a todo";
@@ -186,7 +186,8 @@ let%expect_test _ =
 let%expect_test _ =
   print
   @@ Oarg.parse_val_spec "val f : t -> arg1:(int * int) option -> unit -> int";
-  [%expect {|
+  [%expect
+    {|
     (Error
      "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->")
      |}]
@@ -195,7 +196,8 @@ let%expect_test _ =
   print
   @@ Oarg.parse_val_spec
        "val f : t -> arg1:int * int -> unit -> (int * int) option";
-  [%expect {|
+  [%expect
+    {|
     (Error
      "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->")
      |}]
@@ -204,7 +206,8 @@ let%expect_test _ =
   print
   @@ Oarg.parse_val_spec
        "val f : t -> arg1:(int * int) Or_error.t -> unit -> int";
-  [%expect {|
+  [%expect
+    {|
     (Error
      "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->")
      |}]
@@ -213,7 +216,8 @@ let%expect_test _ =
   print
   @@ Oarg.parse_val_spec
        "val f : t -> arg1:int * int -> unit -> (int * int) Or_error.t";
-  [%expect {|
+  [%expect
+    {|
     (Error
      "Parsing val_spec failed... val_spec parser > parser failed before all input was consumed at token: ->")
      |}]

@@ -102,8 +102,7 @@ let of_pyo_ret_type_term =
       "Return type of the of_pyobject function.  $(docv) must be %s." enum_alts
   in
   Arg.(
-    value
-    & opt argv_conv `Option
+    value & opt argv_conv `Option
     & info [ "r"; "of-pyo-ret-type" ] ~doc ~docv:"OF_PYO_RET_TYPE")
 
 let associated_with_term =
@@ -117,8 +116,7 @@ let associated_with_term =
       enum_alts
   in
   Arg.(
-    value
-    & opt argv_conv `Class
+    value & opt argv_conv `Class
     & info [ "a"; "associated-with" ] ~doc ~docv:"ASSOCIATED_WITH")
 
 let embed_python_source_term =
@@ -157,9 +155,6 @@ let info =
     ]
   in
   Cmd.info "pyml_bindgen" ~version:Lib.Version.version ~doc ~man ~exits:[]
-
-(* let parse_argv () = match Term.eval program with | `Ok opts -> Ok opts | `Help
-   | `Version -> Error 0 | `Error _ -> Error 1 *)
 
 let parse_argv () =
   match Cmd.eval_value @@ Cmd.v info term with

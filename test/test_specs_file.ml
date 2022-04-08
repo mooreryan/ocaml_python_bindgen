@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Base
 open! Lib
 
 let with_data_as_file ~data ~f =
@@ -50,7 +50,7 @@ let%expect_test _ =
     with_data_as_file ~data:test_data ~f:(fun ~file_name ->
         Specs_file.read file_name)
   in
-  print_s @@ [%sexp_of: Specs_file.spec list] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list] specs;
   [%expect
     {|
     (((attrs ()) (val_spec "val add : x:int -> y:int -> unit -> int"))
@@ -67,7 +67,7 @@ let%expect_test "attributes must start a line" =
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect {| (Error (Failure "attributes must start a line")) |}]
 
 let%expect_test _ =
@@ -80,7 +80,7 @@ int -> int
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect
     {| (Error (Failure "In the middle of a val spec, but have none to work on.")) |}]
 
@@ -93,7 +93,7 @@ let%expect_test _ =
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect
     {| (Error (Failure "We have attributes but no val spec for them to go with.")) |}]
 
@@ -107,7 +107,7 @@ int -> float
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect
     {| (Error (Failure "Found unused attrs but in the middle of a val spec.")) |}]
 
@@ -120,7 +120,7 @@ float
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect {| (Ok (((attrs ()) (val_spec "val f : int -> float")))) |}]
 
 let%expect_test _ =
@@ -132,7 +132,7 @@ float
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect
     {| (Ok (((attrs ("[@@hello world]")) (val_spec "val f : int -> float")))) |}]
 
@@ -145,7 +145,7 @@ val f : int -> float
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect
     {| (Ok (((attrs ("[@@hello world]")) (val_spec "val f : int -> float")))) |}]
 
@@ -155,5 +155,5 @@ let%expect_test _ =
     with_data_as_file ~data ~f:(fun ~file_name ->
         Or_error.try_with (fun () -> Specs_file.read file_name))
   in
-  print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
+  Stdio.print_s @@ [%sexp_of: Specs_file.spec list Or_error.t] specs;
   [%expect {| (Ok (((attrs ()) (val_spec "val f : int -> float")))) |}]

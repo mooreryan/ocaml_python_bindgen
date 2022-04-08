@@ -1,7 +1,7 @@
-open! Core_kernel
+open! Base
 open! Lib
-module Q = Quickcheck
-module QG = Quickcheck.Generator
+module Q = Base_quickcheck
+module QG = Base_quickcheck.Generator
 
 let clean = Utils.clean
 
