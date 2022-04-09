@@ -1,0 +1,4 @@
+(cram
+ (enabled_if (= %{profile} dev))
+ (deps
+  %{bin:pyml_bindgen}))
