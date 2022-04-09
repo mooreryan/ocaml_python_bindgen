@@ -1,6 +1,6 @@
 (library
  (name test_lib)
- (libraries base base_quickcheck lib shexp.process)
+ (libraries base base_quickcheck lib shexp.process stdio)
  (inline_tests)
  (preprocess
   (pps

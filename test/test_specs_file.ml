@@ -2,6 +2,7 @@ open! Base
 open! Lib
 
 let with_data_as_file ~data ~f =
+  let open Stdio in
   let fname, oc = Caml.Filename.open_temp_file "pyml_bindeng_test" "" in
   Exn.protectx
     ~f:(fun oc ->
