@@ -74,45 +74,68 @@ let gen_t5_map_impl () =
   "let t5_map (a, b, c, d, e) ~fa ~fb ~fc ~fd ~fe = (fa a, fb b, fc c, fd d, \
    fe e)"
 
+let with_dbl_endline s = s ^ "\n\n"
+
+let maybe_gen b if_true = if b then [%string "%{if_true}\n\n"] else ""
+
+let gen_sig_contents ~shared_signatures ~specs ~needs_todo
+    ~needs_not_implemented =
+  String.concat
+    [
+      maybe_gen needs_todo U.todo_type;
+      maybe_gen needs_not_implemented U.not_implemented_type;
+      String.concat @@ List.map shared_signatures ~f:with_dbl_endline;
+      String.concat
+      @@ List.map specs ~f:(fun spec ->
+             with_dbl_endline spec.Specs_file.val_spec);
+    ]
+
+let gen_impl_contents ~shared_impls ~impls ~import_module_impl ~needs_base
+    ~needs_todo ~needs_not_implemented ~needs_tuple2 ~needs_tuple3 ~needs_tuple4
+    ~needs_tuple5 =
+  String.concat
+    [
+      maybe_gen needs_todo U.todo_type;
+      maybe_gen needs_not_implemented U.not_implemented_type;
+      with_dbl_endline @@ gen_filter_opt_impl needs_base;
+      maybe_gen needs_tuple2 @@ gen_t2_map_impl ();
+      maybe_gen needs_tuple3 @@ gen_t3_map_impl ();
+      maybe_gen needs_tuple4 @@ gen_t4_map_impl ();
+      maybe_gen needs_tuple5 @@ gen_t5_map_impl ();
+      with_dbl_endline import_module_impl;
+      String.concat @@ List.map shared_impls ~f:with_dbl_endline;
+      String.concat @@ List.map impls ~f:with_dbl_endline;
+    ]
+
 (* I'm going to put the todo and not_implemented types inside the generated
    module. While I could put them outside, it makes it more annoying when
    catting together generated files, so we will go with a bit of duplication. *)
-let print_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
+let gen_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
     ~import_module_impl ~needs_base ~needs_todo ~needs_not_implemented
     ~needs_tuple2 ~needs_tuple3 ~needs_tuple4 ~needs_tuple5 =
-  if needs_base then U.print_dbl_endline "open! Base";
-  print_endline [%string "module %{caml_module} : sig"];
-  if needs_todo then U.print_dbl_endline U.todo_type;
-  if needs_not_implemented then U.print_dbl_endline U.not_implemented_type;
-  List.iter shared_signatures ~f:U.print_dbl_endline;
-  List.iter specs ~f:(fun spec -> U.print_dbl_endline spec.Specs_file.val_spec);
-  print_endline "end = struct";
-  if needs_todo then U.print_dbl_endline U.todo_type;
-  if needs_not_implemented then U.print_dbl_endline U.not_implemented_type;
-  U.print_dbl_endline @@ gen_filter_opt_impl needs_base;
-  if needs_tuple2 then U.print_dbl_endline @@ gen_t2_map_impl ();
-  if needs_tuple3 then U.print_dbl_endline @@ gen_t3_map_impl ();
-  if needs_tuple4 then U.print_dbl_endline @@ gen_t4_map_impl ();
-  if needs_tuple5 then U.print_dbl_endline @@ gen_t5_map_impl ();
-  U.print_dbl_endline import_module_impl;
-  List.iter shared_impls ~f:U.print_dbl_endline;
-  List.iter impls ~f:U.print_dbl_endline;
-  print_endline "end"
+  String.concat
+    [
+      maybe_gen needs_base "open! Base";
+      [%string "module %{caml_module} : sig\n"];
+      gen_sig_contents ~shared_signatures ~specs ~needs_todo
+        ~needs_not_implemented;
+      "end = struct\n";
+      gen_impl_contents ~shared_impls ~impls ~import_module_impl ~needs_base
+        ~needs_todo ~needs_not_implemented ~needs_tuple2 ~needs_tuple3
+        ~needs_tuple4 ~needs_tuple5;
+      "end\n";
+    ]
 
-let print_impls ~shared_impls ~impls ~import_module_impl ~needs_base ~needs_todo
-    ~needs_not_implemented ~needs_tuple2 ~needs_tuple3 ~needs_tuple4
+let gen_impls_only ~shared_impls ~impls ~import_module_impl ~needs_base
+    ~needs_todo ~needs_not_implemented ~needs_tuple2 ~needs_tuple3 ~needs_tuple4
     ~needs_tuple5 =
-  if needs_base then U.print_dbl_endline "open! Base";
-  if needs_todo then U.print_dbl_endline U.todo_type;
-  if needs_not_implemented then U.print_dbl_endline U.not_implemented_type;
-  U.print_dbl_endline @@ gen_filter_opt_impl needs_base;
-  if needs_tuple2 then U.print_dbl_endline @@ gen_t2_map_impl ();
-  if needs_tuple3 then U.print_dbl_endline @@ gen_t3_map_impl ();
-  if needs_tuple4 then U.print_dbl_endline @@ gen_t4_map_impl ();
-  if needs_tuple5 then U.print_dbl_endline @@ gen_t5_map_impl ();
-  U.print_dbl_endline import_module_impl;
-  List.iter shared_impls ~f:U.print_dbl_endline;
-  List.iter impls ~f:U.print_dbl_endline
+  String.concat
+    [
+      maybe_gen needs_base "open! Base";
+      gen_impl_contents ~shared_impls ~impls ~import_module_impl ~needs_base
+        ~needs_todo ~needs_not_implemented ~needs_tuple2 ~needs_tuple3
+        ~needs_tuple4 ~needs_tuple5;
+    ]
 
 (* TODO you could do a similar check with the option returning sigs mixed with
    others, as the only 'a option types should be in the return value. *)
@@ -166,11 +189,13 @@ let run
   match caml_module with
   | Some caml_module ->
       Or_error.return
-      @@ print_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
+      @@ Out_channel.output_string Out_channel.stdout
+      @@ gen_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
            ~import_module_impl ~needs_base ~needs_todo ~needs_not_implemented
            ~needs_tuple2 ~needs_tuple3 ~needs_tuple4 ~needs_tuple5
   | None ->
       Or_error.return
-      @@ print_impls ~shared_impls ~impls ~import_module_impl ~needs_base
+      @@ Out_channel.output_string Out_channel.stdout
+      @@ gen_impls_only ~shared_impls ~impls ~import_module_impl ~needs_base
            ~needs_todo ~needs_not_implemented ~needs_tuple2 ~needs_tuple3
            ~needs_tuple4 ~needs_tuple5
