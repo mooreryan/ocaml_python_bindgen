@@ -36,6 +36,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/examples/</loc>
+         <lastmod>2022-04-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://mooreryan.github.io/ocaml_python_bindgen/getting-started/</loc>
          <lastmod>2022-04-12</lastmod>
          <changefreq>daily</changefreq>
@@ -66,12 +71,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://mooreryan.github.io/ocaml_python_bindgen/of-pyobject/</loc>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/ocaml-attributes/</loc>
          <lastmod>2022-04-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/</loc>
+         <loc>https://mooreryan.github.io/ocaml_python_bindgen/of-pyobject/</loc>
          <lastmod>2022-04-12</lastmod>
          <changefreq>daily</changefreq>
     </url>

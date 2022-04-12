@@ -88,6 +88,10 @@
                   <li class="toctree-l1 current"><a class="reference internal current" href="./">Getting Started</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#binding-constructors">Binding constructors</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#using-a-different-name-for-functions">Using a different name for functions</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#binding-instance-methods">Binding instance methods</a>
     </li>
@@ -99,7 +103,11 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#using-the-generated-module">Using the generated module</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next steps</a>
+    </li>
     </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/">Lots of examples</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
                   </li>
@@ -131,9 +139,7 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../py_fun_name/">Attributes -- py_fun_name</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../ocaml-attributes/">Attributes -- py_fun_name</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                   </li>
@@ -184,9 +190,9 @@
         return a - b
 </code></pre>
 <p>Save that in a file called <code>thing.py</code>.  Just to make it clear, the Python module will be called <code>thing</code>, and the class in that module will be called <code>Thing</code>.  Of course, we can name the OCaml module whatever we'd like, but why not name it <code>Thing</code> as well?</p>
-<p>While there are many ways you may want to write a binding for this class by-hand, <code>pyml_bindgen</code> forces you to do the obvious thing write OCaml functions with the same names as the Python methods.  You also need to use named (or optional) arguments.</p>
+<p>While there are many ways you may want to write a binding for this class by-hand, <code>pyml_bindgen</code> forces you to do things in a particular way, i.e., using named arguments.</p>
 <h2 id="binding-constructors">Binding constructors</h2>
-<p><code>__init__</code> in Python constructs an instance of the class.  While you don't usually call <code>__init__</code> directly, it is the way to instantiate classes when using <code>pyml_bindgen</code>.</p>
+<p><code>__init__</code> in Python constructs an instance of the class.  While in Python you don't usually call <code>__init__</code> directly, it is the way to instantiate classes when using <code>pyml_bindgen</code>.</p>
 <p>In val specs for <code>pyml_bindgen</code>, we use <code>t</code> to represent the OCaml module/Python class you're working on, and so, <code>__init__</code> will return <code>t</code>.</p>
 <p>Python:</p>
 <pre><code class="language-python">def __init__(self, x):
@@ -195,7 +201,14 @@
 <p>OCaml:</p>
 <pre><code class="language-ocaml">val __init__ : x:int -&gt; unit -&gt; t
 </code></pre>
-<p>The other thing to note is that the last argument to method bindings must be <code>unit</code>.  This is mainly an artifact of the parsing and code generators, and may change in the future.</p>
+<p>The other thing to note is that the last argument to method bindings must be <code>unit</code>.</p>
+<h3 id="using-a-different-name-for-functions">Using a different name for functions</h3>
+<p>Sometimes you may want to use a different name for a function or an argument on the OCaml side than is used on the Python side.  This will often be the case for binding constructors.  To do so you can use the <code>py_fun_name</code> attribute.  Check it out.</p>
+<pre><code class="language-ocaml">val create : x:int -&gt; unit -&gt; t
+[@@py_fun_name __init__]
+</code></pre>
+<p>This tells <code>pyml_bindgen</code> that we want to use <code>create</code> on the OCaml side, and bind it to the Python <code>__init__</code> function for the class we're currently working on.</p>
+<p>For more on this, check out the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/attributes">attributes</a> example on GitHub.</p>
 <h2 id="binding-instance-methods">Binding instance methods</h2>
 <p>Instance methods are those that are called on instances of a Python class.  In Python, instance methods take <code>self</code> (a reference to the object) as the first argument.  So when binding instance methods with <code>pyml_bindgen</code>, the first argument must be <code>t</code>.  The middle arguments should be named (or optional) and the final argument should be <code>unit</code>.</p>
 <p>Python:</p>
@@ -208,7 +221,7 @@
 <p><em>The <a href="../instance-methods/">instance methods</a> section has more info on binding instance methods.</em></p>
 <h2 id="binding-static-methods">Binding static methods</h2>
 <p>Python static methods are methods associated with a class, but that don't have access to class-wide state, or access to object state.  You can still call them on either instances of a class or the class itself, but it won't have access to any of that internal state.</p>
-<p>Binding these with <code>pyml_bindgen</code> is pretty much like writing val specs for regular OCaml functions, except that each argument must be named (or optional) and the final argument must be <code>unit</code>.</p>
+<p>Binding these with <code>pyml_bindgen</code> is pretty much like writing val specs for regular OCaml functions, except that they don't start with a <code>t</code> argument, and each argument must be named (or optional) and the final argument must be <code>unit</code>.</p>
 <p>Python:</p>
 <pre><code class="language-python">@staticmethod
 def sub(a, b):
@@ -223,7 +236,6 @@ def sub(a, b):
 <p>In the <code>__init__</code> function of the <code>Thing</code> class, you can see that we set an instance variable/attribute <code>x</code> on instance creation.  You can expose functions in your OCaml interface to access Python instance attributes, by providing a function with the same name as the attribute that takes <code>t</code>.</p>
 <pre><code class="language-ocaml">val x : t -&gt; int
 </code></pre>
-<p>One thing to keep in mind is that many Python function can take values of different types.  We could bind <code>x</code> with an OCaml function that returns <code>float</code>.  In cases where you're binding polymorphic python functions, let the rest of your API guide you on how you'd like to type everything.</p>
 <p><em>You can find more info on binding attributes in the <a href="../attributes/">attributes &amp; properties</a> section of the manual.</em></p>
 <h2 id="running-pyml_bindgen">Running pyml_bindgen</h2>
 <p>Let's put all those val specs into a file called <code>val_specs.txt</code>.  Then, we can run <code>pyml_bindgen</code>!</p>
@@ -236,61 +248,6 @@ def sub(a, b):
 <li>The <code>--caml-module=Thing</code> option tells <code>pyml_bindgen</code> to generate a module and signature called <code>Thing</code> based on the val specs you provided.  If you leave this flag out, <code>pyml_bindgen</code> will just generate the implementations that you can manually add where you want.</li>
 <li>The <code>--of-pyo-ret-type=no_check</code> argument tells <code>pyml_bindgen</code> not to check that the Python class is what you expect it to be.  If there is some weird bug in the Python, or a mistake in your bindings, you'll get a runtime error!  The other options for this are <code>option</code> and <code>or_error</code>, which will check that Python classes are correct, but you'll have to deal with the possibility of error explicitly.</li>
 </ul>
-<p><em>For more info on <code>pyml_bindgen</code> options, see <a href="../cli-options/">here</a>.</em></p>
-<p>I ran <code>lib.ml</code> through <code>ocamlformat</code> so it's easier to read here, but of course, that's optional!</p>
-<pre><code>$ ocamlformat lib.ml --enable-outside-detected-project
-</code></pre>
-<p>And here's the output:</p>
-<pre><code class="language-ocaml">module Thing : sig
-  type t
-
-  val of_pyobject : Pytypes.pyobject -&gt; t option
-
-  val to_pyobject : t -&gt; Pytypes.pyobject
-
-  val __init__ : x:int -&gt; unit -&gt; t
-
-  val x : t -&gt; int
-
-  val add : t -&gt; y:int -&gt; unit -&gt; int
-
-  val sub : a:int -&gt; b:int -&gt; unit -&gt; int
-end = struct
-  let filter_opt l = List.filter_map Fun.id l
-
-  let import_module () = Py.Import.import_module &quot;thing&quot;
-
-  type t = Pytypes.pyobject
-
-  let is_instance pyo =
-    let py_class = Py.Module.get (import_module ()) &quot;Thing&quot; in
-    Py.Object.is_instance pyo py_class
-
-  let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
-  let to_pyobject x = x
-
-  let __init__ ~x () =
-    let callable = Py.Module.get (import_module ()) &quot;Thing&quot; in
-    let kwargs = filter_opt [ Some (&quot;x&quot;, Py.Int.of_int x) ] in
-    of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
-
-  let x t = Py.Int.to_int @@ Py.Object.find_attr_string t &quot;x&quot;
-
-  let add t ~y () =
-    let callable = Py.Object.find_attr_string t &quot;add&quot; in
-    let kwargs = filter_opt [ Some (&quot;y&quot;, Py.Int.of_int y) ] in
-    Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
-
-  let sub ~a ~b () =
-    let class_ = Py.Module.get (import_module ()) &quot;Thing&quot; in
-    let callable = Py.Object.find_attr_string class_ &quot;sub&quot; in
-    let kwargs =
-      filter_opt [ Some (&quot;a&quot;, Py.Int.of_int a); Some (&quot;b&quot;, Py.Int.of_int b) ]
-    in
-    Py.Int.to_int @@ Py.Callable.to_function_with_keywords callable [||] kwargs
-end
-</code></pre>
 <h2 id="using-the-generated-module">Using the generated module</h2>
 <p>While you're here, let's go ahead and make a quick executable that uses the generated module.  Add the following files to your working directory.</p>
 <p><code>dune</code></p>
@@ -317,12 +274,14 @@ let () = print_endline @@ string_of_int @@ Thing.sub ~a:1 ~b:2 ()
 30
 -1
 </code></pre>
+<h2 id="next-steps">Next steps</h2>
+<p>These are just a few of the ways you can use <code>pyml_bindgen</code>.  I suggest you take a look at the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a> on GitHub for more information.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href=".." class="btn btn-neutral float-left" title="pyml_bindgen"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../matplotlib/" class="btn btn-neutral float-right" title="Matplotlib Example">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../examples/" class="btn btn-neutral float-right" title="Lots of examples">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -352,7 +311,7 @@ let () = print_endline @@ string_of_int @@ Thing.sub ~a:1 ~b:2 ()
       <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../matplotlib/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../examples/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

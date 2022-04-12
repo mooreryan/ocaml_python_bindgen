@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Ryan M. Moore" /><link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Ryan M. Moore" /><link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/ocaml-attributes/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Overview - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+    <title>Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Overview";
-        var mkdocs_page_input_path = "rules-overview.md";
-        var mkdocs_page_url = "/ocaml_python_bindgen/rules-overview/";
+        var mkdocs_page_name = "Attributes -- py_fun_name";
+        var mkdocs_page_input_path = "ocaml-attributes.md";
+        var mkdocs_page_url = "/ocaml_python_bindgen/ocaml-attributes/";
       </script>
     
     <script src="../js/jquery-3.6.0.min.js" defer></script>
@@ -40,22 +40,22 @@
   
 
 
-<meta property="og:site_name" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/rules-overview/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/ocaml-attributes/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Overview - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -101,10 +101,8 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Rules</span></p>
-              <ul class="current">
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Overview</a>
-    <ul class="current">
-    </ul>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../rules-overview/">Overview</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../types/">Types</a>
                   </li>
@@ -118,10 +116,18 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Miscellaneous</span></p>
-              <ul>
+              <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../ocaml-attributes/">Attributes -- py_fun_name</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Attributes -- py_fun_name</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#full-example">Full example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#warning">Warning</a>
+    </li>
+    </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                   </li>
@@ -146,9 +152,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-          <li>Rules &raquo;</li><li>Overview</li>
+          <li>Miscellaneous &raquo;</li><li>Attributes -- py_fun_name</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/rules-overview.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/ocaml-attributes.md"
           class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
@@ -158,15 +164,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="rules-overview">Rules Overview</h1>
-<p>The following pages are an informal description of some of the rules you have to follow when using <code>pyml_bindgen</code>.</p>
-<p>I will try and keep them updated and (reasonably) complete.  However, if you really want to know how something is working, you may want to have a look at the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/test">tests</a> or the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a>.</p>
+                <h1 id="attributes">Attributes</h1>
+<p>You can attach certain attributes to your value specifications to change their behavior.</p>
+<p>Currently, the only recognized attributes are <code>py_fun_name</code> and <code>py_arg_name</code>.</p>
+<p>You can use them to bind a Python method names and argument names to something else on the OCaml side.</p>
+<h2 id="example">Example</h2>
+<p>For example, rather than having a <code>Cat.__init__</code> method to call from the OCaml side (i.e., to make a new Python <code>Cat</code> object), you can bind the Python <code>__init__</code> function to something more idiomatic like <code>create</code> or whatever you want.</p>
+<pre><code class="language-ocaml">val create : t -&gt; ...
+[@@py_fun_name __init__]
+</code></pre>
+<p>Another common use for this is to bind the Python <code>__str__</code> method for a class to <code>to_string</code> on the OCaml side.</p>
+<p>You can do this with any function. One reason is that you may want to have some type safety with a polymorphic Python function. While you could pass in <a href="https://mooreryan.github.io/ocaml_python_bindgen/types/#pytypes">Py.Object.t</a> directly, you could also use attributes to bind multiple OCaml functions to the same Python method. E.g.,</p>
+<pre><code class="language-ocaml">val eat : t -&gt; num_mice:int -&gt; unit -&gt; unit
+
+val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
+[@@py_fun_name eat]
+</code></pre>
+<p>In this case, we have one <code>eat</code> function for <code>int</code> and one for <code>float</code>.</p>
+<h2 id="full-example">Full example</h2>
+<p>For a full working example see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/attributes">attributes</a> example on GitHub.</p>
+<p>The linked example also shows how to use <code>py_arg_name</code>.</p>
+<h2 id="warning">Warning</h2>
+<ul>
+<li>If you specify the <code>py_fun_name</code> more than once, it will do something wonky. Eventually, the program will treat this as an error, but for now, it is on you to avoid doing it.</li>
+<li>Attributes have to start a line. I.e., if you have more than one attribute, you can't put them on the same line. They must go on separate lines.</li>
+</ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../recursive/" class="btn btn-neutral float-left" title="Recursive Classes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../types/" class="btn btn-neutral float-right" title="Types">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../auto-gen-bindings/" class="btn btn-neutral float-left" title="Auto-generating bindings"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../of-pyobject/" class="btn btn-neutral float-right" title="Converting `pyobjects` to OCaml types">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -193,10 +221,10 @@
         </span>
     
     
-      <span><a href="../recursive/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../auto-gen-bindings/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../of-pyobject/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -87,6 +87,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/">Lots of examples</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib-2/">Matplotlib Example 2</a>
@@ -106,6 +108,8 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="./">Function & Argument Names</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#reserved-keywords">Reserved keywords</a>
+    </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../attributes/">Attributes & Properties</a>
@@ -119,9 +123,7 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../py_fun_name/">Attributes -- py_fun_name</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../ocaml-attributes/">Attributes -- py_fun_name</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                   </li>
@@ -163,11 +165,23 @@
 <p>The main thing to remember is in addition to being valid OCaml names, they must also be <a href="https://docs.python.org/3/reference/lexical_analysis.html#identifiers">valid python names</a>.  This is because we pass the function name and argument names "as-is" to Python.</p>
 <p>In addition to that, there are a couple other things to keep in mind.</p>
 <ul>
-<li>Argument names that match any of the types mentioned <a href="#allowed-types">above</a> are not allowed.</li>
-<li>Argument names that start with any of the types mentioned <a href="#allowed-types">above</a> are not allowed.  (E.g., <code>val foo : t -&gt; int_thing:string -&gt; unit -&gt; float</code> will fail.)</li>
-<li>Argument names that end with any of the above types are actually okay.  You probably shouldn't name them like this but it works.  Really, it's just an artifact of the parsing :) This will probably be fixed at some point....</li>
+<li>Argument names that match any of the <a href="../types/">types</a> mentioned previously are not allowed.</li>
+<li>Argument names that start with any of the types mentioned are not allowed.  (E.g., <code>val foo : t -&gt; int_thing:string -&gt; unit -&gt; float</code> will fail.)</li>
+<li>Argument names that end with any of the above types are actually okay.  You probably shouldn't name them like this but it works.  Really, it's just an artifact of the parsing :) </li>
 <li>Function names and arguments can start with underscores (e.g., <code>__init__</code>) but they cannot be <em>all</em> underscores.  E.g., <code>val ____ : ...</code> will not parse.</li>
 </ul>
+<h2 id="reserved-keywords">Reserved keywords</h2>
+<p>Sometimes, you are binding a Python method that uses reserved OCaml identifiers either in the name of the method names of the arguments.</p>
+<p>You can get around this using <a href="../ocaml-attributes/">attributes</a> in your value specifications.</p>
+<pre><code class="language-ocaml">val downto_ : from:int -&gt; to_:int -&gt; unit -&gt; int array
+[@@py_fun_name downto]
+[@@py_arg_name to_ to]
+[@@py_arg_name from from_]
+</code></pre>
+<p>(Here is the Python you're binding in this case.)</p>
+<pre><code class="language-python">def downto(from_, to):
+    ...
+</code></pre>
               
             </div>
           </div><footer>

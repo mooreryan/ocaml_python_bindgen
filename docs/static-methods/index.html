@@ -87,6 +87,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/">Lots of examples</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib-2/">Matplotlib Example 2</a>
@@ -117,6 +119,10 @@
     <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#binding-__init__">Binding __init__</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#using-a-different-name">Using a different name</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a>
     </li>
@@ -127,9 +133,7 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../py_fun_name/">Attributes -- py_fun_name</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../ocaml-attributes/">Attributes -- py_fun_name</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                   </li>
@@ -173,8 +177,8 @@
 <h2 id="rules">Rules</h2>
 <ul>
 <li>The final function argument (penultimate type expression) must be <code>unit</code>.</li>
-<li>The return type can be any of the types mentioned <a href="#allowed-types">above</a>.</li>
-<li>The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned <a href="#allowed-types">above</a>.</li>
+<li>The return type can be any of the <a href="../types/">types</a> mentioned earlier.</li>
+<li>The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned earlier.</li>
 </ul>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-ocaml">val add_item : fruit:string -&gt; price:float -&gt; unit -&gt; unit
@@ -192,6 +196,11 @@ val subtract : x:int -&gt; ?y:int -&gt; unit -&gt; int
 <pre><code class="language-ocaml">val __init__ : name:string -&gt; age:int -&gt; unit -&gt; t
 </code></pre>
 <p>If you want to generate functions that ensure the class is correct, you can return <code>t option</code> or <code>t Or_error.t</code> instead.</p>
+<h3 id="using-a-different-name">Using a different name</h3>
+<p>You can use a more natural name for the <code>__init__</code> function.  E.g., something like <code>create</code> by using <a href="../ocaml-attributes/">attributs</a>.</p>
+<pre><code class="language-ocaml">val create : name:string -&gt; age:int -&gt; unit -&gt; t
+[@@py_fun_name __init__]
+</code></pre>
 <h2 id="functions">Functions</h2>
 <p>You can also bind functions that are not associated with a class.</p>
 <p>The rules are the same for the class and static methods.  To tell <code>pyml_bindgen</code> that you are actually binding module functions rather than class methods, you have to pass in a command line option <code>--associated-with module</code>.</p>

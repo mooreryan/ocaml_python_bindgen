@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Ryan M. Moore" /><link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Ryan M. Moore" /><link rel="canonical" href="https://mooreryan.github.io/ocaml_python_bindgen/examples/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator</title>
+    <title>Lots of examples - pyml_bindgen -- OCaml-Python Bindings Generator</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Attributes -- py_fun_name";
-        var mkdocs_page_input_path = "py_fun_name.md";
-        var mkdocs_page_url = "/ocaml_python_bindgen/py_fun_name/";
+        var mkdocs_page_name = "Lots of examples";
+        var mkdocs_page_input_path = "examples.md";
+        var mkdocs_page_url = "/ocaml_python_bindgen/examples/";
       </script>
     
     <script src="../js/jquery-3.6.0.min.js" defer></script>
@@ -40,22 +40,22 @@
   
 
 
-<meta property="og:site_name" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator" />
+<meta property="og:site_name" content="Lots of examples - pyml_bindgen -- OCaml-Python Bindings Generator" />
 
 <meta property="og:type" content="website">
 
-<meta property="og:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta property="og:title" content="Lots of examples - pyml_bindgen -- OCaml-Python Bindings Generator">
 
 <meta property="description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta property="og:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 <meta name="twitter:description" content="Installation and usage instructions for pyml_bindgen, a program to generate OCaml bindings for Python classes via pyml.">
 
-<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/py_fun_name/">
+<meta property="og:url" content="https://mooreryan.github.io/ocaml_python_bindgen/examples/">
 
 <meta property="og:locale" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Attributes -- py_fun_name - pyml_bindgen -- OCaml-Python Bindings Generator">
+<meta name="twitter:title" content="Lots of examples - pyml_bindgen -- OCaml-Python Bindings Generator">
 
   
 
@@ -84,8 +84,12 @@
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples & Tutorials</span></p>
-              <ul>
+              <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Lots of examples</a>
+    <ul class="current">
+    </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../matplotlib/">Matplotlib Example</a>
                   </li>
@@ -114,20 +118,10 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Miscellaneous</span></p>
-              <ul class="current">
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../auto-gen-bindings/">Auto-generating bindings</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Attributes -- py_fun_name</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#full-example">Full example</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#warning">Warning</a>
-    </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cli-options/">CLI Options</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../ocaml-attributes/">Attributes -- py_fun_name</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../of-pyobject/">Converting `pyobjects` to OCaml types</a>
                   </li>
@@ -152,9 +146,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-          <li>Miscellaneous &raquo;</li><li>Attributes -- py_fun_name</li>
+          <li>Examples & Tutorials &raquo;</li><li>Lots of examples</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/py_fun_name.md"
+        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/examples.md"
           class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
@@ -164,37 +158,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="attributes">Attributes</h1>
-<p>You can attach certain attributes to your value specifications to change their behavior.</p>
-<p>Currently, the only recognized attributes are <code>py_fun_name</code> and <code>py_arg_name</code>.</p>
-<p>You can use them to bind a Python method names and argument names to something else on the OCaml side.</p>
-<h2 id="example">Example</h2>
-<p>For example, rather than having a <code>Cat.__init__</code> method to call from the OCaml side (i.e., to make a new Python <code>Cat</code> object), you can bind the Python <code>__init__</code> function to something more idiomatic like <code>create</code> or whatever you want.</p>
-<pre><code class="language-ocaml">val create : t -&gt; ...
-[@@py_fun_name __init__]
-</code></pre>
-<p>Another common use for this is to bind the Python <code>__str__</code> method for a class to <code>to_string</code> on the OCaml side.</p>
-<p>You can do this with any function. One reason is that you may want to have some type safety with a polymorphic Python function. While you could pass in <a href="https://mooreryan.github.io/ocaml_python_bindgen/types/#pytypes">Py.Object.t</a> directly, you could also use attributes to bind multiple OCaml functions to the same Python method. E.g.,</p>
-<pre><code class="language-ocaml">val eat : t -&gt; num_mice:int -&gt; unit -&gt; unit
-
-val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
-[@@py_fun_name eat]
-</code></pre>
-<p>In this case, we have one <code>eat</code> function for <code>int</code> and one for <code>float</code>.</p>
-<h2 id="full-example">Full example</h2>
-<p>For a full working example see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/attributes">attributes</a> example on GitHub.</p>
-<p>The linked example also shows how to use <code>py_arg_name</code>.</p>
-<h2 id="warning">Warning</h2>
-<ul>
-<li>If you specify the <code>py_fun_name</code> more than once, it will do something wonky. Eventually, the program will treat this as an error, but for now, it is on you to avoid doing it.</li>
-<li>Attributes have to start a line. I.e., if you have more than one attribute, you can't put them on the same line. They must go on separate lines.</li>
-</ul>
+                <h1 id="lots-of-examples">Lots of Examples</h1>
+<p>You can find a lot of examples on <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">GitHub</a>.</p>
+<p>These examples are particularly cool because they show you how to use Dune <a href="TODO">rules</a> to generate bindings automatically.  Also, they are tested along with the rest of the <code>pyml_bindgen</code> code, so they are guaranteed to be up-to-date and working.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../auto-gen-bindings/" class="btn btn-neutral float-left" title="Auto-generating bindings"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../cli-options/" class="btn btn-neutral float-right" title="CLI Options">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../getting-started/" class="btn btn-neutral float-left" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../matplotlib/" class="btn btn-neutral float-right" title="Matplotlib Example">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -221,10 +193,10 @@ val eat_part : t -&gt; num_mice:float -&gt; unit -&gt; unit
         </span>
     
     
-      <span><a href="../auto-gen-bindings/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../getting-started/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../cli-options/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../matplotlib/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
