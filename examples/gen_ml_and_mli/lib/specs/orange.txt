@@ -1,0 +1,4 @@
+val create : flavor:string -> unit -> t Or_error.t
+[@@py_fun_name __init__]
+
+val flavor : t -> string

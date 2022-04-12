@@ -156,12 +156,18 @@ let assert_base_and_ret_type_good needs_base of_pyo_ret_type =
         "You said you wanted Option return type, but Or_error was found in the \
          sigs."
 
+let gen_ml_mli_names ~dir ~module_ =
+  (* Assumes the module names provided by the user aren't too messed up. *)
+  let module_base_name = Utils.downcase_first_letter module_ in
+  (dir ^ "/" ^ module_base_name ^ ".ml", dir ^ "/" ^ module_base_name ^ ".mli")
+
 let run
     {
       Main_cli.signatures;
       py_module;
       py_class;
       caml_module;
+      split_caml_module;
       of_pyo_ret_type;
       associated_with;
       embed_python_source;
@@ -186,14 +192,35 @@ let run
   let needs_tuple3 = shared_impl_needs.t3 in
   let needs_tuple4 = shared_impl_needs.t4 in
   let needs_tuple5 = shared_impl_needs.t5 in
-  match caml_module with
-  | Some caml_module ->
+  match (caml_module, split_caml_module) with
+  | Some caml_module, None ->
+      (* We want the module + signature, but not in separate files. *)
       Or_error.return
       @@ Out_channel.output_string Out_channel.stdout
       @@ gen_full ~caml_module ~shared_signatures ~shared_impls ~specs ~impls
            ~import_module_impl ~needs_base ~needs_todo ~needs_not_implemented
            ~needs_tuple2 ~needs_tuple3 ~needs_tuple4 ~needs_tuple5
-  | None ->
+  | Some caml_module, Some dir ->
+      (* We want the module + signature, but split across ml & mli files. *)
+      if not (Caml.Sys.file_exists dir) then Mkdir.mkdir_p dir ~perm:0o750;
+      let ml, mli = gen_ml_mli_names ~dir ~module_:caml_module in
+      let open_base = maybe_gen needs_base "open! Base" in
+      Out_channel.with_file mli ~f:(fun oc ->
+          let contents =
+            gen_sig_contents ~shared_signatures ~specs ~needs_todo
+              ~needs_not_implemented
+          in
+          Out_channel.output_lines oc [ open_base; contents ]);
+      Out_channel.with_file ml ~f:(fun oc ->
+          let contents =
+            gen_impl_contents ~shared_impls ~impls ~import_module_impl
+              ~needs_base ~needs_todo ~needs_not_implemented ~needs_tuple2
+              ~needs_tuple3 ~needs_tuple4 ~needs_tuple5
+          in
+          Out_channel.output_lines oc [ open_base; contents ]);
+      Or_error.return ()
+  | None, Some _ | None, None ->
+      (* Just the impls, no signature. *)
       Or_error.return
       @@ Out_channel.output_string Out_channel.stdout
       @@ gen_impls_only ~shared_impls ~impls ~import_module_impl ~needs_base

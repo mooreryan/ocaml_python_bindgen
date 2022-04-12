@@ -1,2 +1,2 @@
-signatures	py_module	py_class	associated_with	caml_module	embed_python_source	of_pyo_ret_type
-../cat_spec.txt	cat	Cat	class	Cat	NA	no_check
+signatures	py_module	py_class	associated_with	caml_module	split_caml_module	embed_python_source	of_pyo_ret_type
+../cat_spec.txt	cat	Cat	class	Cat	NA	NA	no_check

@@ -1,0 +1,4 @@
+val create : name:string -> unit -> t Or_error.t
+[@@py_fun_name __init__]
+
+val name : t -> string

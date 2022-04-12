@@ -105,3 +105,8 @@ let get_arg_name_map attrs =
       py_arg_names
 
 let find_with_default m ~key ~default = Option.value ~default @@ Map.find m key
+
+let downcase_first_letter s =
+  let first = String.prefix s 1 in
+  let rest = String.drop_prefix s 1 in
+  String.lowercase first ^ rest

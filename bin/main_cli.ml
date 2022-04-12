@@ -7,6 +7,7 @@ type opts = {
   py_class : string;
   associated_with : [ `Class | `Module ];
   caml_module : string option;
+  split_caml_module : string option;
   embed_python_source : string option;
   of_pyo_ret_type : [ `No_check | `Option | `Or_error ];
 }
@@ -30,6 +31,7 @@ let of_pyo_ret_type_of_string = function
   | "no_check" -> `No_check
   | _ -> failwith "of_pyo_ret_type must be no_check, option, or or_error"
 
+(* TODO better error message on empty string. *)
 let opts_of_string s =
   let f () =
     match String.split s ~on:'\t' with
@@ -39,6 +41,7 @@ let opts_of_string s =
      py_class;
      associated_with;
      caml_module;
+     split_caml_module;
      embed_python_source;
      of_pyo_ret_type;
     ] ->
@@ -48,6 +51,7 @@ let opts_of_string s =
           py_class;
           associated_with = associated_with_of_string associated_with;
           caml_module = caml_module_of_string caml_module;
+          split_caml_module = caml_module_of_string split_caml_module;
           embed_python_source =
             embed_python_source_of_string embed_python_source;
           of_pyo_ret_type = of_pyo_ret_type_of_string of_pyo_ret_type;
@@ -56,13 +60,14 @@ let opts_of_string s =
   in
   Or_error.try_with f
 
-let make_opts signatures py_module py_class caml_module of_pyo_ret_type
-    associated_with embed_python_source =
+let make_opts signatures py_module py_class caml_module split_caml_module
+    of_pyo_ret_type associated_with embed_python_source =
   {
     signatures;
     py_module;
     py_class;
     caml_module;
+    split_caml_module;
     of_pyo_ret_type;
     associated_with;
     embed_python_source;
@@ -88,6 +93,16 @@ let caml_module_term =
     value
     & opt (some string) None
     & info [ "c"; "caml-module" ] ~doc ~docv:"CAML_MODULE")
+
+let split_caml_module_term =
+  let doc =
+    "Split sig and impl into .ml and .mli files.  Puts results in the \
+     specified dir.  Dir is created if it does not exist."
+  in
+  Arg.(
+    value
+    & opt (some string) None
+    & info [ "s"; "split-caml-module" ] ~doc ~docv:"SPLIT_CAML_MODULE")
 
 (* See for info about how the enum works.
    https://github.com/dbuenzli/logs/blob/master/src/logs_cli.ml *)
@@ -133,8 +148,8 @@ let embed_python_source_term =
 let term =
   Term.(
     const make_opts $ signatures_term $ py_module_term $ py_class_term
-    $ caml_module_term $ of_pyo_ret_type_term $ associated_with_term
-    $ embed_python_source_term)
+    $ caml_module_term $ split_caml_module_term $ of_pyo_ret_type_term
+    $ associated_with_term $ embed_python_source_term)
 
 let info =
   let doc = "generate pyml bindings for a set of signatures" in

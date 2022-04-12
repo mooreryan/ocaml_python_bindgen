@@ -50,6 +50,10 @@ Help screen
              Return type of the of_pyobject function. OF_PYO_RET_TYPE must be
              one of no_check, option or or_error.
   
+         -s SPLIT_CAML_MODULE, --split-caml-module=SPLIT_CAML_MODULE
+             Split sig and impl into .ml and .mli files. Puts results in the
+             specified dir. Dir is created if it does not exist.
+  
   COMMON OPTIONS
          --help[=FMT] (default=auto)
              Show this help in format FMT. The value FMT must be one of auto,
@@ -77,3 +81,18 @@ File doesn't exist.
   Usage: pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
   Try 'pyml_bindgen --help' for more information.
   [1]
+
+Passing `split-caml-module` without `caml-module`.
+
+  $ pyml_bindgen specs.txt silly Silly --split-caml-module abc
+  ERROR: --split-caml-module was given but --caml-module was not
+  [1]
+
+No value for --split-caml-module
+
+  $ pyml_bindgen specs.txt silly Silly --caml-module Silly --split-caml-module
+  pyml_bindgen: option '--split-caml-module' needs an argument
+  Usage: pyml_bindgen [OPTION]… SIGNATURES PY_MODULE PY_CLASS
+  Try 'pyml_bindgen --help' for more information.
+  [1]
+
