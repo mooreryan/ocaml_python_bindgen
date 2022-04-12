@@ -28,6 +28,7 @@ nav:
     - Embedding Python source: embedding-python.md
     - Handling Tuples: tuples.md
     - Gotchas & Known Bugs: gotchas-bugs.md
+    - Splitting ml and mli files: split-ml-mli.md
 theme:
   name: readthedocs
   custom_dir: custom_theme
