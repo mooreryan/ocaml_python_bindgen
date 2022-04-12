@@ -40,4 +40,4 @@ class Human:
 
 You can see that the `Cat` and `Human` classes make reference to one another. This can be a problem when writing OCaml bindings.
 
-One solution is to use [recursive modules](https://ocaml.org/manual/recursivemodules.html). Rather than run `pyml_bindgen` separately for each class we want to bind, and then manually modify the results to make the modules recursive, this directory shows you how you can use the helper scripts `gen_multi` and `combine_rec_modules` to automate this task.
+One solution is to use [recursive modules](https://ocaml.org/manual/recursivemodules.html). Rather than run `pyml_bindgen` separately for each class we want to bind, and then manually [modify](https://mooreryan.github.io/ocaml_python_bindgen/recursive/) the results to make the modules recursive, this directory shows you how you can use the helper scripts `gen_multi` and `combine_rec_modules` to automate this task.

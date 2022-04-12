@@ -16,10 +16,17 @@ class Bar:
 
 `Foo` has a method that returns a `Bar` object, and `Bar` has a method that returns a `Foo` object.
 
-While this works fine in Python, we have to be more explicit in OCaml to use recursive modules. Technically, `pyml_bindgen` doesn't handle recursive modules.  But it is simple enough to edit the output by hand.  Let's see.
+While this works fine in Python, we have to be more explicit in OCaml in these kinds of situations. 
 
+## Auto-generate bindings
 
-## Value specs
+As of version `0.4.0-SNAPSHOT`, `pyml_bindgen` ships two helper scripts for dealing with this type of thing automatically: `gen_multi` and `combine_rec_modules`.  Check out the [Recursive Modules](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/recursive_modules) example on GitHub for how to use them.
+
+## Semi-manually generate bindings
+
+The `pyml_bindgen` itself doesn't handle recursive modules.  But it is simple enough to edit the output by hand.  Let's see how.
+
+### Value specs
 
 Since there are two classes to bind, we will make two val spec files.
 
@@ -35,7 +42,7 @@ val make_bar : unit -> Bar.t
 val make_foo : unit -> Foo.t
 ```
 
-## Run `pyml_bindgen`
+### Run `pyml_bindgen`
 
 Now, run `pyml_bindgen` with some extra shell commands to make the output look nicer.
 
@@ -49,7 +56,7 @@ pyml_bindgen bar_val_specs.txt silly Bar --caml-module Bar -r no_check \
   | ocamlformat --enable --name=a.ml - >> lib.ml
 ```
 
-## Fix the output
+### Fix the output
 
 If you were to try and compile that code, you'd get a lot of errors including about unknown`Bar` module.
 
@@ -61,61 +68,27 @@ Here is what the output should look like:
 
 ```ocaml
 module rec Foo : sig
-  type t
 
-  val of_pyobject : Pytypes.pyobject -> t
+... sig ...
 
-  val to_pyobject : t -> Pytypes.pyobject
-
-  val make_bar : unit -> Bar.t
 end = struct
-  let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module "silly"
+... impl ...
 
-  type t = Pytypes.pyobject
-
-  let of_pyobject pyo = pyo
-
-  let to_pyobject x = x
-
-  let make_bar () =
-    let class_ = Py.Module.get (import_module ()) "Foo" in
-    let callable = Py.Object.find_attr_string class_ "make_bar" in
-    let kwargs = filter_opt [] in
-    Bar.of_pyobject
-    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end
 
 and Bar : sig
-  type t
 
-  val of_pyobject : Pytypes.pyobject -> t
+... sig ...
 
-  val to_pyobject : t -> Pytypes.pyobject
-
-  val make_foo : unit -> Foo.t
 end = struct
-  let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module "silly"
+... impl ...
 
-  type t = Pytypes.pyobject
-
-  let of_pyobject pyo = pyo
-
-  let to_pyobject x = x
-
-  let make_foo () =
-    let class_ = Py.Module.get (import_module ()) "Bar" in
-    let callable = Py.Object.find_attr_string class_ "make_foo" in
-    let kwargs = filter_opt [] in
-    Foo.of_pyobject
-    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end
 ```
 
-## Using the generated modules
+### Using the generated modules
 
 You can use the generated modules as you would any others.
 
@@ -130,4 +103,4 @@ let (_foo : Foo.t) = Bar.make_foo ()
 
 ## Wrap-up
 
-You may come across cyclic classes when binding Python code.  If you want to bind them in OCaml as it, you will need to use recursive module.  For now, `pyml_bindgen` won't generate them for you automatically, but it is not *too* bad to change them by hand :)
+You may come across cyclic classes when binding Python code.  If you want to bind them in OCaml as it, you will need to use recursive module.  This page shows you how to do it semi-manually using `pyml_bindgen`.  If you would like a more automatic way to do this, see the [Recursive Modules](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/recursive_modules) example on GitHub.
