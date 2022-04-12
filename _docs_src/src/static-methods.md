@@ -9,8 +9,8 @@ val f : a:'a -> ?b:'b -> ... -> unit -> 'c
 ## Rules
 
 * The final function argument (penultimate type expression) must be `unit`.
-* The return type can be any of the types mentioned [above](#allowed-types).
-* The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned [above](#allowed-types).
+* The return type can be any of the [types](./types.md) mentioned earlier.
+* The remaining function arguments must either be named or optional.  The types of these arguments can be any of the types mentioned earlier.
 
 ## Examples
 
@@ -39,6 +39,15 @@ val __init__ : name:string -> age:int -> unit -> t
 ```
 
 If you want to generate functions that ensure the class is correct, you can return `t option` or `t Or_error.t` instead.
+
+### Using a different name
+
+You can use a more natural name for the `__init__` function.  E.g., something like `create` by using [attributs](./ocaml-attributes.md).
+
+```ocaml
+val create : name:string -> age:int -> unit -> t
+[@@py_fun_name __init__]
+```
 
 ## Functions
 

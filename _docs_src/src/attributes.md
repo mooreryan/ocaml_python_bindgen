@@ -11,7 +11,7 @@ val f : t -> 'a
 ## Rules
 
 * The first and only function argument must be `t`.
-* The return type can be any of the types mentioned [above](#allowed-types).
+* The return type can be any of the [types](./types.md) mentioned earlier.
 
 ## Examples
 

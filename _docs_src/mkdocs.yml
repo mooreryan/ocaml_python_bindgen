@@ -8,6 +8,7 @@ nav:
   - pyml_bindgen: index.md
   - Examples & Tutorials:
     - Getting Started: getting-started.md
+    - Lots of examples: examples.md
     - Matplotlib Example: matplotlib.md
     - Matplotlib Example 2: matplotlib-2.md
     - Handling Dictionaries: dictionaries.md
@@ -22,8 +23,7 @@ nav:
     - Class & Static Methods; Functions: static-methods.md
   - Miscellaneous:
     - Auto-generating bindings: auto-gen-bindings.md
-    - Attributes -- py_fun_name: py_fun_name.md
-    - CLI Options: cli-options.md
+    - Attributes -- py_fun_name: ocaml-attributes.md
     - Converting `pyobjects` to OCaml types: of-pyobject.md
     - Embedding Python source: embedding-python.md
     - Handling Tuples: tuples.md

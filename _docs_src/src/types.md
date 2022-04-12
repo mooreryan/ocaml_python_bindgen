@@ -12,13 +12,13 @@ For function arguments, you can use
 - `string`
 - `bool`
 - `t` (i.e., the main type of the current module)
-- Other module types (e.g., `Span.t`, `Doc.t`, `Apple_pie.t`)
+- Other module types (e.g., `Span.t`, `Doc.t`, `Yummy.Apple_pie.t`)
 - Arrays of any of the above types
 - Lists of any of the above types
 - Seq.t of any of the above types
 - `'a option`, `'a option array`, `'a option list`, `'a option Seq.t`
 - `Pytypes.pyobject` or `Py.Object.t` if you need to deal with `pytypes` directly
-- Certain kinds of tuples
+- Certain kinds of [tuples](tuples.md)
 
 Note that your custom types must be newly minted modules. E.g.,
 
@@ -39,7 +39,7 @@ let doc_to_pyobject ...
 
 ## Return types
 
-For return types, you can use all of the above types plus `unit`, and `'a Or_error.t` for types `'a` other than `unit`. However, you cannot use `unit array`, `unit list`, or `unit Seq.t`. This is because I haven't decided the best way to handle `unit` and `None` (that's Python's `None`) quite yet!
+For return types, you can use all of the above types plus `unit`, and `'a Or_error.t` for types `'a` other than `unit`. However, you cannot use `unit array`, `unit list`, or `unit Seq.t`. 
 
 You can also return many kinds of tuples directly. See [here](tuples.md).
 
@@ -53,7 +53,11 @@ You are allowed to nest `'a option` in arrays, lists, and `Seq.t`s (e.g., `'a op
 
 ## Pytypes
 
-Sometimes you may want to deal directly with `Pytypes.pyobject` (a.k.a. `Py.Object.t`). Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason. Regardless, you can use `Pytypes.pyobject` or `Py.Object.t` for this. Of course, you will be leaking a bit of the `pyml` implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.
+Sometimes you may want to deal directly with `Pytypes.pyobject` (a.k.a. `Py.Object.t`). 
+
+Maybe you have a Python function that is truly polymorphic, or you just don't feel like giving a function a specific OCaml type for whatever reason. Regardless, you can use `Pytypes.pyobject` or `Py.Object.t` for this. 
+
+Of course, you will be leaking a bit of the `pyml` implementation into your API, but sometimes that is unavoidable, or just more convenient than dealing with it in another way.
 
 Note that you currently are not allowed to nest `pytypes` in any of the containers or monads.
 
@@ -87,4 +91,4 @@ let f () = failwith "todo: f"
 let g () = failwith "not implemented: g"
 ```
 
-So if a user actually calls these functions, the program will throw.
+So if a user actually calls these functions, the program will fail at runtime.
