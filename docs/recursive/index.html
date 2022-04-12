@@ -97,13 +97,19 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="./">Recursive Classes</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#value-specs">Value specs</a>
+    <li class="toctree-l2"><a class="reference internal" href="#auto-generate-bindings">Auto-generate bindings</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#run-pyml_bindgen">Run pyml_bindgen</a>
+    <li class="toctree-l2"><a class="reference internal" href="#semi-manually-generate-bindings">Semi-manually generate bindings</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#value-specs">Value specs</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#fix-the-output">Fix the output</a>
+    <li class="toctree-l3"><a class="reference internal" href="#run-pyml_bindgen">Run pyml_bindgen</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#using-the-generated-modules">Using the generated modules</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fix-the-output">Fix the output</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-the-generated-modules">Using the generated modules</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#wrap-up">Wrap-up</a>
     </li>
@@ -181,8 +187,12 @@ class Bar:
         return Foo()
 </code></pre>
 <p><code>Foo</code> has a method that returns a <code>Bar</code> object, and <code>Bar</code> has a method that returns a <code>Foo</code> object.</p>
-<p>While this works fine in Python, we have to be more explicit in OCaml to use recursive modules. Technically, <code>pyml_bindgen</code> doesn't handle recursive modules.  But it is simple enough to edit the output by hand.  Let's see.</p>
-<h2 id="value-specs">Value specs</h2>
+<p>While this works fine in Python, we have to be more explicit in OCaml in these kinds of situations. </p>
+<h2 id="auto-generate-bindings">Auto-generate bindings</h2>
+<p>As of version <code>0.4.0-SNAPSHOT</code>, <code>pyml_bindgen</code> ships two helper scripts for dealing with this type of thing automatically: <code>gen_multi</code> and <code>combine_rec_modules</code>.  Check out the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/recursive_modules">Recursive Modules</a> example on GitHub for how to use them.</p>
+<h2 id="semi-manually-generate-bindings">Semi-manually generate bindings</h2>
+<p>The <code>pyml_bindgen</code> itself doesn't handle recursive modules.  But it is simple enough to edit the output by hand.  Let's see how.</p>
+<h3 id="value-specs">Value specs</h3>
 <p>Since there are two classes to bind, we will make two val spec files.</p>
 <p><code>foo_val_specs.txt</code></p>
 <pre><code class="language-ocaml">val make_bar : unit -&gt; Bar.t
@@ -190,7 +200,7 @@ class Bar:
 <p><code>bar_val_specs.txt</code></p>
 <pre><code class="language-ocaml">val make_foo : unit -&gt; Foo.t
 </code></pre>
-<h2 id="run-pyml_bindgen">Run <code>pyml_bindgen</code></h2>
+<h3 id="run-pyml_bindgen">Run <code>pyml_bindgen</code></h3>
 <p>Now, run <code>pyml_bindgen</code> with some extra shell commands to make the output look nicer.</p>
 <pre><code>pyml_bindgen foo_val_specs.txt silly Foo --caml-module Foo -r no_check \
   | ocamlformat --enable --name=a.ml - &gt; lib.ml
@@ -200,66 +210,32 @@ printf &quot;\n&quot; &gt;&gt; lib.ml
 pyml_bindgen bar_val_specs.txt silly Bar --caml-module Bar -r no_check \
   | ocamlformat --enable --name=a.ml - &gt;&gt; lib.ml
 </code></pre>
-<h2 id="fix-the-output">Fix the output</h2>
+<h3 id="fix-the-output">Fix the output</h3>
 <p>If you were to try and compile that code, you'd get a lot of errors including about unknown<code>Bar</code> module.</p>
 <p>To fix it, change <code>module Foo : sig</code> to <code>module rec Foo : sig</code> and <code>module Bar : sig</code> to <code>and Bar : sig</code>.</p>
 <p>Once you do that, everything will compile fine :)</p>
 <p>Here is what the output should look like:</p>
 <pre><code class="language-ocaml">module rec Foo : sig
-  type t
 
-  val of_pyobject : Pytypes.pyobject -&gt; t
+... sig ...
 
-  val to_pyobject : t -&gt; Pytypes.pyobject
-
-  val make_bar : unit -&gt; Bar.t
 end = struct
-  let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module &quot;silly&quot;
+... impl ...
 
-  type t = Pytypes.pyobject
-
-  let of_pyobject pyo = pyo
-
-  let to_pyobject x = x
-
-  let make_bar () =
-    let class_ = Py.Module.get (import_module ()) &quot;Foo&quot; in
-    let callable = Py.Object.find_attr_string class_ &quot;make_bar&quot; in
-    let kwargs = filter_opt [] in
-    Bar.of_pyobject
-    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end
 
 and Bar : sig
-  type t
 
-  val of_pyobject : Pytypes.pyobject -&gt; t
+... sig ...
 
-  val to_pyobject : t -&gt; Pytypes.pyobject
-
-  val make_foo : unit -&gt; Foo.t
 end = struct
-  let filter_opt l = List.filter_map Fun.id l
 
-  let import_module () = Py.Import.import_module &quot;silly&quot;
+... impl ...
 
-  type t = Pytypes.pyobject
-
-  let of_pyobject pyo = pyo
-
-  let to_pyobject x = x
-
-  let make_foo () =
-    let class_ = Py.Module.get (import_module ()) &quot;Bar&quot; in
-    let callable = Py.Object.find_attr_string class_ &quot;make_foo&quot; in
-    let kwargs = filter_opt [] in
-    Foo.of_pyobject
-    @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 end
 </code></pre>
-<h2 id="using-the-generated-modules">Using the generated modules</h2>
+<h3 id="using-the-generated-modules">Using the generated modules</h3>
 <p>You can use the generated modules as you would any others.</p>
 <pre><code class="language-ocaml">open Lib
 
@@ -269,7 +245,7 @@ let (_bar : Bar.t) = Foo.make_bar ()
 let (_foo : Foo.t) = Bar.make_foo ()
 </code></pre>
 <h2 id="wrap-up">Wrap-up</h2>
-<p>You may come across cyclic classes when binding Python code.  If you want to bind them in OCaml as it, you will need to use recursive module.  For now, <code>pyml_bindgen</code> won't generate them for you automatically, but it is not <em>too</em> bad to change them by hand :)</p>
+<p>You may come across cyclic classes when binding Python code.  If you want to bind them in OCaml as it, you will need to use recursive module.  This page shows you how to do it semi-manually using <code>pyml_bindgen</code>.  If you would like a more automatic way to do this, see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples/recursive_modules">Recursive Modules</a> example on GitHub.</p>
               
             </div>
           </div><footer>
