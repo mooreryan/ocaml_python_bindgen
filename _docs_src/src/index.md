@@ -104,6 +104,8 @@ $ ocamlformat --enable-outside-detected-project lib.ml
 
 Check out the examples for more info about using and running `pyml_bindgen`.  Then, check out the rules that you have to follow when writing value specifications that `pyml_bindgen` can read.
 
+Additionally, you may want to check out this [blog post](https://www.tenderisthebyte.com/blog/2022/04/12/ocaml-python-bindgen/) introducing `pyml_bindgen`.
+
 ## License
 
 ### Software

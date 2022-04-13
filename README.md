@@ -65,6 +65,8 @@ For information on installing and using `pyml_bindgen`, check out the [docs](htt
 
 Additionally, you can find examples in the [examples](https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples) directory. One neat thing about these examples is that you can see how to write Dune [rules](https://dune.readthedocs.io/en/stable/dune-files.html#rule) to automatically generate your `pyml` bindings.
 
+You may also want to check out my [blog post](https://www.tenderisthebyte.com/blog/2022/04/12/ocaml-python-bindgen/) introducing `pyml_bindgen`.
+
 ## Installing from sources
 
 If you want to install from sources, e.g., to track the main branch or a development branch, but you do not want to install all the test and development packages, clone the repository, checkout the branch you want to follow and run opam install manually:
