@@ -1,4 +1,5 @@
 (executables
+ (package pyml_bindgen)
  (public_names pyml_bindgen combine_rec_modules gen_multi)
  (names pyml_bindgen combine_rec_modules gen_multi)
  (libraries base cmdliner lib re stdio)
