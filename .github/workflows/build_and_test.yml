@@ -34,18 +34,31 @@ jobs:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
           dune-cache: true
           cache-prefix: v1-${{ matrix.os }}
+          opam-local-packages: pyml_bindgen.opam
 
-      - run: opam install . --deps-only --with-doc --with-test
+      - run: opam install ./pyml_bindgen.opam --deps-only --with-doc --with-test
 
-      - run: opam exec -- opam install core core_bench core_unix bisect_ppx
+      - name: Check release profile
+        run: |
+          opam exec -- make clean
+          opam exec -- make build_release
+          opam exec -- make test_release
+          opam exec -- make install_release
 
-      - run: opam exec -- make build_release
+      - name: Check dev profile
+        run: |
+          opam install ./pyml_bindgen-dev.opam --deps-only --with-doc --with-test
+          opam exec -- make clean
+          opam exec -- make build_dev
+          opam exec -- make test_dev
+          opam exec -- make install_dev
+        if: matrix.ocaml-compiler == '4.14.0'
 
-      - run: opam exec -- make install_release
-
-      - run: opam exec -- make test
-
-      - run: opam exec -- make send_coverage
+      # Send the coverage.
+      - name: Send coverage
+        run: |
+          opam install bisect_ppx
+          opam exec -- make send_coverage
         if: matrix.ocaml-compiler == '4.14.0'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
