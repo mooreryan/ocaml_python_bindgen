@@ -1,3 +1,5 @@
 (executable
+ (enabled_if
+  (= %{profile} dev))
  (name hello)
  (libraries pyml base gen_ml_and_mli_lib))

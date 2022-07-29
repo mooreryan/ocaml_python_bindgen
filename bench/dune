@@ -1,4 +1,6 @@
 (executables
+ (enabled_if
+  (= %{profile} dev))
  (names bench_import_module)
  (libraries core core_bench core_unix.command_unix pyml))
 

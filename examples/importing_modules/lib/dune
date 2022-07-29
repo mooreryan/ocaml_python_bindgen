@@ -1,4 +1,6 @@
 (library
+ (enabled_if
+  (= %{profile} dev))
  (name importing_modules_lib)
  (libraries pyml))
 

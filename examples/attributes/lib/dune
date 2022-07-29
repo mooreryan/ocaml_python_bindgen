@@ -1,4 +1,6 @@
 (library
+ (enabled_if
+  (= %{profile} dev))
  (name examples_attributes_lib)
  (libraries pyml))
 

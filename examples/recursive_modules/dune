@@ -1,3 +1,5 @@
 (executable
+ (enabled_if
+  (= %{profile} dev))
  (name run)
  (libraries base pyml stdio examples_recursive_modules_lib))

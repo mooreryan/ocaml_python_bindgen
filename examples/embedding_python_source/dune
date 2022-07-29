@@ -1,3 +1,5 @@
 (executable
+ (enabled_if
+  (= %{profile} dev))
  (name run)
  (libraries embedding_py_source_lib pyml))

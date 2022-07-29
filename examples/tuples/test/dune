@@ -1,4 +1,6 @@
 (cram
+ (enabled_if
+  (= %{profile} dev))
  (deps
   ../run.exe
   (source_tree ..)))

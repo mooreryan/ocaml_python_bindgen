@@ -1,4 +1,6 @@
 (library
+ (enabled_if
+  (= %{profile} dev))
  (name gen_ml_and_mli_lib)
  (libraries pyml base))
 
@@ -6,22 +8,24 @@
  (targets thing.ml thing.mli)
  (mode
   (promote (until-clean)))
- (deps (source_tree specs) (source_tree py))
+ (deps
+  (source_tree specs)
+  (source_tree py))
  (action
   (progn
    (run
-     %{bin:pyml_bindgen}
-     specs/thing.txt
-     thing
-     Thing
-     --caml-module
-     Thing
-     --split-caml-module
-     .
-     --of-pyo-ret-type
-     or_error
-     --embed-python-source
-     py/thing.py)
+    %{bin:pyml_bindgen}
+    specs/thing.txt
+    thing
+    Thing
+    --caml-module
+    Thing
+    --split-caml-module
+    .
+    --of-pyo-ret-type
+    or_error
+    --embed-python-source
+    py/thing.py)
    (run ocamlformat thing.ml --inplace)
    (run ocamlformat thing.mli --inplace))))
 
@@ -29,21 +33,23 @@
  (targets orange.ml orange.mli)
  (mode
   (promote (until-clean)))
- (deps (source_tree specs) (source_tree py))
+ (deps
+  (source_tree specs)
+  (source_tree py))
  (action
   (progn
    (run
-     %{bin:pyml_bindgen}
-     specs/orange.txt
-     orange
-     Orange
-     --caml-module
-     Orange
-     --split-caml-module
-     .
-     --of-pyo-ret-type
-     or_error
-     --embed-python-source
-     py/orange.py)
+    %{bin:pyml_bindgen}
+    specs/orange.txt
+    orange
+    Orange
+    --caml-module
+    Orange
+    --split-caml-module
+    .
+    --of-pyo-ret-type
+    or_error
+    --embed-python-source
+    py/orange.py)
    (run ocamlformat orange.ml --inplace)
    (run ocamlformat orange.mli --inplace))))

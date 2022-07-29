@@ -1,3 +1,5 @@
 (executable
+ (enabled_if
+  (= %{profile} dev))
  (name run)
  (libraries examples_attributes_lib pyml))

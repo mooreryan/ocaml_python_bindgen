@@ -1,4 +1,6 @@
 (library
+ (enabled_if
+  (= %{profile} dev))
  (name embedding_py_source_lib)
  (libraries pyml))
 
