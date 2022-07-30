@@ -15,25 +15,18 @@ of_pyobject with no check
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : name:string -> unit -> t
-  
     val eat : t -> fly:Creature.Bug.Fly.t -> unit -> unit
-  
     val hunger : t -> int
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let __init__ ~name () =
@@ -64,19 +57,13 @@ of_pyobject returning option
     type t
   
     val of_pyobject : Pytypes.pyobject -> t option
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : name:string -> unit -> t option
-  
     val eat : t -> fly:Creature.Bug.Fly.t -> unit -> unit
-  
     val hunger : t -> int
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
@@ -86,7 +73,6 @@ of_pyobject returning option
       Py.Object.is_instance pyo py_class
   
     let of_pyobject pyo = if is_instance pyo then Some pyo else None
-  
     let to_pyobject x = x
   
     let __init__ ~name () =
@@ -119,19 +105,13 @@ of_pyobject returning Or_error
     type t
   
     val of_pyobject : Pytypes.pyobject -> t Or_error.t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : name:string -> unit -> t Or_error.t
-  
     val eat : t -> fly:Creature.Bug.Fly.t -> unit -> unit
-  
     val hunger : t -> int
   end = struct
     let filter_opt = List.filter_opt
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject

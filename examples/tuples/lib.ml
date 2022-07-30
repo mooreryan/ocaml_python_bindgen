@@ -2,29 +2,17 @@ module Tuples : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val pair : x:int -> y:string -> unit -> int * string
-
   val identity : x:int * int -> unit -> int * int
-
   val first : x:int * int -> unit -> int
-
   val make : ?x:int * int -> unit -> int * int
-
   val apple : x:int list -> unit -> int list
-
   val pie_list : x:(int * int) list -> unit -> (int * int) list
-
   val pie_array : x:(int * int) array -> unit -> (int * int) array
-
   val pie_seq : x:(int * int) Seq.t -> unit -> (int * int) Seq.t
-
   val t2 : x:int * string -> unit -> int * string
-
   val t3 : x:int * string * float -> unit -> int * string * float
-
   val t4 : x:int * string * float * bool -> unit -> int * string * float * bool
 
   val t5 :
@@ -60,17 +48,11 @@ module Tuples : sig
     (int * int) list
 end = struct
   let filter_opt l = List.filter_map Fun.id l
-
   let t2_map (a, b) ~fa ~fb = (fa a, fb b)
-
   let t3_map (a, b, c) ~fa ~fb ~fc = (fa a, fb b, fc c)
-
   let t4_map (a, b, c, d) ~fa ~fb ~fc ~fd = (fa a, fb b, fc c, fd d)
-
   let t5_map (a, b, c, d, e) ~fa ~fb ~fc ~fd ~fe = (fa a, fb b, fc c, fd d, fe e)
-
   let py_module = lazy (Py.Import.import_module "tuples")
-
   let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
@@ -80,7 +62,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let pair ~x ~y () =

@@ -2,9 +2,7 @@ module Adder : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val add : x:int -> y:int -> unit -> int
 end = struct
   let filter_opt l = List.filter_map Fun.id l
@@ -35,7 +33,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let add ~x ~y () =

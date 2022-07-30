@@ -35,8 +35,8 @@
    (>= "v0.15"))
   (ocamlformat
    (and
-    (>= "0.21")
-    (< "0.22")))
+    (>= "0.23")
+    (< "0.24")))
   (ocaml-lsp-server
    (>= "1.13"))
   pyml))
@@ -75,8 +75,8 @@
     :with-test))
   (ocamlformat
    (and
-    (>= "0.21.0")
-    (< "0.22.0")
+    (>= "0.23")
+    (< "0.24")
     :with-test))
   (ppx_assert
    (and

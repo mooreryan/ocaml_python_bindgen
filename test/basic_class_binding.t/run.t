@@ -13,56 +13,38 @@ of_pyobject with no check
   $ ocamlformat --enable-outside-detected-project lib.ml
   module Silly : sig
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
-  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : x:int -> y:int -> unit -> t
-  
     val x : t -> int
-  
     val y : t -> int
-  
     val foo : t -> a:int -> b:int -> unit -> int
-  
     val do_nothing : t -> unit -> unit
-  
     val return_list : t -> l:string list -> unit -> string list
-  
     val return_opt_list : t -> l:string option list -> unit -> string option list
-  
     val return_array : t -> a:string array -> unit -> string array
   
     val return_opt_array :
       t -> a:string option array -> unit -> string option array
   
     val bar : a:int -> b:int -> unit -> int
-  
     val do_nothing2 : unit -> unit
-  
     val hello : 'a todo
-  
     val world : 'a not_implemented
   end = struct
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
   
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let __init__ ~x ~y () =
@@ -73,7 +55,6 @@ of_pyobject with no check
       of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let x t = Py.Int.to_int @@ Py.Object.find_attr_string t "x"
-  
     let y t = Py.Int.to_int @@ Py.Object.find_attr_string t "y"
   
     let foo t ~a ~b () =
@@ -151,7 +132,6 @@ of_pyobject with no check
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let hello () = failwith "todo: hello"
-  
     let world () = failwith "not implemented: world"
   end
   $ dune exec ./run_no_check.exe 2> /dev/null
@@ -171,50 +151,33 @@ of_pyobject returning option
   $ ocamlformat --enable-outside-detected-project lib.ml
   module Silly : sig
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
-  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t option
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : x:int -> y:int -> unit -> t option
-  
     val x : t -> int
-  
     val y : t -> int
-  
     val foo : t -> a:int -> b:int -> unit -> int
-  
     val do_nothing : t -> unit -> unit
-  
     val return_list : t -> l:string list -> unit -> string list
-  
     val return_opt_list : t -> l:string option list -> unit -> string option list
-  
     val return_array : t -> a:string array -> unit -> string array
   
     val return_opt_array :
       t -> a:string option array -> unit -> string option array
   
     val bar : a:int -> b:int -> unit -> int
-  
     val do_nothing2 : unit -> unit
-  
     val hello : 'a todo
-  
     val world : 'a not_implemented
   end = struct
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
   
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
@@ -224,7 +187,6 @@ of_pyobject returning option
       Py.Object.is_instance pyo py_class
   
     let of_pyobject pyo = if is_instance pyo then Some pyo else None
-  
     let to_pyobject x = x
   
     let __init__ ~x ~y () =
@@ -235,7 +197,6 @@ of_pyobject returning option
       of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let x t = Py.Int.to_int @@ Py.Object.find_attr_string t "x"
-  
     let y t = Py.Int.to_int @@ Py.Object.find_attr_string t "y"
   
     let foo t ~a ~b () =
@@ -313,7 +274,6 @@ of_pyobject returning option
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let hello () = failwith "todo: hello"
-  
     let world () = failwith "not implemented: world"
   end
   $ dune exec ./run_option.exe 2> /dev/null
@@ -335,50 +295,33 @@ of_pyobject returning Or_error
   
   module Silly : sig
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
-  
     type t
   
     val of_pyobject : Pytypes.pyobject -> t Or_error.t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : x:int -> y:int -> unit -> t Or_error.t
-  
     val x : t -> int
-  
     val y : t -> int
-  
     val foo : t -> a:int -> b:int -> unit -> int
-  
     val do_nothing : t -> unit -> unit
-  
     val return_list : t -> l:string list -> unit -> string list
-  
     val return_opt_list : t -> l:string option list -> unit -> string option list
-  
     val return_array : t -> a:string array -> unit -> string array
   
     val return_opt_array :
       t -> a:string option array -> unit -> string option array
   
     val bar : a:int -> b:int -> unit -> int
-  
     val do_nothing2 : unit -> unit
-  
     val hello : 'a todo
-  
     val world : 'a not_implemented
   end = struct
     type 'a todo = unit -> 'a
-  
     type 'a not_implemented = unit -> 'a
   
     let filter_opt = List.filter_opt
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
@@ -401,7 +344,6 @@ of_pyobject returning Or_error
       of_pyobject @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let x t = Py.Int.to_int @@ Py.Object.find_attr_string t "x"
-  
     let y t = Py.Int.to_int @@ Py.Object.find_attr_string t "y"
   
     let foo t ~a ~b () =
@@ -479,7 +421,6 @@ of_pyobject returning Or_error
       ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
   
     let hello () = failwith "todo: hello"
-  
     let world () = failwith "not implemented: world"
   end
   $ dune exec ./run_or_error.exe

@@ -21,11 +21,8 @@ Cat the files and run.
     type t
   
     val make : int -> string -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val of_pyobject : Pytypes.pyobject -> t
-  
     val print_endline : t -> unit
   end = struct
     type t = int * string
@@ -46,21 +43,16 @@ Cat the files and run.
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val foo : x:Tuple_int_string.t -> unit -> Tuple_int_string.t
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let foo ~x () =

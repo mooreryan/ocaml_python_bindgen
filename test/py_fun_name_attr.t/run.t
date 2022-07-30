@@ -15,29 +15,20 @@ of_pyobject with no check
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val create : name:string -> unit -> t
-  
     val to_string : t -> unit -> string
-  
     val eat : t -> num_mice:int -> unit -> unit
-  
     val eat_part : t -> num_mice:float -> unit -> unit
-  
     val climb : t -> how_high:int -> unit -> unit
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let create ~name () =

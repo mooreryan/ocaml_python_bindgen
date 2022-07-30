@@ -11,25 +11,18 @@ Basic usage.
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val add_feature : t -> pr_name:string -> pr_value:string -> unit -> unit
-  
     val add_feature2 : t -> pr_name:string -> pr_value:string -> unit -> unit
-  
     val add_feature3 : t -> pr_name:string -> pr_value:string -> unit -> unit
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly_mod")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let add_feature t ~pr_name ~pr_value () =

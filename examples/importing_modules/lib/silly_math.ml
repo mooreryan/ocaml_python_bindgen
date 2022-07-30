@@ -2,15 +2,11 @@ module Add : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val add : x:int -> y:int -> unit -> int
 end = struct
   let filter_opt l = List.filter_map Fun.id l
-
   let py_module = lazy (Py.Import.import_module "silly_math.adder.add")
-
   let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
@@ -20,7 +16,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let add ~x ~y () =
@@ -35,9 +30,7 @@ module Subtract : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val subtract : x:int -> y:int -> unit -> int
 end = struct
   let filter_opt l = List.filter_map Fun.id l
@@ -54,7 +47,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let subtract ~x ~y () =

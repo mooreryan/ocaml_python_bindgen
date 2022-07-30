@@ -2,17 +2,11 @@ module rec Human : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val create : name:string -> unit -> t
-
   val to_string : t -> unit -> string
-
   val adopt_cat : t -> cat:Cat.t -> unit -> unit
-
   val name : t -> string
-
   val cat : t -> Cat.t
 end = struct
   let filter_opt l = List.filter_map Fun.id l
@@ -51,7 +45,6 @@ end = struct
   type t = Pytypes.pyobject
 
   let of_pyobject pyo = pyo
-
   let to_pyobject x = x
 
   let create ~name () =
@@ -71,7 +64,6 @@ end = struct
     ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 
   let name t = Py.String.to_string @@ Py.Object.find_attr_string t "name"
-
   let cat t = Cat.of_pyobject @@ Py.Object.find_attr_string t "cat"
 end
 
@@ -79,17 +71,11 @@ and Cat : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val create : name:string -> unit -> t
-
   val to_string : t -> unit -> string
-
   val adopt_human : t -> human:Human.t -> unit -> unit
-
   val name : t -> string
-
   val human : t -> Human.t
 end = struct
   let filter_opt l = List.filter_map Fun.id l
@@ -127,7 +113,6 @@ end = struct
   type t = Pytypes.pyobject
 
   let of_pyobject pyo = pyo
-
   let to_pyobject x = x
 
   let create ~name () =
@@ -147,6 +132,5 @@ end = struct
     ignore @@ Py.Callable.to_function_with_keywords callable [||] kwargs
 
   let name t = Py.String.to_string @@ Py.Object.find_attr_string t "name"
-
   let human t = Human.of_pyobject @@ Py.Object.find_attr_string t "human"
 end

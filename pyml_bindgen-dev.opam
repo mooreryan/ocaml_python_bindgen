@@ -14,7 +14,7 @@ depends: [
   "core" {>= "v0.15"}
   "core_bench" {>= "v0.15"}
   "core_unix" {>= "v0.15"}
-  "ocamlformat" {>= "0.21" & < "0.22"}
+  "ocamlformat" {>= "0.23" & < "0.24"}
   "ocaml-lsp-server" {>= "1.13"}
   "pyml"
   "odoc" {with-doc}

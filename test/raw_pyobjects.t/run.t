@@ -15,26 +15,21 @@ of_pyobject with no check
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
   
     val concat1 :
       x:Pytypes.pyobject -> y:Pytypes.pyobject -> unit -> Pytypes.pyobject
   
     val concat2 : x:Py.Object.t -> y:Py.Object.t -> unit -> Py.Object.t
-  
     val concat3 : x:int -> y:Py.Object.t -> unit -> int
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "silly")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let concat1 ~x ~y () =

@@ -2,15 +2,11 @@ module Hearts : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val hearts : unit -> string
 end = struct
   let filter_opt l = List.filter_map Fun.id l
-
   let py_module = lazy (Py.Import.import_module "magic_dust.hearts")
-
   let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
@@ -20,7 +16,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let hearts () =
@@ -34,15 +29,11 @@ module Sparkles : sig
   type t
 
   val of_pyobject : Pytypes.pyobject -> t option
-
   val to_pyobject : t -> Pytypes.pyobject
-
   val sparkles : unit -> string
 end = struct
   let filter_opt l = List.filter_map Fun.id l
-
   let py_module = lazy (Py.Import.import_module "magic_dust.sparkles")
-
   let import_module () = Lazy.force py_module
 
   type t = Pytypes.pyobject
@@ -52,7 +43,6 @@ end = struct
     Py.Object.is_instance pyo py_class
 
   let of_pyobject pyo = if is_instance pyo then Some pyo else None
-
   let to_pyobject x = x
 
   let sparkles () =

@@ -47,7 +47,6 @@ Check the generated source.
   type t = Pytypes.pyobject
   
   let of_pyobject pyo = pyo
-  
   let to_pyobject x = x
   
   let __init__ ~name ~age () =
@@ -104,7 +103,6 @@ Now try a module inside a package.
   type t = Pytypes.pyobject
   
   let of_pyobject pyo = pyo
-  
   let to_pyobject x = x
   
   let __init__ ~name ~age () =
@@ -155,23 +153,17 @@ And run it.
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : name:string -> age:int -> unit -> t
-  
     val __str__ : t -> unit -> string
   end = struct
     let filter_opt l = List.filter_map Fun.id l
-  
     let py_module = lazy (Py.Import.import_module "person")
-  
     let import_module () = Lazy.force py_module
   
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let __init__ ~name ~age () =
@@ -196,11 +188,8 @@ And run it.
     type t
   
     val of_pyobject : Pytypes.pyobject -> t
-  
     val to_pyobject : t -> Pytypes.pyobject
-  
     val __init__ : color:string -> unit -> t
-  
     val __str__ : t -> unit -> string
   end = struct
     let filter_opt l = List.filter_map Fun.id l
@@ -232,7 +221,6 @@ And run it.
     type t = Pytypes.pyobject
   
     let of_pyobject pyo = pyo
-  
     let to_pyobject x = x
   
     let __init__ ~color () =
