@@ -23,6 +23,14 @@ check:
 clean:
 	dune clean
 
+.PHONY: deps
+deps:
+	opam install ./pyml_bindgen.opam --deps-only --with-doc --with-test
+
+.PHONY: deps_dev
+deps_dev:
+	opam install ./pyml_bindgen-dev.opam --deps-only --with-doc --with-test
+
 .PHONY: install_dev
 install_dev:
 	dune install --profile=dev

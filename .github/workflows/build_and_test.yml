@@ -36,7 +36,7 @@ jobs:
           cache-prefix: v1-${{ matrix.os }}
           opam-local-packages: pyml_bindgen.opam
 
-      - run: opam install ./pyml_bindgen.opam --deps-only --with-doc --with-test
+      - run: opam exec -- make deps
 
       - name: Check release profile
         run: |
@@ -47,7 +47,7 @@ jobs:
 
       - name: Check dev profile
         run: |
-          opam install ./pyml_bindgen-dev.opam --deps-only --with-doc --with-test
+          opam exec -- make deps_dev
           opam exec -- make clean
           opam exec -- make build_dev
           opam exec -- make test_dev
