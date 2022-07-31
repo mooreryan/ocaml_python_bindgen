@@ -73,8 +73,9 @@ If you want to install from sources, e.g., to track the main branch or a develop
 
 ```
 $ git clone https://github.com/mooreryan/ocaml_python_bindgen.git
+# Checkout whatever branch you want, in this case `dev`.
 $ git checkout dev
-$ opam install .
+$ opam install ./pyml_bindgen.opam
 ```
 
 This will save a lot of install time as it avoids some heavy packages.
