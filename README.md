@@ -69,28 +69,29 @@ You may also want to check out my [blog post](https://www.tenderisthebyte.com/bl
 
 ## Installing from sources
 
-If you want to install from sources, e.g., to track the main branch or a development branch, but you do not want to install all the test and development packages, clone the repository, checkout the branch you want to follow and run opam install manually:
+If you want to install from sources, e.g., to track the main branch or a development branch, but you do not want to install all the test and development packages, clone the repository, checkout the branch you want to follow and install:
 
 ```
 $ git clone https://github.com/mooreryan/ocaml_python_bindgen.git
 # Checkout whatever branch you want, in this case `dev`.
 $ git checkout dev
-$ opam install ./pyml_bindgen.opam
+$ make opam_install
 ```
 
 This will save a lot of install time as it avoids some heavy packages.
 
 ## Development
 
-If instead, you want to work on `pyml_bindgen` development, will need to ensure you have the test dependencies, as well as a couple dependencies that are not included in the `opam` file (`core`, `core_bench`, and `bisect_ppx`.)
+If instead, you want to work on `pyml_bindgen` development, will need to ensure you have the development and test dependencies.
 
 E.g.,
 
 ```
 $ git clone https://github.com/mooreryan/ocaml_python_bindgen.git
-$ opam install . --deps-only --with-doc --with-test
-$ opam install core core_bench core_unix bisect_ppx
-$ dune build
+$ make deps
+$ make deps_dev
+# Start working!
+$ dune test
 ```
 
 ## License

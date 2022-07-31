@@ -39,6 +39,10 @@ install_dev:
 install_release:
 	dune install --profile=release
 
+.PHONY: opam_install
+opam_install:
+	opam install ./pyml_bindgen.opam
+
 .PHONY: promote
 promote:
 	dune promote
