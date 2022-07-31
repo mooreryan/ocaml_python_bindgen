@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.4.0 (2022-07-31)
+
 ### Added
 
 - Add helper scripts for binding cyclic Python classes
@@ -8,6 +10,7 @@
   - You can combine these two to make it easier to generate recursive modules, which can be useful for binding Python classes that reference each other.
 - Add support for `py_arg_name` attribute. It lets you use different argument names in the OCaml bindings than used in the Python functions.
 - Add `--split-caml-module` option to split generated module into separate `ml` and `mli` files.
+- Add `pyml_bindgen-dev.opam` for easier installation of development dependencies.
 
 ## 0.3.1 (2022-03-23)
 
