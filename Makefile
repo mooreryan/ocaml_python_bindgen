@@ -29,7 +29,7 @@ deps:
 
 .PHONY: deps_dev
 deps_dev:
-	opam install ./pyml_bindgen-dev.opam --deps-only --with-doc --with-test
+	opam install ./pyml_bindgen-dev.opam --deps-only
 
 .PHONY: install_dev
 install_dev:
