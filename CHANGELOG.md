@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 0.4.1 (2022-08-01)
+
+### Fixed
+
+- Fixed cram dependency specification
+
 ## 0.4.0 (2022-07-31)
 
 ### Added
