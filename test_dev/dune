@@ -1,4 +1,4 @@
 (cram
  (enabled_if
   (= %{profile} dev))
- (deps %{bin:pyml_bindgen}))
+ (deps %{bin:combine_rec_modules} %{bin:gen_multi} %{bin:pyml_bindgen}))

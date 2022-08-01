@@ -15,5 +15,6 @@
  (applies_to :whole_subtree)
  (deps
   %{bin:combine_rec_modules}
+  %{bin:gen_multi}
   %{bin:pyml_bindgen}
   ./helpers/sanitize_logs))
