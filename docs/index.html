@@ -73,7 +73,7 @@
           <a href="." class="icon icon-home"> pyml_bindgen -- OCaml-Python Bindings Generator
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -95,6 +95,8 @@
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick start</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next steps</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
         <ul>
@@ -169,11 +171,10 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
       <li>pyml_bindgen</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/index.md"
-          class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/mooreryan/ocaml_python_bindgen/edit/main/_docs_src/src/index.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -190,19 +191,20 @@
 <!-- [![Coverage Status](https://coveralls.io/repos/github/mooreryan/ocaml_python_bindgen/badge.svg?branch=main)](https://coveralls.io/github/mooreryan/ocaml_python_bindgen?branch=main) -->
 
 <p>Generate Python bindings with <a href="https://github.com/thierry-martinez/pyml">pyml</a> directly from OCaml value specifications.</p>
-<p>While you <em>could</em> write all your Python bindings by hand, it can be tedious and it gets old real quick.  While <code>pyml_bindgen</code> can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖</p>
+<p>While you <em>could</em> write all your Python bindings by hand, it can be tedious and it gets old real quick. While <code>pyml_bindgen</code> can't yet auto-generate all the bindings you may need, it can definitely take care of a lot of the tedious and repetitive work you need to do when writing bindings for a big Python library!! 💖</p>
 <h2 id="how-to-get-started">How to get started</h2>
-<p>Getting started with a new package or library and going through lots of docs can be frustrating.  Here's the order I would suggest you look at these docs</p>
+<p>Getting started with a new package or library and going through lots of docs can be frustrating. Here's the order I would suggest you look at these docs</p>
 <ul>
 <li>Read the installing and quick start sections of this page.</li>
-<li>Then read through the <a href="getting-started/">getting started</a> tutorial.  If you only read one page in the docs, make it this one!  It explains most of what you need to know to get started with a simple example, while not getting bogged down in too much details.</li>
+<li>Then read through the <a href="getting-started/">getting started</a> tutorial. If you only read one page in the docs, make it this one! It explains most of what you need to know to get started with a simple example, while not getting bogged down in too much details.</li>
 <li>Next, check out some working <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a> on GitHub.</li>
 <li>Finally, there are some more (potentially) important details in the Rules and Miscellaneous sections of this site.</li>
 </ul>
 <p>If you have any questions or issues, please <a href="https://github.com/mooreryan/ocaml_python_bindgen/issues">let me know</a> about it on GitHub!</p>
+<p><em>Note: I try to keep this doc updated, but it may sometimes get out-of-sync with the latest <code>pyml_bindgen</code>. For the most up-to-date info, see the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a>, <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/test">tests</a>, and <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/test_dev">dev tests</a>, which are tested and kept up-to-date under CI.</em></p>
 <h2 id="installing">Installing</h2>
 <h3 id="using-opam">Using Opam</h3>
-<p><code>pyml_bindgen</code> is available on <a href="https://opam.ocaml.org/packages/pyml_bindgen/">Opam</a>.  You can install it in the normal way:</p>
+<p><code>pyml_bindgen</code> is available on <a href="https://opam.ocaml.org/packages/pyml_bindgen/">Opam</a>. You can install it in the normal way:</p>
 <pre><code class="language-bash">$ opam install pyml_bindgen
 </code></pre>
 <h3 id="installing-from-sources">Installing from sources</h3>
@@ -221,9 +223,9 @@ $ opam install core core_bench core_unix bisect_ppx
 $ dune build
 </code></pre>
 <h2 id="quick-start">Quick start</h2>
-<p><em>Note: You can find full examples in the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a> directory on GitHub.  One neat thing about the examples there is that you can see how to write Dune <a href="https://dune.readthedocs.io/en/stable/dune-files.html#rule">rules</a> to automatically generate your <code>pyml</code> bindings.</em></p>
+<p><em>Note: You can find full examples in the <a href="https://github.com/mooreryan/ocaml_python_bindgen/tree/main/examples">examples</a> directory on GitHub. One neat thing about the examples there is that you can see how to write Dune <a href="https://dune.readthedocs.io/en/stable/dune-files.html#rule">rules</a> to automatically generate your <code>pyml</code> bindings.</em></p>
 <p><code>pyml_bindgen</code> is a CLI program that generates OCaml modules that bind Python classes via <a href="https://github.com/thierry-martinez/pyml">pyml</a>.</p>
-<p>Here's a small example.  Take a Python class, <code>Thing</code>.  (Put it in a file called <code>thing.py</code>...this means the Python module will be called <code>thing</code>.)</p>
+<p>Here's a small example. Take a Python class, <code>Thing</code>. (Put it in a file called <code>thing.py</code>...this means the Python module will be called <code>thing</code>.)</p>
 <pre><code class="language-python">class Thing:
     def __init__(self, x):
         self.x = x
@@ -232,20 +234,21 @@ $ dune build
         return self.x + y
 </code></pre>
 <p>Now, look at your Python class and decide how you would like to use this class on the OCaml side.</p>
-<p>For now, we will just do a direct translation, keeping in mind the rules for writing value specs that <code>pyml_bindgen</code> can process.  Maybe something like this.  (Put it in a file called <code>val_specs.txt</code>.)</p>
+<p>For now, we will just do a direct translation, keeping in mind the rules for writing value specs that <code>pyml_bindgen</code> can process. Maybe something like this. (Put it in a file called <code>val_specs.txt</code>.)</p>
 <pre><code class="language-ocaml">val __init__ : x:int -&gt; unit -&gt; t
 
 val x : t -&gt; int
 
 val add : t -&gt; y:int -&gt; unit -&gt; int
 </code></pre>
-<p>Finally, to generate the OCaml code, run the <code>pyml_bindgen</code> program.  There are a couple of options you can choose, but let's just keep it simple for now.</p>
+<p>Finally, to generate the OCaml code, run the <code>pyml_bindgen</code> program. There are a couple of options you can choose, but let's just keep it simple for now.</p>
 <pre><code class="language-bash">$ pyml_bindgen val_specs.txt thing Thing --caml-module=Thing &gt; lib.ml
 </code></pre>
 <p>If you want nicer formatting than that which is generated by <code>pyml_bindgen</code>, you can use <code>ocamlformat</code>.</p>
 <pre><code class="language-bash">$ ocamlformat --enable-outside-detected-project lib.ml
 </code></pre>
-<p>Check out the examples for more info about using and running <code>pyml_bindgen</code>.  Then, check out the rules that you have to follow when writing value specifications that <code>pyml_bindgen</code> can read.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>Check out the examples for more info about using and running <code>pyml_bindgen</code>. Then, check out the rules that you have to follow when writing value specifications that <code>pyml_bindgen</code> can read.</p>
 <p>Additionally, you may want to check out this <a href="https://www.tenderisthebyte.com/blog/2022/04/12/ocaml-python-bindgen/">blog post</a> introducing <code>pyml_bindgen</code>.</p>
 <h2 id="license">License</h2>
 <h3 id="software">Software</h3>
@@ -309,6 +312,6 @@ val add : t -&gt; y:int -&gt; unit -&gt; int
 </html>
 
 <!--
-MkDocs version : 1.3.1
-Build Date UTC : 2022-08-01 15:21:04.339867+00:00
+MkDocs version : 1.4.3
+Build Date UTC : 2023-05-12 16:13:10.834269+00:00
 -->
