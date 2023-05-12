@@ -1,4 +1,8 @@
+# Changelog
+
 ## Unreleased
+
+- Update docs
 
 ## 0.4.1 (2022-08-01)
 

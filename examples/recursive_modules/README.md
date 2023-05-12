@@ -51,19 +51,19 @@ It takes a tab-separated file (TSV), where each line describes the command line 
 Here is what the input file `cli_specs.tsv` looks like from this example.
 
 | signatures           | py_module | py_class | associated_with | caml_module | split_caml_module | embed_python_source | of_pyo_ret_type |
-|----------------------|-----------|----------|-----------------|-------------|-------------------|---------------------|-----------------|
+| -------------------- | --------- | -------- | --------------- | ----------- | ----------------- | ------------------- | --------------- |
 | specs/human_spec.txt | human     | Human    | class           | Human       | NA                | ../py/human.py      | no_check        |
 | specs/cat_spec.txt   | cat       | Cat      | class           | Cat         | NA                | ../py/cat.py        | no_check        |
 
-The first row must be given in this exact order.  Each column is one of the command line options to `pyml_bindgen`.  You can put `NA` (or `na`, or blank) in cases in which you would not pass the flag/option to `pyml_bindgen`.
+The first row must be given in this exact order. Each column is one of the command line options to `pyml_bindgen`. You can put `NA` (or `na`, or blank) in cases in which you would not pass the flag/option to `pyml_bindgen`.
 
-One potentially tricky thing is that the file paths will be with respect to the location in which the `gen_multi` program is run from, rather than the location of the `cli_specs.tsv` file.  If it is giving you trouble, you could use absolute paths instead.
+One potentially tricky thing is that the file paths will be with respect to the location in which the `gen_multi` program is run from, rather than the location of the `cli_specs.tsv` file. If it is giving you trouble, you could use absolute paths instead.
 
 ## `combine_rec_modules`
 
 This is a simple script that takes the output of say, `gen_multi` and turns all of the modules into recursive modules.
 
-Something like this
+In other words, an input file that looks something like this
 
 ```ocaml
 module A : sig
@@ -109,7 +109,7 @@ end
 
 ## Generating the modules
 
-See `lib/dune` for an automatic way to do this.  But basically, it goes something like this:
+See `lib/dune` for an automatic way to do this. But basically, it goes something like this:
 
 ```bash
 $ gen_multi ./specs/cli_specs.tsv \
